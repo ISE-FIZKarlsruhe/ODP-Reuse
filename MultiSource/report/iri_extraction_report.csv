@@ -1,0 +1,570 @@
+file,dir,iri,method
+patterns-repository/ActingFor/DUL.owl,patterns-repository/ActingFor,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ActingFor/DUL.owl,patterns-repository/ActingFor,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/ActingFor/DUL.owl,patterns-repository/ActingFor,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/ActingFor/actingfor.owl,patterns-repository/ActingFor,http://www.ontologydesignpatterns.org/cp/owl/actingfor.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ActingFor/actingfor.owl,patterns-repository/ActingFor,http://www.ontologydesignpatterns.org/cp/owl/actingfor.owl,xml:base
+patterns-repository/ActingFor/actingfor.owl,patterns-repository/ActingFor,http://www.ontologydesignpatterns.org/cp/owl/actingfor.owl,xmlns (default namespace)
+patterns-repository/Action/Action.owl,patterns-repository/Action,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/Actuation-Actuator-Effect/AAE.owl,patterns-repository/Actuation-Actuator-Effect,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/Actuation-Actuator-Effect/AAE.owl,patterns-repository/Actuation-Actuator-Effect,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/Actuation-Actuator-Effect/SAN.owl,patterns-repository/Actuation-Actuator-Effect,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/Actuation-Actuator-Effect/SAN.owl,patterns-repository/Actuation-Actuator-Effect,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/Affordance/DUL.owl,patterns-repository/Affordance,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Affordance/DUL.owl,patterns-repository/Affordance,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Affordance/DUL.owl,patterns-repository/Affordance,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Affordance/affordance.owl,patterns-repository/Affordance,https://w3id.org/MON/affordance.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Affordance/affordance.owl,patterns-repository/Affordance,https://w3id.org/MON/affordance.owl,xml:base
+patterns-repository/Affordance/affordance.owl,patterns-repository/Affordance,https://w3id.org/MON/affordance.owl,xmlns (default namespace)
+patterns-repository/AgentRole/agentrole.owl,patterns-repository/AgentRole,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,owl:Ontology IRI/rdf:about
+patterns-repository/AgentRole/agentrole.owl,patterns-repository/AgentRole,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,xml:base
+patterns-repository/AgentRole/agentrole.owl,patterns-repository/AgentRole,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,xmlns (default namespace)
+patterns-repository/AgentRole/ex1.owl,patterns-repository/AgentRole,http://www.ontologydesignpatterns.org/cp/examples/agentrole/ex1.owl,xml:base
+patterns-repository/AgentRole/ex1.owl,patterns-repository/AgentRole,http://www.ontologydesignpatterns.org/cp/examples/agentrole/ex1.owl,xmlns (default namespace)
+patterns-repository/Airline.owl/Airline.owl,patterns-repository/Airline.owl,http://www.ontologydesignpatterns.org/ekp/owl/Airline.owl,xmlns (default namespace)
+patterns-repository/Airline.owl/Airline.owl,patterns-repository/Airline.owl,http://www.ontologydesignpatterns.org/ekp/owl/Airline.owl,xmlns:base (namespace)
+patterns-repository/Airline/Airline.owl,patterns-repository/Airline,http://www.ontologydesignpatterns.org/ekp/owl/Airline.owl,xmlns (default namespace)
+patterns-repository/Airline/Airline.owl,patterns-repository/Airline,http://www.ontologydesignpatterns.org/ekp/owl/Airline.owl,xmlns:base (namespace)
+patterns-repository/AlgorithmImplementationExecution/AlgorithmImplementationExecution.owl,patterns-repository/AlgorithmImplementationExecution,http://www.w3.org/2000/svg,xmlns (default namespace)
+patterns-repository/An_Ontology_Design_Pattern_for_Activity_Reasoning/ActivityPattern.owl,patterns-repository/An_Ontology_Design_Pattern_for_Activity_Reasoning,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/AquaticResourceObservation/aquaticresourceobservation.owl,patterns-repository/AquaticResourceObservation,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresourceobservation.owl,xml:base
+patterns-repository/AquaticResourceObservation/aquaticresourceobservation.owl,patterns-repository/AquaticResourceObservation,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresourceobservation.owl,xmlns (default namespace)
+patterns-repository/AquaticResources/aquaticresources.owl,patterns-repository/AquaticResources,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xml:base
+patterns-repository/AquaticResources/aquaticresources.owl,patterns-repository/AquaticResources,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xmlns (default namespace)
+patterns-repository/AquaticResources/cpannotationschema.owl,patterns-repository/AquaticResources,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/AquaticResources/cpannotationschema.owl,patterns-repository/AquaticResources,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/Auriol_Degbelo/geoi-20200810.owl,patterns-repository/Auriol_Degbelo,http://aurioldegbelo.github.io/geoi,OWL/XML ontologyIRI
+patterns-repository/Auriol_Degbelo/geoi-20200810.owl,patterns-repository/Auriol_Degbelo,http://aurioldegbelo.github.io/geoi,xml:base
+patterns-repository/Auriol_Degbelo/geoi-20200810.owl,patterns-repository/Auriol_Degbelo,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/Bag/bag.owl,patterns-repository/Bag,http://www.ontologydesignpatterns.org/cp/owl/bag.owl,xml:base
+patterns-repository/Bag/bag.owl,patterns-repository/Bag,http://www.ontologydesignpatterns.org/cp/owl/bag.owl,xmlns (default namespace)
+patterns-repository/BasicPlan/basicplan.owl,patterns-repository/BasicPlan,http://www.ontologydesignpatterns.org/cp/owl/basicplan.owl,owl:Ontology IRI/rdf:about
+patterns-repository/BasicPlan/basicplan.owl,patterns-repository/BasicPlan,http://www.ontologydesignpatterns.org/cp/owl/basicplan.owl,xml:base
+patterns-repository/BasicPlan/basicplan.owl,patterns-repository/BasicPlan,http://www.ontologydesignpatterns.org/cp/owl/basicplan.owl,xmlns (default namespace)
+patterns-repository/BasicPlanExecution/basicplanexecution.owl,patterns-repository/BasicPlanExecution,http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl,owl:Ontology IRI/rdf:about
+patterns-repository/BasicPlanExecution/basicplanexecution.owl,patterns-repository/BasicPlanExecution,http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl,xml:base
+patterns-repository/BasicPlanExecution/basicplanexecution.owl,patterns-repository/BasicPlanExecution,http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl,xmlns (default namespace)
+patterns-repository/Born_Digital_Archives/BornDigitalArchives_ODP.owl,patterns-repository/Born_Digital_Archives,http://mklab.iti.gr/pericles/BornDigitalArchives_ODP,owl:Ontology IRI/rdf:about
+patterns-repository/Born_Digital_Archives/BornDigitalArchives_ODP.owl,patterns-repository/Born_Digital_Archives,http://mklab.iti.gr/pericles/BornDigitalArchives_ODP,xml:base
+patterns-repository/Born_Digital_Archives/BornDigitalArchives_ODP.owl,patterns-repository/Born_Digital_Archives,http://mklab.iti.gr/pericles/BornDigitalArchives_ODP,xmlns (default namespace)
+patterns-repository/CatchRecord/catchrecord.owl,patterns-repository/CatchRecord,http://www.ontologydesignpatterns.org/cp/owl/fsdas/catchrecord.owl,xml:base
+patterns-repository/CatchRecord/catchrecord.owl,patterns-repository/CatchRecord,http://www.ontologydesignpatterns.org/cp/owl/fsdas/catchrecord.owl,xmlns (default namespace)
+patterns-repository/ChessGame/chesspattern.owl,patterns-repository/ChessGame,http://purl.org/NET/rdfchess/ontology/,owl:Ontology IRI/rdf:about
+patterns-repository/ChessGame/chesspattern.owl,patterns-repository/ChessGame,http://purl.org/NET/rdfchess/ontology/,xml:base
+patterns-repository/ChessGame/chesspattern.owl,patterns-repository/ChessGame,http://purl.org/NET/rdfchess/ontology/,xmlns (default namespace)
+patterns-repository/City_Resident_Pattern/GCI-Innovation.owl,patterns-repository/City_Resident_Pattern,http://ontology.eil.utoronto.ca/GCI/Innovation/GCI-Innovation.owl,OWL/XML ontologyIRI
+patterns-repository/City_Resident_Pattern/GCI-Innovation.owl,patterns-repository/City_Resident_Pattern,http://ontology.eil.utoronto.ca/GCI/Innovation/GCI-Innovation.owl,xml:base
+patterns-repository/City_Resident_Pattern/GCI-Innovation.owl,patterns-repository/City_Resident_Pattern,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/City_Resident_Pattern/Resident.owl,patterns-repository/City_Resident_Pattern,http://ontology.eil.utoronto.ca/cdm/Resident#,OWL/XML ontologyIRI
+patterns-repository/City_Resident_Pattern/Resident.owl,patterns-repository/City_Resident_Pattern,http://ontology.eil.utoronto.ca/cdm/Resident#,xml:base
+patterns-repository/City_Resident_Pattern/Resident.owl,patterns-repository/City_Resident_Pattern,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/City_Resident_Pattern/icontact.owl,patterns-repository/City_Resident_Pattern,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/Classification/classification.owl,patterns-repository/Classification,http://www.ontologydesignpatterns.org/cp/owl/classification.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Classification/classification.owl,patterns-repository/Classification,http://www.ontologydesignpatterns.org/cp/owl/classification.owl,xml:base
+patterns-repository/Classification/classification.owl,patterns-repository/Classification,http://www.ontologydesignpatterns.org/cp/owl/classification.owl,xmlns (default namespace)
+patterns-repository/ClimaticZone/aquaticresources.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xml:base
+patterns-repository/ClimaticZone/aquaticresources.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xmlns (default namespace)
+patterns-repository/ClimaticZone/climaticzone.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/cp/owl/fsdas/climaticzone.owl,xml:base
+patterns-repository/ClimaticZone/climaticzone.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/cp/owl/fsdas/climaticzone.owl,xmlns (default namespace)
+patterns-repository/ClimaticZone/cpannotationschema.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/ClimaticZone/cpannotationschema.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/ClimaticZone/observation.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ClimaticZone/observation.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,xml:base
+patterns-repository/ClimaticZone/observation.owl,patterns-repository/ClimaticZone,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,xmlns (default namespace)
+patterns-repository/Co-participation/ISWCco-participation.owl,patterns-repository/Co-participation,http://www.ontologydesignpatterns.org/cp/examples/coparticpation/ISWCco-participation.owl,xml:base
+patterns-repository/Co-participation/ISWCco-participation.owl,patterns-repository/Co-participation,http://www.ontologydesignpatterns.org/cp/examples/coparticpation/ISWCco-participation.owl,xmlns (default namespace)
+patterns-repository/Co-participation/coparticipation.owl,patterns-repository/Co-participation,http://www.ontologydesignpatterns.org/cp/owl/coparticipation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Co-participation/coparticipation.owl,patterns-repository/Co-participation,http://www.ontologydesignpatterns.org/cp/owl/coparticipation.owl,xml:base
+patterns-repository/Co-participation/coparticipation.owl,patterns-repository/Co-participation,http://www.ontologydesignpatterns.org/cp/owl/coparticipation.owl,xmlns (default namespace)
+patterns-repository/Collection/DUL.owl,patterns-repository/Collection,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Collection/DUL.owl,patterns-repository/Collection,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Collection/DUL.owl,patterns-repository/Collection,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Collection/collectionentity.owl,patterns-repository/Collection,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Collection/collectionentity.owl,patterns-repository/Collection,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,xml:base
+patterns-repository/Collection/collectionentity.owl,patterns-repository/Collection,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,xmlns (default namespace)
+patterns-repository/Collection/cpannotationschema.owl,patterns-repository/Collection,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/Collection/cpannotationschema.owl,patterns-repository/Collection,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/CollectionEntity/DUL.owl,patterns-repository/CollectionEntity,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/CollectionEntity/DUL.owl,patterns-repository/CollectionEntity,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/CollectionEntity/DUL.owl,patterns-repository/CollectionEntity,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/CollectionEntity/ISTC.owl,patterns-repository/CollectionEntity,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/CollectionEntity/collectionentity.owl,patterns-repository/CollectionEntity,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,owl:Ontology IRI/rdf:about
+patterns-repository/CollectionEntity/collectionentity.owl,patterns-repository/CollectionEntity,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,xml:base
+patterns-repository/CollectionEntity/collectionentity.owl,patterns-repository/CollectionEntity,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,xmlns (default namespace)
+patterns-repository/CommunicationEvent/CommunicationEvent.owl,patterns-repository/CommunicationEvent,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/Communities/communities.owl,patterns-repository/Communities,http://www.ontologydesignpatterns.org/cp/owl/communities.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Communities/communities.owl,patterns-repository/Communities,http://www.ontologydesignpatterns.org/cp/owl/communities.owl,xml:base
+patterns-repository/Communities/communities.owl,patterns-repository/Communities,http://www.ontologydesignpatterns.org/cp/owl/communities.owl,xmlns (default namespace)
+patterns-repository/Componency/componency.owl,patterns-repository/Componency,http://www.ontologydesignpatterns.org/cp/owl/componency.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Componency/componency.owl,patterns-repository/Componency,http://www.ontologydesignpatterns.org/cp/owl/componency.owl,xml:base
+patterns-repository/Componency/componency.owl,patterns-repository/Componency,http://www.ontologydesignpatterns.org/cp/owl/componency.owl,xmlns (default namespace)
+patterns-repository/ComputationalEnvironment/ComputationalEnvironment.owl,patterns-repository/ComputationalEnvironment,http://dase.cs.wright.edu/ontologies/ComputationalEnvironment,OWL/XML ontologyIRI
+patterns-repository/ComputationalEnvironment/ComputationalEnvironment.owl,patterns-repository/ComputationalEnvironment,http://dase.cs.wright.edu/ontologies/ComputationalEnvironment,xml:base
+patterns-repository/ComputationalEnvironment/ComputationalEnvironment.owl,patterns-repository/ComputationalEnvironment,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/ComputationalEnvironment/exampleCompEnv.owl,patterns-repository/ComputationalEnvironment,http://dase.cs.wright.edu/ontologies/ComputationalEnvironment,OWL/XML ontologyIRI
+patterns-repository/ComputationalEnvironment/exampleCompEnv.owl,patterns-repository/ComputationalEnvironment,http://dase.cs.wright.edu/ontologies/ComputationalEnvironment,xml:base
+patterns-repository/ComputationalEnvironment/exampleCompEnv.owl,patterns-repository/ComputationalEnvironment,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/Computer_System/ComputerSystem_ODP.owl,patterns-repository/Computer_System,http://mklab.iti.gr/pericles/ComputerSystem_ODP,owl:Ontology IRI/rdf:about
+patterns-repository/Computer_System/ComputerSystem_ODP.owl,patterns-repository/Computer_System,http://mklab.iti.gr/pericles/ComputerSystem_ODP,xml:base
+patterns-repository/Computer_System/ComputerSystem_ODP.owl,patterns-repository/Computer_System,http://mklab.iti.gr/pericles/ComputerSystem_ODP,xmlns (default namespace)
+patterns-repository/Constituency/constituency.owl,patterns-repository/Constituency,http://www.ontologydesignpatterns.org/cp/owl/constituency.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Constituency/constituency.owl,patterns-repository/Constituency,http://www.ontologydesignpatterns.org/cp/owl/constituency.owl,xml:base
+patterns-repository/Constituency/constituency.owl,patterns-repository/Constituency,http://www.ontologydesignpatterns.org/cp/owl/constituency.owl,xmlns (default namespace)
+patterns-repository/ContentOPs/DUL.owl,patterns-repository/ContentOPs,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ContentOPs/DUL.owl,patterns-repository/ContentOPs,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/ContentOPs/DUL.owl,patterns-repository/ContentOPs,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/ContentOPs/SAN.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/ContentOPs/SAN.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/ContentOPs/SGA_Protege_OWL.owl,patterns-repository/ContentOPs,http://www.semanticweb.org/holly2012/ontologies/2016/SGA_Pattern,owl:Ontology IRI/rdf:about
+patterns-repository/ContentOPs/SGA_Protege_OWL.owl,patterns-repository/ContentOPs,http://www.semanticweb.org/holly2012/ontologies/2016/SGA_Pattern,xml:base
+patterns-repository/ContentOPs/SGA_Protege_OWL.owl,patterns-repository/ContentOPs,http://www.semanticweb.org/holly2012/ontologies/2016/SGA_Pattern,xmlns (default namespace)
+patterns-repository/ContentOPs/event.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/ContentOPs/event.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/ContentOPs/geometry.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/geometry.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ContentOPs/geometry.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/geometry.owl,xml:base
+patterns-repository/ContentOPs/geometry.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/geometry.owl,xmlns (default namespace)
+patterns-repository/ContentOPs/network.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/ContentOPs/network.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/ContentOPs/object.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/ContentOPs/object.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/ContentOPs/place.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/ContentOPs/place.owl,patterns-repository/ContentOPs,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/ContentOPs/sensing.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/sensing,owl:Ontology IRI/rdf:about
+patterns-repository/ContentOPs/sensing.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/sensing.owl,xml:base
+patterns-repository/ContentOPs/sensing.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/sensing.owl,xmlns (default namespace)
+patterns-repository/ContentOPs/situation.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/situation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ContentOPs/situation.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/situation.owl,xml:base
+patterns-repository/ContentOPs/situation.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/situation.owl,xmlns (default namespace)
+patterns-repository/ContentOPs/time.owl,patterns-repository/ContentOPs,http://ecareathome-ontology.mpi.aass.oru.se/patterns/time.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ContentOPs/time.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/time.owl,xml:base
+patterns-repository/ContentOPs/time.owl,patterns-repository/ContentOPs,https://w3id.org/smartenvironment/patterns/time.owl,xmlns (default namespace)
+patterns-repository/ContextualizedWinstonPartWhole/ContextualizedWinstonPartWhole.owl,patterns-repository/ContextualizedWinstonPartWhole,http://daselab.org/ContextualizedWinstonPartWhole,owl:Ontology IRI/rdf:about
+patterns-repository/ContextualizedWinstonPartWhole/ContextualizedWinstonPartWhole.owl,patterns-repository/ContextualizedWinstonPartWhole,http://daselab.org/ContextualizedWinstonPartWhole,xml:base
+patterns-repository/ContextualizedWinstonPartWhole/ContextualizedWinstonPartWhole.owl,patterns-repository/ContextualizedWinstonPartWhole,http://daselab.org/ContextualizedWinstonPartWhole,xmlns (default namespace)
+patterns-repository/Controlflow/controlflow.owl,patterns-repository/Controlflow,http://www.ontologydesignpatterns.org/cp/owl/controlflow.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Controlflow/controlflow.owl,patterns-repository/Controlflow,http://www.ontologydesignpatterns.org/cp/owl/controlflow.owl,xml:base
+patterns-repository/Controlflow/controlflow.owl,patterns-repository/Controlflow,http://www.ontologydesignpatterns.org/cp/owl/controlflow.owl,xmlns (default namespace)
+patterns-repository/CountingAs/countingas.owl,patterns-repository/CountingAs,http://www.ontologydesignpatterns.org/cp/owl/countingas.owl,owl:Ontology IRI/rdf:about
+patterns-repository/CountingAs/countingas.owl,patterns-repository/CountingAs,http://www.ontologydesignpatterns.org/cp/owl/countingas.owl,xml:base
+patterns-repository/CountingAs/countingas.owl,patterns-repository/CountingAs,http://www.ontologydesignpatterns.org/cp/owl/countingas.owl,xmlns (default namespace)
+patterns-repository/Description/description.owl,patterns-repository/Description,http://www.ontologydesignpatterns.org/cp/owl/description.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Description/description.owl,patterns-repository/Description,http://www.ontologydesignpatterns.org/cp/owl/description.owl,xml:base
+patterns-repository/Description/description.owl,patterns-repository/Description,http://www.ontologydesignpatterns.org/cp/owl/description.owl,xmlns (default namespace)
+patterns-repository/DescriptionAndSituation/DUL.owl,patterns-repository/DescriptionAndSituation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/DescriptionAndSituation/DUL.owl,patterns-repository/DescriptionAndSituation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/DescriptionAndSituation/DUL.owl,patterns-repository/DescriptionAndSituation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/DescriptionAndSituation/descriptionandsituation.owl,patterns-repository/DescriptionAndSituation,http://www.ontologydesignpatterns.org/cp/owl/descriptionandsituation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/DescriptionAndSituation/descriptionandsituation.owl,patterns-repository/DescriptionAndSituation,http://www.ontologydesignpatterns.org/cp/owl/descriptionandsituation.owl,xml:base
+patterns-repository/DescriptionAndSituation/descriptionandsituation.owl,patterns-repository/DescriptionAndSituation,http://www.ontologydesignpatterns.org/cp/owl/descriptionandsituation.owl,xmlns (default namespace)
+patterns-repository/DetectorFinalState/dectectorfinalstate.owl,patterns-repository/DetectorFinalState,http://purl.org/net/detectorfinalstate/,owl:Ontology IRI/rdf:about
+patterns-repository/DetectorFinalState/dectectorfinalstate.owl,patterns-repository/DetectorFinalState,http://purl.org/net/detectorfinalstate/,xml:base
+patterns-repository/DetectorFinalState/dectectorfinalstate.owl,patterns-repository/DetectorFinalState,http://purl.org/net/detectorfinalstate/,xmlns (default namespace)
+patterns-repository/DigitalVideo/DigitalVideo_ODP.owl,patterns-repository/DigitalVideo,http://mklab.iti.gr/pericles/DigitalVideo_ODP,owl:Ontology IRI/rdf:about
+patterns-repository/DigitalVideo/DigitalVideo_ODP.owl,patterns-repository/DigitalVideo,http://www.semanticweb.org/pmitzias/ontologies/2015/5/untitled-ontology-17,xml:base
+patterns-repository/DigitalVideo/DigitalVideo_ODP.owl,patterns-repository/DigitalVideo,http://www.semanticweb.org/pmitzias/ontologies/2015/5/untitled-ontology-17,xmlns (default namespace)
+patterns-repository/EEP/DUL.owl,patterns-repository/EEP,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/EEP/DUL.owl,patterns-repository/EEP,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/EEP/DUL.owl,patterns-repository/EEP,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/EthnicGroup/EthnicGroup.owl,patterns-repository/EthnicGroup,http://www.ontologydesignpatterns.org/ekp/owl/EthnicGroup.owl,xmlns (default namespace)
+patterns-repository/EthnicGroup/EthnicGroup.owl,patterns-repository/EthnicGroup,http://www.ontologydesignpatterns.org/ekp/owl/EthnicGroup.owl,xmlns:base (namespace)
+patterns-repository/EventCore/event.owl,patterns-repository/EventCore,http://w3id.org/daselab/onto/event,owl:Ontology IRI/rdf:about
+patterns-repository/EventCore/event.owl,patterns-repository/EventCore,http://w3id.org/daselab/onto/event,xml:base
+patterns-repository/EventCore/event.owl,patterns-repository/EventCore,http://w3id.org/daselab/onto/event,xmlns (default namespace)
+patterns-repository/EventProcessing/eventexample.owl,patterns-repository/EventProcessing,http://www.ontologydesignpatterns.org/cp/examples/eventprocessing/eventexample,xml:base
+patterns-repository/EventProcessing/eventexample.owl,patterns-repository/EventProcessing,http://www.ontologydesignpatterns.org/cp/examples/eventprocessing/eventexample,xmlns (default namespace)
+patterns-repository/EventProcessing/eventprocessing.owl,patterns-repository/EventProcessing,http://www.ontologydesignpatterns.org/cp/owl/eventprocessing.owl,xml:base
+patterns-repository/EventProcessing/eventprocessing.owl,patterns-repository/EventProcessing,http://www.ontologydesignpatterns.org/cp/owl/eventprocessing.owl,xmlns (default namespace)
+patterns-repository/Experience_&_Observation/cp_experience.owl,patterns-repository/Experience_&_Observation,http://modellingdh.github.io/ont/odp/experience,OWL/XML ontologyIRI
+patterns-repository/Experience_&_Observation/cp_experience.owl,patterns-repository/Experience_&_Observation,http://modellingdh.github.io/ont/odp/experience,xml:base
+patterns-repository/Experience_&_Observation/cp_experience.owl,patterns-repository/Experience_&_Observation,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/Experience_&_Observation/data-model-v2.owl,patterns-repository/Experience_&_Observation,http://readit-project.eu/ont/datamodel,OWL/XML ontologyIRI
+patterns-repository/Experience_&_Observation/data-model-v2.owl,patterns-repository/Experience_&_Observation,http://readit-project.eu/ont/datamodel,xml:base
+patterns-repository/Experience_&_Observation/data-model-v2.owl,patterns-repository/Experience_&_Observation,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/Food_Recipe_Ingredient_Substitution_ODP/food_recipe_ingredient_substitute_ODP.owl,patterns-repository/Food_Recipe_Ingredient_Substitution_ODP,http://semantic.cs.put.poznan.pl/ontologies/food_ingredient_substitutes,owl:Ontology IRI/rdf:about
+patterns-repository/Food_Recipe_Ingredient_Substitution_ODP/food_recipe_ingredient_substitute_ODP.owl,patterns-repository/Food_Recipe_Ingredient_Substitution_ODP,http://www.semanticweb.org/anna.wroblewska/ontologies/2021/11/untitled-ontology-24,xml:base
+patterns-repository/Food_Recipe_Ingredient_Substitution_ODP/food_recipe_ingredient_substitute_ODP.owl,patterns-repository/Food_Recipe_Ingredient_Substitution_ODP,http://www.semanticweb.org/anna.wroblewska/ontologies/2021/11/untitled-ontology-24,xmlns (default namespace)
+patterns-repository/Food_Recipe_Ingredient_Substitution_Ontology_Design_Pattern/food_recipe_ingredient_substitute_ODP.owl,patterns-repository/Food_Recipe_Ingredient_Substitution_Ontology_Design_Pattern,http://semantic.cs.put.poznan.pl/ontologies/food_ingredient_substitutes,owl:Ontology IRI/rdf:about
+patterns-repository/Food_Recipe_Ingredient_Substitution_Ontology_Design_Pattern/food_recipe_ingredient_substitute_ODP.owl,patterns-repository/Food_Recipe_Ingredient_Substitution_Ontology_Design_Pattern,http://www.semanticweb.org/anna.wroblewska/ontologies/2021/11/untitled-ontology-24,xml:base
+patterns-repository/Food_Recipe_Ingredient_Substitution_Ontology_Design_Pattern/food_recipe_ingredient_substitute_ODP.owl,patterns-repository/Food_Recipe_Ingredient_Substitution_Ontology_Design_Pattern,http://www.semanticweb.org/anna.wroblewska/ontologies/2021/11/untitled-ontology-24,xmlns (default namespace)
+patterns-repository/GO_Top/gotop.owl,patterns-repository/GO_Top,http://www.ontologydesignpatterns.org/cp/owl/gotop.owl,owl:Ontology IRI/rdf:about
+patterns-repository/GO_Top/gotop.owl,patterns-repository/GO_Top,http://www.ontologydesignpatterns.org/cp/owl/gotop.owl,xml:base
+patterns-repository/GO_Top/gotop.owl,patterns-repository/GO_Top,http://www.ontologydesignpatterns.org/cp/owl/gotop.owl,xmlns (default namespace)
+patterns-repository/GearSpecies/cpannotationschema.owl,patterns-repository/GearSpecies,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/GearSpecies/cpannotationschema.owl,patterns-repository/GearSpecies,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/GearSpecies/gearspecies.owl,patterns-repository/GearSpecies,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearspecies.owl,xml:base
+patterns-repository/GearSpecies/gearspecies.owl,patterns-repository/GearSpecies,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearspecies.owl,xmlns (default namespace)
+patterns-repository/GearVessel/cpannotationschema.owl,patterns-repository/GearVessel,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/GearVessel/cpannotationschema.owl,patterns-repository/GearVessel,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/GearVessel/gearvessel.owl,patterns-repository/GearVessel,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearvessel.owl,xml:base
+patterns-repository/GearVessel/gearvessel.owl,patterns-repository/GearVessel,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearvessel.owl,xmlns (default namespace)
+patterns-repository/GearWaterArea/gearwaterarea.owl,patterns-repository/GearWaterArea,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearwaterarea.owl,xml:base
+patterns-repository/GearWaterArea/gearwaterarea.owl,patterns-repository/GearWaterArea,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearwaterarea.owl,xmlns (default namespace)
+patterns-repository/HazardousSituation/HazardousSituation.owl,patterns-repository/HazardousSituation,http://semantic.cs.put.poznan.pl/ontologies/oshdo/HazardousSituation,owl:Ontology IRI/rdf:about
+patterns-repository/HazardousSituation/HazardousSituation.owl,patterns-repository/HazardousSituation,http://www.semanticweb.org/ontologies/2015/6/untitled-ontology-181,xml:base
+patterns-repository/HazardousSituation/HazardousSituation.owl,patterns-repository/HazardousSituation,http://www.semanticweb.org/ontologies/2015/6/untitled-ontology-181,xmlns (default namespace)
+patterns-repository/InformationObjectsAndRepresentationLanguages/informationobjectsandrepresentationlanguages.owl,patterns-repository/InformationObjectsAndRepresentationLanguages,http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl,owl:Ontology IRI/rdf:about
+patterns-repository/InformationObjectsAndRepresentationLanguages/informationobjectsandrepresentationlanguages.owl,patterns-repository/InformationObjectsAndRepresentationLanguages,http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl,xml:base
+patterns-repository/InformationObjectsAndRepresentationLanguages/informationobjectsandrepresentationlanguages.owl,patterns-repository/InformationObjectsAndRepresentationLanguages,http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl,xmlns (default namespace)
+patterns-repository/Information_realization/DUL.owl,patterns-repository/Information_realization,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/Information_realization/IMeMine.owl,patterns-repository/Information_realization,http://www.ontologydesignpatterns.org/cp/examples/informationrealization/IMeMine.owl,xml:base
+patterns-repository/Information_realization/IMeMine.owl,patterns-repository/Information_realization,http://www.ontologydesignpatterns.org/cp/examples/informationrealization/IMeMine.owl,xmlns (default namespace)
+patterns-repository/Information_realization/informationrealization.owl,patterns-repository/Information_realization,http://www.ontologydesignpatterns.org/cp/owl/informationrealization.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Information_realization/informationrealization.owl,patterns-repository/Information_realization,http://www.ontologydesignpatterns.org/cp/owl/informationrealization.owl,xml:base
+patterns-repository/Information_realization/informationrealization.owl,patterns-repository/Information_realization,http://www.ontologydesignpatterns.org/cp/owl/informationrealization.owl,xmlns (default namespace)
+patterns-repository/IntensionExtension/DUL.owl,patterns-repository/IntensionExtension,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/IntensionExtension/DUL.owl,patterns-repository/IntensionExtension,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/IntensionExtension/DUL.owl,patterns-repository/IntensionExtension,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/IntensionExtension/intensionextension.owl,patterns-repository/IntensionExtension,http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl,owl:Ontology IRI/rdf:about
+patterns-repository/IntensionExtension/intensionextension.owl,patterns-repository/IntensionExtension,http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl,xml:base
+patterns-repository/IntensionExtension/intensionextension.owl,patterns-repository/IntensionExtension,http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl,xmlns (default namespace)
+patterns-repository/Interest/InterestOntology.owl,patterns-repository/Interest,http://www.semanticweb.org/hirtq/ontologies/2018/5/uip,OWL/XML ontologyIRI
+patterns-repository/Interest/InterestOntology.owl,patterns-repository/Interest,http://www.semanticweb.org/hirtq/ontologies/2018/5/uip,xml:base
+patterns-repository/Interest/InterestOntology.owl,patterns-repository/Interest,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/Invoice/invoice.owl,patterns-repository/Invoice,http://www.ontologydesignpatterns.org/cp/owl/invoice.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Invoice/invoice.owl,patterns-repository/Invoice,http://www.ontologydesignpatterns.org/cp/owl/invoice.owl,xml:base
+patterns-repository/Invoice/invoice.owl,patterns-repository/Invoice,http://www.ontologydesignpatterns.org/cp/owl/invoice.owl,xmlns (default namespace)
+patterns-repository/LinnaeanTaxonomy/linnaeantaxonomy.owl,patterns-repository/LinnaeanTaxonomy,http://www.ontologydesignpatterns.org/cp/owl/linnaeantaxonomy.owl,owl:Ontology IRI/rdf:about
+patterns-repository/LinnaeanTaxonomy/linnaeantaxonomy.owl,patterns-repository/LinnaeanTaxonomy,http://www.ontologydesignpatterns.org/cp/owl/linnaeantaxonomy.owl,xml:base
+patterns-repository/LinnaeanTaxonomy/linnaeantaxonomy.owl,patterns-repository/LinnaeanTaxonomy,http://www.ontologydesignpatterns.org/cp/owl/linnaeantaxonomy.owl,xmlns (default namespace)
+patterns-repository/List/list.owl,patterns-repository/List,http://www.ontologydesignpatterns.org/cp/owl/list.owl,xml:base
+patterns-repository/List/list.owl,patterns-repository/List,http://www.ontologydesignpatterns.org/cp/owl/list.owl,xmlns (default namespace)
+patterns-repository/Logistics_Service_(LoSe_ODP)/LoSe_ODP.owl,patterns-repository/Logistics_Service_(LoSe_ODP),http://www.w3.org/2000/svg,xmlns (default namespace)
+patterns-repository/Material_Transformation/MaterialTransformationPattern.owl,patterns-repository/Material_Transformation,http://descartes-core.org/ontologies/mt/1.1/MaterialTransformationPattern,owl:Ontology IRI/rdf:about
+patterns-repository/Material_Transformation/MaterialTransformationPattern.owl,patterns-repository/Material_Transformation,http://www.descartes-core.org/patterns/owl/MaterialTransformationPattern,xml:base
+patterns-repository/Material_Transformation/MaterialTransformationPattern.owl,patterns-repository/Material_Transformation,http://www.descartes-core.org/patterns/owl/MaterialTransformationPattern,xmlns (default namespace)
+patterns-repository/MaterialsProperty/matl-prop.owl,patterns-repository/MaterialsProperty,http://example.org/mmd/matlprop/mp-prop,OWL/XML ontologyIRI
+patterns-repository/MaterialsProperty/matl-prop.owl,patterns-repository/MaterialsProperty,http://example.org/mmd/matlprop/mp-prop,xml:base
+patterns-repository/MaterialsProperty/matl-prop.owl,patterns-repository/MaterialsProperty,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/MicroblogEntry/MicroblogEntry.owl,patterns-repository/MicroblogEntry,http://www.w3.org/2000/svg,xmlns (default namespace)
+patterns-repository/Move/move.owl,patterns-repository/Move,http://www.ontologydesignpatterns.org/cp/owl/move.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Move/move.owl,patterns-repository/Move,http://www.ontologydesignpatterns.org/cp/owl/move.owl,xml:base
+patterns-repository/Move/move.owl,patterns-repository/Move,http://www.ontologydesignpatterns.org/cp/owl/move.owl,xmlns (default namespace)
+patterns-repository/Nary_Participation/naryparticipation.owl,patterns-repository/Nary_Participation,http://www.ontologydesignpatterns.org/cp/owl/naryparticipation.owl,xml:base
+patterns-repository/Nary_Participation/naryparticipation.owl,patterns-repository/Nary_Participation,http://www.ontologydesignpatterns.org/cp/owl/naryparticipation.owl,xmlns (default namespace)
+patterns-repository/Nary_Participation/naryparticipationex.owl,patterns-repository/Nary_Participation,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/NewsReportingEvent/newsreportingevent.owl,patterns-repository/NewsReportingEvent,http://semantic.cs.put.poznan.pl/ontologies/newsreportingevent.owl,owl:Ontology IRI/rdf:about
+patterns-repository/NewsReportingEvent/newsreportingevent.owl,patterns-repository/NewsReportingEvent,http://semantic.cs.put.poznan.pl/ontologies/newsreportingevent.owl,xml:base
+patterns-repository/NewsReportingEvent/newsreportingevent.owl,patterns-repository/NewsReportingEvent,http://semantic.cs.put.poznan.pl/ontologies/newsreportingevent.owl,xmlns (default namespace)
+patterns-repository/Notepattern/notepattern.owl,patterns-repository/Notepattern,https://purl.org/andreapoltronieri/notepattern/,owl:Ontology IRI/rdf:about
+patterns-repository/Notepattern/notepattern.owl,patterns-repository/Notepattern,https://purl.org/andreapoltronieri/notepattern/,xml:base
+patterns-repository/Notepattern/notepattern.owl,patterns-repository/Notepattern,https://purl.org/andreapoltronieri/notepattern/,xmlns (default namespace)
+patterns-repository/OOPMetrics/oopmetrics.owl,patterns-repository/OOPMetrics,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/Object_with_states/ObjectWithStates.owl,patterns-repository/Object_with_states,http://delicias.dia.fi.upm.es/ontologies/ObjectWithStates.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Object_with_states/ObjectWithStates.owl,patterns-repository/Object_with_states,http://delicias.dia.fi.upm.es/ontologies/ObjectWithStates.owl,xml:base
+patterns-repository/Object_with_states/ObjectWithStates.owl,patterns-repository/Object_with_states,http://delicias.dia.fi.upm.es/ontologies/ObjectWithStates.owl,xmlns (default namespace)
+patterns-repository/Object_with_states/alm-istack.owl,patterns-repository/Object_with_states,http://delicias.dia.fi.upm.es/ontologies/alm-istack,owl:Ontology IRI/rdf:about
+patterns-repository/Object_with_states/alm-istack.owl,patterns-repository/Object_with_states,http://delicias.dia.fi.upm.es/ontologies/alm-istack,xml:base
+patterns-repository/Object_with_states/alm-istack.owl,patterns-repository/Object_with_states,http://delicias.dia.fi.upm.es/ontologies/alm-istack,xmlns (default namespace)
+patterns-repository/Object_with_states/collectionentity.owl,patterns-repository/Object_with_states,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Object_with_states/collectionentity.owl,patterns-repository/Object_with_states,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,xml:base
+patterns-repository/Object_with_states/collectionentity.owl,patterns-repository/Object_with_states,http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl,xmlns (default namespace)
+patterns-repository/Object_with_states/set.owl,patterns-repository/Object_with_states,http://www.ontologydesignpatterns.org/cp/owl/set.owl,xml:base
+patterns-repository/Object_with_states/set.owl,patterns-repository/Object_with_states,http://www.ontologydesignpatterns.org/cp/owl/set.owl,xmlns (default namespace)
+patterns-repository/Object_with_states/situation.owl,patterns-repository/Object_with_states,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Object_with_states/situation.owl,patterns-repository/Object_with_states,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,xml:base
+patterns-repository/Object_with_states/situation.owl,patterns-repository/Object_with_states,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,xmlns (default namespace)
+patterns-repository/Objectrole/objectrole.owl,patterns-repository/Objectrole,http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Objectrole/objectrole.owl,patterns-repository/Objectrole,http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl,xml:base
+patterns-repository/Objectrole/objectrole.owl,patterns-repository/Objectrole,http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl,xmlns (default namespace)
+patterns-repository/Observation/observation.owl,patterns-repository/Observation,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Observation/observation.owl,patterns-repository/Observation,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,xml:base
+patterns-repository/Observation/observation.owl,patterns-repository/Observation,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,xmlns (default namespace)
+patterns-repository/Observation/situation.owl,patterns-repository/Observation,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Observation/situation.owl,patterns-repository/Observation,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,xml:base
+patterns-repository/Observation/situation.owl,patterns-repository/Observation,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,xmlns (default namespace)
+patterns-repository/Parameter/DUL.owl,patterns-repository/Parameter,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Parameter/DUL.owl,patterns-repository/Parameter,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Parameter/DUL.owl,patterns-repository/Parameter,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Parameter/parameter.owl,patterns-repository/Parameter,http://www.ontologydesignpatterns.org/cp/owl/parameter.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Parameter/parameter.owl,patterns-repository/Parameter,http://www.ontologydesignpatterns.org/cp/owl/parameter.owl,xml:base
+patterns-repository/Parameter/parameter.owl,patterns-repository/Parameter,http://www.ontologydesignpatterns.org/cp/owl/parameter.owl,xmlns (default namespace)
+patterns-repository/PartOf/humanbodyparts.owl,patterns-repository/PartOf,http://www.ontologydesignpatterns.org/cp/examples/partof/humanbodyparts.owl,xml:base
+patterns-repository/PartOf/humanbodyparts.owl,patterns-repository/PartOf,http://www.ontologydesignpatterns.org/cp/examples/partof/humanbodyparts.owl,xmlns (default namespace)
+patterns-repository/PartOf/partof.owl,patterns-repository/PartOf,http://www.ontologydesignpatterns.org/cp/owl/partof.owl,owl:Ontology IRI/rdf:about
+patterns-repository/PartOf/partof.owl,patterns-repository/PartOf,http://www.ontologydesignpatterns.org/cp/owl/partof.owl,xml:base
+patterns-repository/PartOf/partof.owl,patterns-repository/PartOf,http://www.ontologydesignpatterns.org/cp/owl/partof.owl,xmlns (default namespace)
+patterns-repository/ParticipantRole/ParticipantRole.owl,patterns-repository/ParticipantRole,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/Participation/DUL.owl,patterns-repository/Participation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Participation/DUL.owl,patterns-repository/Participation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Participation/DUL.owl,patterns-repository/Participation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Participation/participation.owl,patterns-repository/Participation,http://www.ontologydesignpatterns.org/cp/owl/participation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Participation/participation.owl,patterns-repository/Participation,http://www.ontologydesignpatterns.org/cp/owl/participation.owl,xml:base
+patterns-repository/Participation/participation.owl,patterns-repository/Participation,http://www.ontologydesignpatterns.org/cp/owl/participation.owl,xmlns (default namespace)
+patterns-repository/PeriodicInterval/PeriodicInterval.owl,patterns-repository/PeriodicInterval,http://delicias.dia.fi.upm.es/ontologies/PeriodicInterval.owl,owl:Ontology IRI/rdf:about
+patterns-repository/PeriodicInterval/PeriodicInterval.owl,patterns-repository/PeriodicInterval,http://delicias.dia.fi.upm.es/ontologies/PeriodicInterval.owl,xml:base
+patterns-repository/PeriodicInterval/PeriodicInterval.owl,patterns-repository/PeriodicInterval,http://delicias.dia.fi.upm.es/ontologies/PeriodicInterval.owl,xmlns (default namespace)
+patterns-repository/Persons/persons.owl,patterns-repository/Persons,http://www.ontologydesignpatterns.org/cp/owl/persons.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Persons/persons.owl,patterns-repository/Persons,http://www.ontologydesignpatterns.org/cp/owl/persons.owl,xml:base
+patterns-repository/Persons/persons.owl,patterns-repository/Persons,http://www.ontologydesignpatterns.org/cp/owl/persons.owl,xmlns (default namespace)
+patterns-repository/PharmaInnova/cpannotationschema.owl,patterns-repository/PharmaInnova,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/PharmaInnova/cpannotationschema.owl,patterns-repository/PharmaInnova,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/Place/DUL.owl,patterns-repository/Place,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Place/DUL.owl,patterns-repository/Place,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Place/DUL.owl,patterns-repository/Place,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Place/cpannotationschema.owl,patterns-repository/Place,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/Place/cpannotationschema.owl,patterns-repository/Place,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/Place/place.owl,patterns-repository/Place,http://www.ontologydesignpatterns.org/cp/owl/place.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Place/place.owl,patterns-repository/Place,http://www.ontologydesignpatterns.org/cp/owl/place.owl,xml:base
+patterns-repository/Place/place.owl,patterns-repository/Place,http://www.ontologydesignpatterns.org/cp/owl/place.owl,xmlns (default namespace)
+patterns-repository/PlanConditions/planconditions.owl,patterns-repository/PlanConditions,http://www.ontologydesignpatterns.org/cp/owl/planconditions.owl,owl:Ontology IRI/rdf:about
+patterns-repository/PlanConditions/planconditions.owl,patterns-repository/PlanConditions,http://www.ontologydesignpatterns.org/cp/owl/planconditions.owl,xml:base
+patterns-repository/PlanConditions/planconditions.owl,patterns-repository/PlanConditions,http://www.ontologydesignpatterns.org/cp/owl/planconditions.owl,xmlns (default namespace)
+patterns-repository/Policy/Policy_ODP.owl,patterns-repository/Policy,http://mklab.iti.gr/pericles/Policy_ODP,owl:Ontology IRI/rdf:about
+patterns-repository/Policy/Policy_ODP.owl,patterns-repository/Policy,http://mklab.iti.gr/pericles/Policy_ODP,xml:base
+patterns-repository/Policy/Policy_ODP.owl,patterns-repository/Policy,http://mklab.iti.gr/pericles/Policy_ODP,xmlns (default namespace)
+patterns-repository/Pollution/PollutionODP.owl,patterns-repository/Pollution,http://www.w3.org/2000/svg,xmlns (default namespace)
+patterns-repository/Price/price.owl,patterns-repository/Price,http://www.ontologydesignpatterns.org/cp/owl/price.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Price/price.owl,patterns-repository/Price,http://www.ontologydesignpatterns.org/cp/owl/price.owl,xml:base
+patterns-repository/Price/price.owl,patterns-repository/Price,http://www.ontologydesignpatterns.org/cp/owl/price.owl,xmlns (default namespace)
+patterns-repository/PrivacyPolicyPersonalData/privacypolicy.owl,patterns-repository/PrivacyPolicyPersonalData,http://openscience.adaptcentre.ie/ontologies/privacypolicy#,OWL/XML ontologyIRI
+patterns-repository/PrivacyPolicyPersonalData/privacypolicy.owl,patterns-repository/PrivacyPolicyPersonalData,http://openscience.adaptcentre.ie/ontologies/privacypolicy#,xml:base
+patterns-repository/PrivacyPolicyPersonalData/privacypolicy.owl,patterns-repository/PrivacyPolicyPersonalData,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/Provenance/EntityWithProvenanceOntologyPattern.owl,patterns-repository/Provenance,http://www.semanticweb.org/hirtq/ontologies/2018/4/EntityWithProvenanceOntologyPattern,OWL/XML ontologyIRI
+patterns-repository/Provenance/EntityWithProvenanceOntologyPattern.owl,patterns-repository/Provenance,http://www.semanticweb.org/hirtq/ontologies/2018/4/EntityWithProvenanceOntologyPattern,xml:base
+patterns-repository/Provenance/EntityWithProvenanceOntologyPattern.owl,patterns-repository/Provenance,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/RTMSmapping/cpannotationschema.owl,patterns-repository/RTMSmapping,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/RTMSmapping/cpannotationschema.owl,patterns-repository/RTMSmapping,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/RTMSmapping/rtmsmapping.owl,patterns-repository/RTMSmapping,http://www.ontologydesignpatterns.org/cp/owl/fsdas/rtmsmapping.owl,xml:base
+patterns-repository/RTMSmapping/rtmsmapping.owl,patterns-repository/RTMSmapping,http://www.ontologydesignpatterns.org/cp/owl/fsdas/rtmsmapping.owl,xmlns (default namespace)
+patterns-repository/RecurrentEventSeries/recurrenteventseries.owl,patterns-repository/RecurrentEventSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl,owl:Ontology IRI/rdf:about
+patterns-repository/RecurrentEventSeries/recurrenteventseries.owl,patterns-repository/RecurrentEventSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl,xml:base
+patterns-repository/RecurrentEventSeries/recurrenteventseries.owl,patterns-repository/RecurrentEventSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl,xmlns (default namespace)
+patterns-repository/RecurrentSituationSeries/recurrenteventseries.owl,patterns-repository/RecurrentSituationSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl,owl:Ontology IRI/rdf:about
+patterns-repository/RecurrentSituationSeries/recurrenteventseries.owl,patterns-repository/RecurrentSituationSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl,xml:base
+patterns-repository/RecurrentSituationSeries/recurrenteventseries.owl,patterns-repository/RecurrentSituationSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl,xmlns (default namespace)
+patterns-repository/RecurrentSituationSeries/recurrentsituationseries.owl,patterns-repository/RecurrentSituationSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrentsituationseries.owl,owl:Ontology IRI/rdf:about
+patterns-repository/RecurrentSituationSeries/recurrentsituationseries.owl,patterns-repository/RecurrentSituationSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrentsituationseries.owl,xml:base
+patterns-repository/RecurrentSituationSeries/recurrentsituationseries.owl,patterns-repository/RecurrentSituationSeries,http://www.ontologydesignpatterns.org/cp/owl/recurrentsituationseries.owl,xmlns (default namespace)
+patterns-repository/Region/DUL.owl,patterns-repository/Region,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Region/DUL.owl,patterns-repository/Region,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Region/DUL.owl,patterns-repository/Region,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Region/region.owl,patterns-repository/Region,http://www.ontologydesignpatterns.org/cp/owl/region.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Region/region.owl,patterns-repository/Region,http://www.ontologydesignpatterns.org/cp/owl/region.owl,xml:base
+patterns-repository/Region/region.owl,patterns-repository/Region,http://www.ontologydesignpatterns.org/cp/owl/region.owl,xmlns (default namespace)
+patterns-repository/ReportingEvent/reportingevent.owl,patterns-repository/ReportingEvent,http://semantic.cs.put.poznan.pl/ontologies/reportingevent.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ReportingEvent/reportingevent.owl,patterns-repository/ReportingEvent,http://semantic.cs.put.poznan.pl/ontologies/reportingevent.owl,xml:base
+patterns-repository/ReportingEvent/reportingevent.owl,patterns-repository/ReportingEvent,http://semantic.cs.put.poznan.pl/ontologies/reportingevent.owl,xmlns (default namespace)
+patterns-repository/ReportingNewsEvent/newsreportingevent.owl,patterns-repository/ReportingNewsEvent,http://semantic.cs.put.poznan.pl/ontologies/newsreportingevent.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ReportingNewsEvent/newsreportingevent.owl,patterns-repository/ReportingNewsEvent,http://semantic.cs.put.poznan.pl/ontologies/newsreportingevent.owl,xml:base
+patterns-repository/ReportingNewsEvent/newsreportingevent.owl,patterns-repository/ReportingNewsEvent,http://semantic.cs.put.poznan.pl/ontologies/newsreportingevent.owl,xmlns (default namespace)
+patterns-repository/ResourceAbundanceObservation/resourceabundanceobservation.owl,patterns-repository/ResourceAbundanceObservation,http://www.ontologydesignpatterns.org/cp/owl/fsdas/resourceabundanceobservation.owl,xml:base
+patterns-repository/ResourceAbundanceObservation/resourceabundanceobservation.owl,patterns-repository/ResourceAbundanceObservation,http://www.ontologydesignpatterns.org/cp/owl/fsdas/resourceabundanceobservation.owl,xmlns (default namespace)
+patterns-repository/ResourceExploitationObservation/observation.owl,patterns-repository/ResourceExploitationObservation,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/ResourceExploitationObservation/observation.owl,patterns-repository/ResourceExploitationObservation,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,xml:base
+patterns-repository/ResourceExploitationObservation/observation.owl,patterns-repository/ResourceExploitationObservation,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,xmlns (default namespace)
+patterns-repository/ResourceExploitationObservation/resourceexploitationobservation.owl,patterns-repository/ResourceExploitationObservation,http://www.ontologydesignpatterns.org/cp/owl/fsdas/resourceexploitationobservation.owl,xml:base
+patterns-repository/ResourceExploitationObservation/resourceexploitationobservation.owl,patterns-repository/ResourceExploitationObservation,http://www.ontologydesignpatterns.org/cp/owl/fsdas/resourceexploitationobservation.owl,xmlns (default namespace)
+patterns-repository/RoleDependentNames/RoleDependentNames.owl,patterns-repository/RoleDependentNames,https://kastle-labl.org/lod/ontology/,Turtle @base
+patterns-repository/Role_task/DUL.owl,patterns-repository/Role_task,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Role_task/DUL.owl,patterns-repository/Role_task,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Role_task/DUL.owl,patterns-repository/Role_task,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Role_task/ex1.owl,patterns-repository/Role_task,http://www.ontologydesignpatterns.org/cp/examples/taskrole/ex1.owl,xml:base
+patterns-repository/Role_task/ex1.owl,patterns-repository/Role_task,http://www.ontologydesignpatterns.org/cp/examples/taskrole/ex1.owl,xmlns (default namespace)
+patterns-repository/Role_task/taskrole.owl,patterns-repository/Role_task,http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Role_task/taskrole.owl,patterns-repository/Role_task,http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl,xml:base
+patterns-repository/Role_task/taskrole.owl,patterns-repository/Role_task,http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl,xmlns (default namespace)
+patterns-repository/Scorepart/scorepart.owl,patterns-repository/Scorepart,https://purl.org/andreapoltronieri/scorepart/,owl:Ontology IRI/rdf:about
+patterns-repository/Scorepart/scorepart.owl,patterns-repository/Scorepart,https://purl.org/andreapoltronieri/scorepart/,xml:base
+patterns-repository/Scorepart/scorepart.owl,patterns-repository/Scorepart,https://purl.org/andreapoltronieri/scorepart/,xmlns (default namespace)
+patterns-repository/Sequence/DUL.owl,patterns-repository/Sequence,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Sequence/DUL.owl,patterns-repository/Sequence,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Sequence/DUL.owl,patterns-repository/Sequence,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Sequence/sequence.owl,patterns-repository/Sequence,http://www.ontologydesignpatterns.org/cp/owl/sequence.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Sequence/sequence.owl,patterns-repository/Sequence,http://www.ontologydesignpatterns.org/cp/owl/sequence.owl,xml:base
+patterns-repository/Sequence/sequence.owl,patterns-repository/Sequence,http://www.ontologydesignpatterns.org/cp/owl/sequence.owl,xmlns (default namespace)
+patterns-repository/Set/set.owl,patterns-repository/Set,http://www.ontologydesignpatterns.org/cp/owl/set.owl,xml:base
+patterns-repository/Set/set.owl,patterns-repository/Set,http://www.ontologydesignpatterns.org/cp/owl/set.owl,xmlns (default namespace)
+patterns-repository/SimpleOrAggregated/SimpleOrAggregated.owl,patterns-repository/SimpleOrAggregated,http://delicias.dia.fi.upm.es/ontologies/SimpleOrAggregated.owl,xml:base
+patterns-repository/SimpleOrAggregated/SimpleOrAggregated.owl,patterns-repository/SimpleOrAggregated,http://www.cenitmio.es/ontologies/Provider.owl,xmlns (default namespace)
+patterns-repository/SimpleTopic/topic.owl,patterns-repository/SimpleTopic,http://www.ontologydesignpatterns.org/cp/owl/topic.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SimpleTopic/topic.owl,patterns-repository/SimpleTopic,http://www.ontologydesignpatterns.org/cp/owl/topic.owl,xml:base
+patterns-repository/SimpleTopic/topic.owl,patterns-repository/SimpleTopic,http://www.ontologydesignpatterns.org/cp/owl/topic.owl,xmlns (default namespace)
+patterns-repository/Situation/DUL.owl,patterns-repository/Situation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Situation/DUL.owl,patterns-repository/Situation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/Situation/DUL.owl,patterns-repository/Situation,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/Situation/cpannotationschema.owl,patterns-repository/Situation,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/Situation/cpannotationschema.owl,patterns-repository/Situation,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/Situation/situation.owl,patterns-repository/Situation,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Situation/situation.owl,patterns-repository/Situation,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,xml:base
+patterns-repository/Situation/situation.owl,patterns-repository/Situation,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,xmlns (default namespace)
+patterns-repository/SmartHome/event.owl,patterns-repository/SmartHome,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/SmartHome/event.owl,patterns-repository/SmartHome,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome/geometry.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/geometry.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome/geometry.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/geometry.owl,xml:base
+patterns-repository/SmartHome/geometry.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/geometry.owl,xmlns (default namespace)
+patterns-repository/SmartHome/network.owl,patterns-repository/SmartHome,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/SmartHome/network.owl,patterns-repository/SmartHome,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome/object.owl,patterns-repository/SmartHome,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/SmartHome/object.owl,patterns-repository/SmartHome,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome/place.owl,patterns-repository/SmartHome,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/SmartHome/place.owl,patterns-repository/SmartHome,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome/sensing.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/sensing,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome/sensing.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/sensing.owl,xml:base
+patterns-repository/SmartHome/sensing.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/sensing.owl,xmlns (default namespace)
+patterns-repository/SmartHome/situation.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/situation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome/situation.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/situation.owl,xml:base
+patterns-repository/SmartHome/situation.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/situation.owl,xmlns (default namespace)
+patterns-repository/SmartHome/smartenv.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/smartenv.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome/smartenv.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/smartenv.owl,xml:base
+patterns-repository/SmartHome/smartenv.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/smartenv.owl,xmlns (default namespace)
+patterns-repository/SmartHome/time.owl,patterns-repository/SmartHome,http://ecareathome-ontology.mpi.aass.oru.se/patterns/time.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome/time.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/time.owl,xml:base
+patterns-repository/SmartHome/time.owl,patterns-repository/SmartHome,https://w3id.org/smartenvironment/patterns/time.owl,xmlns (default namespace)
+patterns-repository/SmartHome_FeatureOfInterest/SmartHome_FeatureOfInterest.owl,patterns-repository/SmartHome_FeatureOfInterest,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_FeatureOfInterest.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome_FeatureOfInterest/SmartHome_FeatureOfInterest.owl,patterns-repository/SmartHome_FeatureOfInterest,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_FeatureOfInterest.owl,xml:base
+patterns-repository/SmartHome_FeatureOfInterest/SmartHome_FeatureOfInterest.owl,patterns-repository/SmartHome_FeatureOfInterest,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_FeatureOfInterest.owl,xmlns (default namespace)
+patterns-repository/SmartHome_Geometry/SmartHome_Geometry.owl,patterns-repository/SmartHome_Geometry,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_Geometry.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome_Geometry/SmartHome_Geometry.owl,patterns-repository/SmartHome_Geometry,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_Geometry.owl,xml:base
+patterns-repository/SmartHome_Geometry/SmartHome_Geometry.owl,patterns-repository/SmartHome_Geometry,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_Geometry.owl,xmlns (default namespace)
+patterns-repository/SmartHome_Network/SmartHome_Network.owl,patterns-repository/SmartHome_Network,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_Network.owl,xml:base
+patterns-repository/SmartHome_Network/SmartHome_Network.owl,patterns-repository/SmartHome_Network,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome_Object/SmartHome_Object.owl,patterns-repository/SmartHome_Object,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_Object.owl,xml:base
+patterns-repository/SmartHome_Object/SmartHome_Object.owl,patterns-repository/SmartHome_Object,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome_Place/DUL.owl,patterns-repository/SmartHome_Place,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome_Place/DUL.owl,patterns-repository/SmartHome_Place,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xml:base
+patterns-repository/SmartHome_Place/DUL.owl,patterns-repository/SmartHome_Place,http://www.ontologydesignpatterns.org/ont/dul/DUL.owl,xmlns (default namespace)
+patterns-repository/SmartHome_Place/SmartHome_Place.owl,patterns-repository/SmartHome_Place,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_Place.owl,xml:base
+patterns-repository/SmartHome_Place/SmartHome_Place.owl,patterns-repository/SmartHome_Place,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome_Property/SmartHome_Property.owl,patterns-repository/SmartHome_Property,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_Property.owl,xml:base
+patterns-repository/SmartHome_Property/SmartHome_Property.owl,patterns-repository/SmartHome_Property,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome_Sensing/SmartHome_Sensing.owl,patterns-repository/SmartHome_Sensing,http://www.w3.org/2002/07/owl,xml:base
+patterns-repository/SmartHome_Sensing/SmartHome_Sensing.owl,patterns-repository/SmartHome_Sensing,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome_Situation/SmartHome_Situation.owl,patterns-repository/SmartHome_Situation,http://ecareathome-ontology.mpi.aass.oru.se/patterns/SmartHome_Situation.owl,xml:base
+patterns-repository/SmartHome_Situation/SmartHome_Situation.owl,patterns-repository/SmartHome_Situation,http://www.w3.org/2002/07/owl,xmlns (default namespace)
+patterns-repository/SmartHome_TimeInterval/time.owl,patterns-repository/SmartHome_TimeInterval,http://ecareathome-ontology.mpi.aass.oru.se/patterns/time.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SmartHome_TimeInterval/time.owl,patterns-repository/SmartHome_TimeInterval,https://w3id.org/smartenvironment/patterns/time.owl,xml:base
+patterns-repository/SmartHome_TimeInterval/time.owl,patterns-repository/SmartHome_TimeInterval,https://w3id.org/smartenvironment/patterns/time.owl,xmlns (default namespace)
+patterns-repository/Spatial_Graph_Adapter_(SGA)/SGA_Protege_OWL.owl,patterns-repository/Spatial_Graph_Adapter_(SGA),http://www.semanticweb.org/holly2012/ontologies/2016/SGA_Pattern,owl:Ontology IRI/rdf:about
+patterns-repository/Spatial_Graph_Adapter_(SGA)/SGA_Protege_OWL.owl,patterns-repository/Spatial_Graph_Adapter_(SGA),http://www.semanticweb.org/holly2012/ontologies/2016/SGA_Pattern,xml:base
+patterns-repository/Spatial_Graph_Adapter_(SGA)/SGA_Protege_OWL.owl,patterns-repository/Spatial_Graph_Adapter_(SGA),http://www.semanticweb.org/holly2012/ontologies/2016/SGA_Pattern,xmlns (default namespace)
+patterns-repository/SpatioTemporalExtent/spatiotemporalextent.owl,patterns-repository/SpatioTemporalExtent,http://w3id.org/daselab/onto/spatiotemporalextent,owl:Ontology IRI/rdf:about
+patterns-repository/SpatioTemporalExtent/spatiotemporalextent.owl,patterns-repository/SpatioTemporalExtent,http://w3id.org/daselab/onto/spatiotemporalextent,xml:base
+patterns-repository/SpatioTemporalExtent/spatiotemporalextent.owl,patterns-repository/SpatioTemporalExtent,http://w3id.org/daselab/onto/spatiotemporalextent,xmlns (default namespace)
+patterns-repository/SpeciesBathymetry/aquaticresources.owl,patterns-repository/SpeciesBathymetry,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xml:base
+patterns-repository/SpeciesBathymetry/aquaticresources.owl,patterns-repository/SpeciesBathymetry,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xmlns (default namespace)
+patterns-repository/SpeciesBathymetry/cpannotationschema.owl,patterns-repository/SpeciesBathymetry,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/SpeciesBathymetry/cpannotationschema.owl,patterns-repository/SpeciesBathymetry,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/SpeciesBathymetry/speciesbathymetry.owl,patterns-repository/SpeciesBathymetry,http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesbathymetry.owl,xml:base
+patterns-repository/SpeciesBathymetry/speciesbathymetry.owl,patterns-repository/SpeciesBathymetry,http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesbathymetry.owl,xmlns (default namespace)
+patterns-repository/SpeciesConditions/cpannotationschema.owl,patterns-repository/SpeciesConditions,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/SpeciesConditions/cpannotationschema.owl,patterns-repository/SpeciesConditions,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/SpeciesConditions/situation.owl,patterns-repository/SpeciesConditions,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/SpeciesConditions/situation.owl,patterns-repository/SpeciesConditions,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,xml:base
+patterns-repository/SpeciesConditions/situation.owl,patterns-repository/SpeciesConditions,http://www.ontologydesignpatterns.org/cp/owl/situation.owl,xmlns (default namespace)
+patterns-repository/SpeciesConditions/speciesconditions.owl,patterns-repository/SpeciesConditions,http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesconditions.owl,xml:base
+patterns-repository/SpeciesConditions/speciesconditions.owl,patterns-repository/SpeciesConditions,http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesconditions.owl,xmlns (default namespace)
+patterns-repository/SpeciesConservation/speciesconservation.owl,patterns-repository/SpeciesConservation,http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesconservation.owl,xml:base
+patterns-repository/SpeciesConservation/speciesconservation.owl,patterns-repository/SpeciesConservation,http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesconservation.owl,xmlns (default namespace)
+patterns-repository/SpeciesEat/cpannotationschema.owl,patterns-repository/SpeciesEat,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/SpeciesEat/cpannotationschema.owl,patterns-repository/SpeciesEat,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/SpeciesEat/specieseat.owl,patterns-repository/SpeciesEat,http://www.ontologydesignpatterns.org/cp/owl/fsdas/specieseat.owl,xml:base
+patterns-repository/SpeciesEat/specieseat.owl,patterns-repository/SpeciesEat,http://www.ontologydesignpatterns.org/cp/owl/fsdas/specieseat.owl,xmlns (default namespace)
+patterns-repository/SpeciesHabitat/aquaticresources.owl,patterns-repository/SpeciesHabitat,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xml:base
+patterns-repository/SpeciesHabitat/aquaticresources.owl,patterns-repository/SpeciesHabitat,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xmlns (default namespace)
+patterns-repository/SpeciesHabitat/cpannotationschema.owl,patterns-repository/SpeciesHabitat,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/SpeciesHabitat/cpannotationschema.owl,patterns-repository/SpeciesHabitat,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/SpeciesHabitat/specieshabitat.owl,patterns-repository/SpeciesHabitat,http://www.ontologydesignpatterns.org/cp/owl/fsdas/specieshabitat.owl,xml:base
+patterns-repository/SpeciesNames/cpannotationschema.owl,patterns-repository/SpeciesNames,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/SpeciesNames/cpannotationschema.owl,patterns-repository/SpeciesNames,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/SpeciesNames/speciesnames.owl,patterns-repository/SpeciesNames,http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesnames.owl,xml:base
+patterns-repository/SpeciesNames/speciesnames.owl,patterns-repository/SpeciesNames,http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesnames.owl,xmlns (default namespace)
+patterns-repository/Tagging/tagging.owl,patterns-repository/Tagging,http://www.ontologydesignpatterns.org/cp/owl/tagging.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Tagging/tagging.owl,patterns-repository/Tagging,http://www.ontologydesignpatterns.org/cp/owl/tagging.owl,xml:base
+patterns-repository/Tagging/tagging.owl,patterns-repository/Tagging,http://www.ontologydesignpatterns.org/cp/owl/tagging.owl,xmlns (default namespace)
+patterns-repository/TaskExecution/agentrole.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TaskExecution/agentrole.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,xml:base
+patterns-repository/TaskExecution/agentrole.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,xmlns (default namespace)
+patterns-repository/TaskExecution/naryclassification.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/naryclassification.owl,xml:base
+patterns-repository/TaskExecution/naryclassification.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/naryclassification.owl,xmlns (default namespace)
+patterns-repository/TaskExecution/participation.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/participation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TaskExecution/participation.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/participation.owl,xml:base
+patterns-repository/TaskExecution/participation.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/participation.owl,xmlns (default namespace)
+patterns-repository/TaskExecution/taskexecution.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/taskexecution.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TaskExecution/taskexecution.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/taskexecution.owl,xml:base
+patterns-repository/TaskExecution/taskexecution.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/taskexecution.owl,xmlns (default namespace)
+patterns-repository/TaskExecution/taskrole.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TaskExecution/taskrole.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl,xml:base
+patterns-repository/TaskExecution/taskrole.owl,patterns-repository/TaskExecution,http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl,xmlns (default namespace)
+patterns-repository/Template_Instance/template_instance_odp.owl,patterns-repository/Template_Instance,http://ontologydesignpatterns.org/template,xml:base
+patterns-repository/Template_Instance/template_instance_odp.owl,patterns-repository/Template_Instance,http://ontologydesignpatterns.org/template,xmlns (default namespace)
+patterns-repository/TimeIndexedClassification/countingAs.owl,patterns-repository/TimeIndexedClassification,http://www.w3.org/1999/xhtml,xmlns (default namespace)
+patterns-repository/TimeIndexedClassification/timeindexedclassification.owl,patterns-repository/TimeIndexedClassification,http://www.ontologydesignpatterns.org/cp/owl/timeindexedclassification.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TimeIndexedClassification/timeindexedclassification.owl,patterns-repository/TimeIndexedClassification,http://www.ontologydesignpatterns.org/cp/owl/timeindexedclassification.owl,xml:base
+patterns-repository/TimeIndexedClassification/timeindexedclassification.owl,patterns-repository/TimeIndexedClassification,http://www.ontologydesignpatterns.org/cp/owl/timeindexedclassification.owl,xmlns (default namespace)
+patterns-repository/TimeIndexedClassification/timeindexedsituation.owl,patterns-repository/TimeIndexedClassification,http://www.ontologydesignpatterns.org/cp/owl/timeindexedsituation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TimeIndexedClassification/timeindexedsituation.owl,patterns-repository/TimeIndexedClassification,http://www.ontologydesignpatterns.org/cp/owl/timeindexedsituation.owl,xml:base
+patterns-repository/TimeIndexedClassification/timeindexedsituation.owl,patterns-repository/TimeIndexedClassification,http://www.ontologydesignpatterns.org/cp/owl/timeindexedsituation.owl,xmlns (default namespace)
+patterns-repository/TimeIndexedPartOf/timeindexedpartof.owl,patterns-repository/TimeIndexedPartOf,http://www.ontologydesignpatterns.org/cp/owl/timeindexedpartof.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TimeIndexedPartOf/timeindexedpartof.owl,patterns-repository/TimeIndexedPartOf,http://www.ontologydesignpatterns.org/cp/owl/timeindexedpartof.owl,xml:base
+patterns-repository/TimeIndexedPartOf/timeindexedpartof.owl,patterns-repository/TimeIndexedPartOf,http://www.ontologydesignpatterns.org/cp/owl/timeindexedpartof.owl,xmlns (default namespace)
+patterns-repository/TimeIndexedPartOf/yarispneumatics.owl,patterns-repository/TimeIndexedPartOf,http://www.ontologydesignpatterns.org/cp/examples/timeindexedpartof/yarispneumatics.owl,xml:base
+patterns-repository/TimeIndexedPartOf/yarispneumatics.owl,patterns-repository/TimeIndexedPartOf,http://www.ontologydesignpatterns.org/cp/examples/timeindexedpartof/yarispneumatics.owl,xmlns (default namespace)
+patterns-repository/TimeIndexedSituation/timeindexedsituation.owl,patterns-repository/TimeIndexedSituation,http://www.ontologydesignpatterns.org/cp/owl/timeindexedsituation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TimeIndexedSituation/timeindexedsituation.owl,patterns-repository/TimeIndexedSituation,http://www.ontologydesignpatterns.org/cp/owl/timeindexedsituation.owl,xml:base
+patterns-repository/TimeIndexedSituation/timeindexedsituation.owl,patterns-repository/TimeIndexedSituation,http://www.ontologydesignpatterns.org/cp/owl/timeindexedsituation.owl,xmlns (default namespace)
+patterns-repository/TimeInterval/january2008.owl,patterns-repository/TimeInterval,http://www.ontologydesignpatterns.org/cp/examples/timeinterval/january2008.owl,xml:base
+patterns-repository/TimeInterval/january2008.owl,patterns-repository/TimeInterval,http://www.ontologydesignpatterns.org/cp/examples/timeinterval/january2008.owl,xmlns (default namespace)
+patterns-repository/TimeInterval/timeinterval.owl,patterns-repository/TimeInterval,http://www.ontologydesignpatterns.org/cp/owl/timeinterval.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TimeInterval/timeinterval.owl,patterns-repository/TimeInterval,http://www.ontologydesignpatterns.org/cp/owl/timeinterval.owl,xml:base
+patterns-repository/TimeInterval/timeinterval.owl,patterns-repository/TimeInterval,http://www.ontologydesignpatterns.org/cp/owl/timeinterval.owl,xmlns (default namespace)
+patterns-repository/TimePeriod/timeperiod.owl,patterns-repository/TimePeriod,http://www.ontologydesignpatterns.org/cp/owl/timeperiod.owl,owl:Ontology IRI/rdf:about
+patterns-repository/TimePeriod/timeperiod.owl,patterns-repository/TimePeriod,http://www.ontologydesignpatterns.org/cp/owl/timeperiod.owl,xml:base
+patterns-repository/TimePeriod/timeperiod.owl,patterns-repository/TimePeriod,http://www.ontologydesignpatterns.org/cp/owl/timeperiod.owl,xmlns (default namespace)
+patterns-repository/Time_indexed_participation/timeindexedparticipation.owl,patterns-repository/Time_indexed_participation,http://www.ontologydesignpatterns.org/cp/owl/timeindexedparticipation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Time_indexed_participation/timeindexedparticipation.owl,patterns-repository/Time_indexed_participation,http://www.ontologydesignpatterns.org/cp/owl/timeindexedparticipation.owl,xml:base
+patterns-repository/Time_indexed_participation/timeindexedparticipation.owl,patterns-repository/Time_indexed_participation,http://www.ontologydesignpatterns.org/cp/owl/timeindexedparticipation.owl,xmlns (default namespace)
+patterns-repository/Time_indexed_person_role/agentrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Time_indexed_person_role/agentrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,xml:base
+patterns-repository/Time_indexed_person_role/agentrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl,xmlns (default namespace)
+patterns-repository/Time_indexed_person_role/classification.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/classification.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Time_indexed_person_role/classification.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/classification.owl,xml:base
+patterns-repository/Time_indexed_person_role/classification.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/classification.owl,xmlns (default namespace)
+patterns-repository/Time_indexed_person_role/cpannotationschema.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/Time_indexed_person_role/cpannotationschema.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/Time_indexed_person_role/naryclassification.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/naryclassification.owl,xml:base
+patterns-repository/Time_indexed_person_role/naryclassification.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/naryclassification.owl,xmlns (default namespace)
+patterns-repository/Time_indexed_person_role/objectrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Time_indexed_person_role/objectrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl,xml:base
+patterns-repository/Time_indexed_person_role/objectrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl,xmlns (default namespace)
+patterns-repository/Time_indexed_person_role/timeindexedpersonrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/timeindexedpersonrole.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Time_indexed_person_role/timeindexedpersonrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/timeindexedpersonrole.owl,xml:base
+patterns-repository/Time_indexed_person_role/timeindexedpersonrole.owl,patterns-repository/Time_indexed_person_role,http://www.ontologydesignpatterns.org/cp/owl/timeindexedpersonrole.owl,xmlns (default namespace)
+patterns-repository/Topic/ontopic.owl,patterns-repository/Topic,http://www.ontologydesignpatterns.org/ont/dul/ontopic.owl,xml:base
+patterns-repository/Topic/ontopic.owl,patterns-repository/Topic,http://www.ontologydesignpatterns.org/ont/dul/ontopic.owl,xmlns (default namespace)
+patterns-repository/Topic/topic.owl,patterns-repository/Topic,http://www.ontologydesignpatterns.org/cp/owl/topic.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Topic/topic.owl,patterns-repository/Topic,http://www.ontologydesignpatterns.org/cp/owl/topic.owl,xml:base
+patterns-repository/Topic/topic.owl,patterns-repository/Topic,http://www.ontologydesignpatterns.org/cp/owl/topic.owl,xmlns (default namespace)
+patterns-repository/Trajectory/trajectory.owl,patterns-repository/Trajectory,http://w3id.org/daselab/onto/trajectory,owl:Ontology IRI/rdf:about
+patterns-repository/Trajectory/trajectory.owl,patterns-repository/Trajectory,http://w3id.org/daselab/onto/trajectory,xml:base
+patterns-repository/Trajectory/trajectory.owl,patterns-repository/Trajectory,http://w3id.org/daselab/onto/trajectory,xmlns (default namespace)
+patterns-repository/Transition/transition.owl,patterns-repository/Transition,http://www.ontologydesignpatterns.org/cp/owl/transition.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Transition/transition.owl,patterns-repository/Transition,http://www.ontologydesignpatterns.org/cp/owl/transition.owl,xml:base
+patterns-repository/Transition/transition.owl,patterns-repository/Transition,http://www.ontologydesignpatterns.org/cp/owl/transition.owl,xmlns (default namespace)
+patterns-repository/TransportPattern/TransportPattern.owl,patterns-repository/TransportPattern,http://www.descartes-core.org/patterns/owl/transportPattern,owl:Ontology IRI/rdf:about
+patterns-repository/TransportPattern/TransportPattern.owl,patterns-repository/TransportPattern,http://www.descartes-core.org/patterns/owl/transportPattern,xml:base
+patterns-repository/TransportPattern/TransportPattern.owl,patterns-repository/TransportPattern,http://www.descartes-core.org/patterns/owl/transportPattern,xmlns (default namespace)
+patterns-repository/Types_of_entities/typesofentities.owl,patterns-repository/Types_of_entities,http://www.ontologydesignpatterns.org/cp/owl/typesofentities.owl,owl:Ontology IRI/rdf:about
+patterns-repository/Types_of_entities/typesofentities.owl,patterns-repository/Types_of_entities,http://www.ontologydesignpatterns.org/cp/owl/typesofentities.owl,xml:base
+patterns-repository/Types_of_entities/typesofentities.owl,patterns-repository/Types_of_entities,http://www.ontologydesignpatterns.org/cp/owl/typesofentities.owl,xmlns (default namespace)
+patterns-repository/VerticalDistribution/aquaticresources.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xml:base
+patterns-repository/VerticalDistribution/aquaticresources.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/cp/owl/fsdas/aquaticresources.owl,xmlns (default namespace)
+patterns-repository/VerticalDistribution/cpannotationschema.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/VerticalDistribution/cpannotationschema.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/VerticalDistribution/observation.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,owl:Ontology IRI/rdf:about
+patterns-repository/VerticalDistribution/observation.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,xml:base
+patterns-repository/VerticalDistribution/observation.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/cp/owl/observation.owl,xmlns (default namespace)
+patterns-repository/VerticalDistribution/verticaldistribution.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/cp/owl/fsdas/verticaldistribution.owl,xml:base
+patterns-repository/VerticalDistribution/verticaldistribution.owl,patterns-repository/VerticalDistribution,http://www.ontologydesignpatterns.org/cp/owl/fsdas/verticaldistribution.owl,xmlns (default namespace)
+patterns-repository/VesselSpecies/cpannotationschema.owl,patterns-repository/VesselSpecies,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/VesselSpecies/cpannotationschema.owl,patterns-repository/VesselSpecies,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/VesselSpecies/gearspecies.owl,patterns-repository/VesselSpecies,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearspecies.owl,xml:base
+patterns-repository/VesselSpecies/gearspecies.owl,patterns-repository/VesselSpecies,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearspecies.owl,xmlns (default namespace)
+patterns-repository/VesselSpecies/gearvessel.owl,patterns-repository/VesselSpecies,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearvessel.owl,xml:base
+patterns-repository/VesselSpecies/gearvessel.owl,patterns-repository/VesselSpecies,http://www.ontologydesignpatterns.org/cp/owl/fsdas/gearvessel.owl,xmlns (default namespace)
+patterns-repository/VesselSpecies/vesselspecies.owl,patterns-repository/VesselSpecies,http://www.ontologydesignpatterns.org/cp/owl/fsdas/vesselspecies.owl,xml:base
+patterns-repository/VesselSpecies/vesselspecies.owl,patterns-repository/VesselSpecies,http://www.ontologydesignpatterns.org/cp/owl/fsdas/vesselspecies.owl,xmlns (default namespace)
+patterns-repository/VesselWaterArea/cpannotationschema.owl,patterns-repository/VesselWaterArea,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xml:base
+patterns-repository/VesselWaterArea/cpannotationschema.owl,patterns-repository/VesselWaterArea,http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl,xmlns (default namespace)
+patterns-repository/VesselWaterArea/vesselwaterarea.owl,patterns-repository/VesselWaterArea,http://www.ontologydesignpatterns.org/cp/owl/fsdas/vesselwaterarea.owl,xml:base
+patterns-repository/VesselWaterArea/vesselwaterarea.owl,patterns-repository/VesselWaterArea,http://www.ontologydesignpatterns.org/cp/owl/fsdas/vesselwaterarea.owl,xmlns (default namespace)
+patterns-repository/WinstonPartWhole/WinstonPartWhole.owl,patterns-repository/WinstonPartWhole,http://daselab.org/WinstonPartWhole,Turtle @base

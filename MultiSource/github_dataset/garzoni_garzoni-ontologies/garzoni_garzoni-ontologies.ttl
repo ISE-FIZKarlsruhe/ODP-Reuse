@@ -1,0 +1,73 @@
+@prefix :        <http://vocab.dhlab.epfl.ch/data-core#> .
+@prefix core:    <http://vocab.dhlab.epfl.ch/data-core#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://vocab.dhlab.epfl.ch/data-core>
+      a       owl:Ontology ;
+      rdfs:comment "Core Data Model Ontology"@en , "This ontology defines the core elements of the Venice time machine data model, specifically regarding material of textual nature."@en ;
+      owl:versionIRI <http://vocab.dhlab.epfl.ch/data-core/1.0> .
+
+core:Source
+      a       owl:Class ;
+      rdfs:comment "An information object with a digital representation."@en ;
+      rdfs:label "Source"@en .
+
+core:isComponentOf
+      a       owl:ObjectProperty ;
+      rdfs:isDefinedBy "http://www.ontologydesignpatterns.org/cp/owl/componency.owl#isComponentOf"^^xsd:anyURI ;
+      rdfs:label "isComponentOf"@en .
+
+core:refersTo
+      a       owl:FunctionalProperty , owl:ObjectProperty ;
+      rdfs:comment "This property indicates the entity a mention refers to."@en ;
+      rdfs:domain core:Mention ;
+      rdfs:label "refersTo"@en ;
+      rdfs:range core:Entity .
+
+core:isMentionedIn
+      a       owl:ObjectProperty ;
+      rdfs:comment "This property indicates the source were a mention occurs."@en ;
+      rdfs:domain core:Mention ;
+      rdfs:label "isMentionedIn"@en ;
+      rdfs:range core:Source .
+
+skos:closeMatch
+      a       owl:AnnotationProperty .
+
+core:referredBy
+      a       owl:ObjectProperty ;
+      rdfs:comment "This property indicates the mention an entity is referred by."@en ;
+      rdfs:domain core:Entity ;
+      rdfs:label "referredBy"@en ;
+      rdfs:range core:Mention ;
+      owl:inverseOf core:refersTo .
+
+core:Entity
+      a       owl:Class ;
+      rdfs:comment "Cf. the 'KnowledgeStore Core Data Model ontology' definition \"Any identifiable entity in the domain of discourse, extracted from text and/or imported from some source of background knowledge.\""@en ;
+      rdfs:label "Entity"@en ;
+      skos:closeMatch "http://dkm.fbk.eu/ontologies/knowledgestore#Entity"^^xsd:anyURI .
+
+core:hasComponent
+      a       owl:ObjectProperty ;
+      rdfs:isDefinedBy "http://www.ontologydesignpatterns.org/cp/owl/componency.owl#hasComponent"^^xsd:anyURI ;
+      rdfs:label "hasComponent"@en ;
+      owl:inverseOf core:isComponentOf .
+
+core:hasMention
+      a       owl:ObjectProperty ;
+      rdfs:comment "This property indicates the mention which occur in a source."@en ;
+      rdfs:domain core:Source ;
+      rdfs:label "hasMention"@en ;
+      rdfs:range core:Mention ;
+      owl:inverseOf core:isMentionedIn .
+
+core:Mention
+      a       owl:Class ;
+      rdfs:comment "Fragment of an information object (source) which refer to an entity."@en ;
+      rdfs:label "Mention"@en ;
+      skos:closeMatch "http://dkm.fbk.eu/ontologies/knowledgestore#Mention"^^xsd:anyURI .

@@ -1,0 +1,12 @@
+patterns-repository/AOS_AGROVOC_Concept_Server_fundation_ontology_model
+patterns-repository/Biological_Entities
+patterns-repository/ConceptGroup
+patterns-repository/ConceptTerms
+patterns-repository/Criterion
+patterns-repository/CriterionS
+patterns-repository/CriterionSetter
+patterns-repository/DataTransformationPattern
+patterns-repository/Faceted_Classification_Scheme
+patterns-repository/Metonymy-species-commodity
+patterns-repository/Partition
+patterns-repository/SmartHome_Event

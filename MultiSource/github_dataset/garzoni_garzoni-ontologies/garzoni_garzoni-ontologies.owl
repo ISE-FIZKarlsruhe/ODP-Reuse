@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://vocab.dhlab.epfl.ch/data-core#"
+     xml:base="http://vocab.dhlab.epfl.ch/data-core"
+     xmlns:core="http://vocab.dhlab.epfl.ch/data-core#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://vocab.dhlab.epfl.ch/data-core">
+        <owl:versionIRI rdf:resource="http://vocab.dhlab.epfl.ch/data-core/1.0"/>
+        <rdfs:comment xml:lang="en">Core Data Model Ontology</rdfs:comment>
+        <rdfs:comment xml:lang="en">This ontology defines the core elements of the Venice time machine data model, specifically regarding material of textual nature.</rdfs:comment>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#closeMatch -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#closeMatch"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#hasComponent -->
+
+    <owl:ObjectProperty rdf:about="http://vocab.dhlab.epfl.ch/data-core#hasComponent">
+        <owl:inverseOf rdf:resource="http://vocab.dhlab.epfl.ch/data-core#isComponentOf"/>
+        <rdfs:isDefinedBy rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://www.ontologydesignpatterns.org/cp/owl/componency.owl#hasComponent</rdfs:isDefinedBy>
+        <rdfs:label xml:lang="en">hasComponent</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#hasMention -->
+
+    <owl:ObjectProperty rdf:about="http://vocab.dhlab.epfl.ch/data-core#hasMention">
+        <owl:inverseOf rdf:resource="http://vocab.dhlab.epfl.ch/data-core#isMentionedIn"/>
+        <rdfs:domain rdf:resource="http://vocab.dhlab.epfl.ch/data-core#Source"/>
+        <rdfs:range rdf:resource="http://vocab.dhlab.epfl.ch/data-core#Mention"/>
+        <rdfs:comment xml:lang="en">This property indicates the mention which occur in a source.</rdfs:comment>
+        <rdfs:label xml:lang="en">hasMention</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#isComponentOf -->
+
+    <owl:ObjectProperty rdf:about="http://vocab.dhlab.epfl.ch/data-core#isComponentOf">
+        <rdfs:isDefinedBy rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://www.ontologydesignpatterns.org/cp/owl/componency.owl#isComponentOf</rdfs:isDefinedBy>
+        <rdfs:label xml:lang="en">isComponentOf</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#isMentionedIn -->
+
+    <owl:ObjectProperty rdf:about="http://vocab.dhlab.epfl.ch/data-core#isMentionedIn">
+        <rdfs:domain rdf:resource="http://vocab.dhlab.epfl.ch/data-core#Mention"/>
+        <rdfs:range rdf:resource="http://vocab.dhlab.epfl.ch/data-core#Source"/>
+        <rdfs:comment xml:lang="en">This property indicates the source were a mention occurs.</rdfs:comment>
+        <rdfs:label xml:lang="en">isMentionedIn</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#referredBy -->
+
+    <owl:ObjectProperty rdf:about="http://vocab.dhlab.epfl.ch/data-core#referredBy">
+        <owl:inverseOf rdf:resource="http://vocab.dhlab.epfl.ch/data-core#refersTo"/>
+        <rdfs:domain rdf:resource="http://vocab.dhlab.epfl.ch/data-core#Entity"/>
+        <rdfs:range rdf:resource="http://vocab.dhlab.epfl.ch/data-core#Mention"/>
+        <rdfs:comment xml:lang="en">This property indicates the mention an entity is referred by.</rdfs:comment>
+        <rdfs:label xml:lang="en">referredBy</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#refersTo -->
+
+    <owl:ObjectProperty rdf:about="http://vocab.dhlab.epfl.ch/data-core#refersTo">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://vocab.dhlab.epfl.ch/data-core#Mention"/>
+        <rdfs:range rdf:resource="http://vocab.dhlab.epfl.ch/data-core#Entity"/>
+        <rdfs:comment xml:lang="en">This property indicates the entity a mention refers to.</rdfs:comment>
+        <rdfs:label xml:lang="en">refersTo</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#Entity -->
+
+    <owl:Class rdf:about="http://vocab.dhlab.epfl.ch/data-core#Entity">
+        <rdfs:comment xml:lang="en">Cf. the &apos;KnowledgeStore Core Data Model ontology&apos; definition &quot;Any identifiable entity in the domain of discourse, extracted from text and/or imported from some source of background knowledge.&quot;</rdfs:comment>
+        <rdfs:label xml:lang="en">Entity</rdfs:label>
+        <skos:closeMatch rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://dkm.fbk.eu/ontologies/knowledgestore#Entity</skos:closeMatch>
+    </owl:Class>
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#Mention -->
+
+    <owl:Class rdf:about="http://vocab.dhlab.epfl.ch/data-core#Mention">
+        <rdfs:comment xml:lang="en">Fragment of an information object (source) which refer to an entity.</rdfs:comment>
+        <rdfs:label xml:lang="en">Mention</rdfs:label>
+        <skos:closeMatch rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://dkm.fbk.eu/ontologies/knowledgestore#Mention</skos:closeMatch>
+    </owl:Class>
+    
+
+
+    <!-- http://vocab.dhlab.epfl.ch/data-core#Source -->
+
+    <owl:Class rdf:about="http://vocab.dhlab.epfl.ch/data-core#Source">
+        <rdfs:comment xml:lang="en">An information object with a digital representation.</rdfs:comment>
+        <rdfs:label xml:lang="en">Source</rdfs:label>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
+

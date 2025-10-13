@@ -1,0 +1,6 @@
+ontology_file,ontology_name,ontology_iri,used_fallback_for_ontology,n_classes,n_object_properties,n_datatype_properties,n_patterns
+github_dataset/ACAXOntology_project/ACAXOntology_project.owl,ACAXOntology_project,http://www.w3.org/2002/07/owl#,True,0,0,0,14
+github_dataset/achiminator_TestOnto/achiminator_TestOnto.owl,achiminator_TestOnto,http://example.org/mmd/matlprop/mp-prop,False,9,3,1,1
+github_dataset/feup-infolab_ontologies-database/feup-infolab_ontologies-database-3.rdf,feup-infolab_ontologies-database-3,https://www.irit.fr/recherches/MELODI/ontologies/IoT-O,False,31,24,6,19
+github_dataset/fusion-jena_ReproduceMeON/fusion-jena_ReproduceMeON-3.rdf,fusion-jena_ReproduceMeON-3,,False,0,0,0,34
+github_dataset/garzoni_garzoni-ontologies/garzoni_garzoni-ontologies.xml,garzoni_garzoni-ontologies,http://vocab.dhlab.epfl.ch/data-core,False,3,6,0,3

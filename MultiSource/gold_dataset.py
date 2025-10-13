@@ -642,7 +642,20 @@ def main(base_dir: str,
                 "rationale": why
             })
 
-    df = pd.DataFrame(rows).sort_values(["repo","pattern_name"])
+    # Build a well-formed DataFrame even if rows == []
+    cols = [
+        "repo","pattern_name","ontology_file","pattern_file","pattern_total",
+        "reused_total_graph","reused_total_label","coverage_graph","coverage_label",
+        "connectivity_ratio","nonreused_relevance","has_import","gold_label","rationale"
+    ]
+    df = pd.DataFrame(rows, columns=cols)
+
+    # Only sort if columns exist and DataFrame is non-empty
+    if not df.empty and {"repo","pattern_name"}.issubset(df.columns):
+        df = df.sort_values(["repo","pattern_name"]).reset_index(drop=True)
+    else:
+        df = df.reset_index(drop=True)
+
     df.to_csv(out_csv, index=False)
     print(f"[OK] Wrote {out_csv} ({len(df)} rows)")
 

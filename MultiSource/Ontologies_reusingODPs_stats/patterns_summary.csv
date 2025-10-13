@@ -1,0 +1,5 @@
+pattern_file,pattern_name,pattern_iri,used_fallback_for_pattern,n_classes,n_object_properties,n_datatype_properties
+Ontologies_reusingODPs/TheMusicNoteOntology/patterns/musicalobject.owl,musicalobject,https://purl.org/andreapoltronieri/musicalobject,False,7,8,7
+Ontologies_reusingODPs/TheMusicNoteOntology/patterns/notepattern.owl,notepattern,https://purl.org/andreapoltronieri/notepattern/,False,58,23,6
+Ontologies_reusingODPs/TheMusicNoteOntology/patterns/scorepart.owl,scorepart,https://purl.org/andreapoltronieri/scorepart/,False,5,8,5
+Ontologies_reusingODPs/MaterialTransformationPattern/patterns/trajectory.owl,trajectory,http://w3id.org/daselab/onto/trajectory,False,9,10,0
