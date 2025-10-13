@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/mmd/matlprop/mp-prop"
+     xml:base="http://example.org/mmd/matlprop/mp-prop"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:prov="http://www.w3.org/ns/prov#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:dcterms="http://purl.org/dc/terms/"
+     xmlns:mp-cond="http://example.org/mmd/matlprop/mp-cond#"
+     xmlns:mp-prop="http://example.org/mmd/matlprop/mp-prop#">
+    <owl:Ontology rdf:about="http://example.org/mmd/matlprop/mp-prop">
+        <dcterms:creator rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clare Paul</dcterms:creator>
+        <dcterms:creator rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cogan Matthew Shimizu</dcterms:creator>
+        <dcterms:creator rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pascal Hitzler</dcterms:creator>
+        <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2016-06-01</dcterms:date>
+        <dcterms:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The intent of this ontology is to enable the materials, manufacturing, and design community to associate materials with their materials properties.</dcterms:description>
+        <dcterms:language rdf:datatype="http://www.w3.org/2001/XMLSchema#string">en</dcterms:language>
+        <dcterms:title xml:lang="en">Materials Property Ontology</dcterms:title>
+        <rdfs:label xml:lang="en">Materials Property Ontology</rdfs:label>
+        <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0.1</owl:versionInfo>
+    </owl:Ontology>
+    
+
+
+
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#hasCondition -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/mmd/matlprop/mp-prop#hasCondition">
+        <rdfs:domain rdf:resource="http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyAssertion"/>
+        <rdfs:range rdf:resource="http://example.org/mmd/matlprop/mp-prop#MaterialsProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#hasMaterialsPropertyAssertion -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/mmd/matlprop/mp-prop#hasMaterialsPropertyAssertion">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyAssertion"/>
+        <rdfs:range rdf:resource="http://example.org/mmd/matlprop/mp-prop#MaterialsProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#hasMaterialsPropertyCollection -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/mmd/matlprop/mp-prop#hasMaterialsPropertyCollection">
+        <rdfs:domain rdf:resource="http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyAssertion"/>
+        <rdfs:range rdf:resource="http://example.org/mmd/matlprop/mp-prop#MaterialsProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#hasMaterialsPropertyDescription -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/mmd/matlprop/mp-prop#hasMaterialsPropertyDescription">
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-cond#Condition -->
+
+    <owl:Class rdf:about="http://example.org/mmd/matlprop/mp-cond#Condition"/>
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#Material -->
+
+    <owl:Class rdf:about="http://example.org/mmd/matlprop/mp-prop#Material"/>
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#MaterialsProperty -->
+
+    <owl:Class rdf:about="http://example.org/mmd/matlprop/mp-prop#MaterialsProperty">
+  
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyAssertion -->
+
+    <owl:Class rdf:about="http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyAssertion">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+
+    </owl:Class>
+    
+
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyAuthority -->
+
+    <owl:Class rdf:about="http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyAuthority">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyCollection -->
+
+    <owl:Class rdf:about="http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyCollection"/>
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyDescriptor -->
+
+    <owl:Class rdf:about="http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyDescriptor"/>
+    
+
+
+    <!-- http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyQuantity -->
+
+    <owl:Class rdf:about="http://example.org/mmd/matlprop/mp-prop#MaterialsPropertyQuantity"/>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#Entity -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/prov#Entity"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

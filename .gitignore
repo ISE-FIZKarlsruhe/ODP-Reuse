@@ -1,3 +1,11 @@
+# output files
+scholar/arxiv/odp_results
+scholar/arxiv/.venv
+scholar/output
+
+MultiSource/report
+MultiSource/patterns-repository
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
