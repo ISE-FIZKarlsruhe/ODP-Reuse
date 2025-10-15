@@ -1,5 +1,0 @@
-ontology_name,pattern_name,reused_classes,reused_object_properties,reused_datatype_properties,reused_total,label_reused_classes,label_reused_object_properties,label_reused_datatype_properties,label_reused_total,pattern_n_classes,pattern_n_object_properties,pattern_n_datatype_properties,pattern_n_total,pct_reused_total,pct_label_reused_total
-MaterialTransformationPattern,trajectory,0,0,0,0,0,0,0,0,9,10,0,19,0.0,0.0
-TheMusicNoteOntology,musicalobject,7,8,7,22,7,8,7,22,7,8,7,22,100.0,100.0
-TheMusicNoteOntology,notepattern,58,23,6,87,58,23,6,87,58,23,6,87,100.0,100.0
-TheMusicNoteOntology,scorepart,5,8,5,18,5,8,5,18,5,8,5,18,100.0,100.0

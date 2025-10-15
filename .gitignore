@@ -4,6 +4,12 @@ scholar/arxiv/.venv
 scholar/output
 
 MultiSource/patterns-repository
+MultiSource/github_dataset
+MultiSource/github_dataset_gold
+MultiSource/github_dataset_stats
+MultiSource/Ontologies_reusingODPs
+MultiSource/Ontologies_reusingODPs_gold
+MultiSource/Ontologies_reusingODPs_stats
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

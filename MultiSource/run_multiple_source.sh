@@ -274,7 +274,7 @@ echo
 #python3 build_github_dataset.py --csv report/github.csv --patterns-repo patterns-repository --out-dir github_dataset
 
 python3 odp_stats.py --base github_dataset --out-dir github_dataset_stats --sim-backend sbert
-python3 odp_stats.py --base Ontologies_reusingODPs --out-dir Ontologies_reusingODPs_stats --sim-backend sbert
+#python3 odp_stats.py --base Ontologies_reusingODPs --out-dir Ontologies_reusingODPs_stats --sim-backend sbert
 
 python3 gold_dataset.py --base github_dataset --out-dir gold_out --sim-backend sbert --label-threshold 0.80 --coverage-good 0.30 --connectivity-good 0.60 --connectivity-weak 0.20 --nonreused-relevance-max 0.20  --min-reused-entities 3 --materialize symlink --grouping pair
-python3 gold_dataset.py --base Ontologies_reusingODPs --out-dir gold_ontology_out --sim-backend sbert --label-threshold 0.80 --coverage-good 0.30 --connectivity-good 0.60 --connectivity-weak 0.20 --nonreused-relevance-max 0.20  --min-reused-entities 3 --materialize symlink --grouping pair
+#python3 gold_dataset.py --base Ontologies_reusingODPs --out-dir gold_ontology_out --sim-backend sbert --label-threshold 0.80 --coverage-good 0.30 --connectivity-good 0.60 --connectivity-weak 0.20 --nonreused-relevance-max 0.20  --min-reused-entities 3 --materialize symlink --grouping pair

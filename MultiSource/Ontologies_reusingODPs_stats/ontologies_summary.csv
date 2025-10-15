@@ -1,3 +1,0 @@
-ontology_file,ontology_name,ontology_iri,used_fallback_for_ontology,n_classes,n_object_properties,n_datatype_properties,n_patterns
-Ontologies_reusingODPs/MaterialTransformationPattern/MaterialTransformationPattern.owl,MaterialTransformationPattern,http://descartes-core.org/ontologies/mt/1.1/MaterialTransformationPattern,False,6,5,2,1
-Ontologies_reusingODPs/TheMusicNoteOntology/TheMusicNoteOntology.owl,TheMusicNoteOntology,https://purl.org/andreapoltronieri/musicalobject,False,65,39,18,3

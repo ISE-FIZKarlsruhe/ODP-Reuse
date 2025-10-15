@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import argparse, csv, os, re, shutil, sys, time
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
+from urllib.parse import urlparse
 import requests
 
 UA = "odp-github-dataset/1.1"
@@ -15,7 +16,7 @@ def log(msg: str):
 
 def sanitize_label(label: str) -> str:
     s = (label or "").strip().replace("/", "_").replace("\\", "_")
-    s = re.sub(r"[^A-Za-z0-9._\-+]", "_", s)
+    s = re.sub(r"[^A-Za-z0-9._+\-]", "_", s)
     s = re.sub(r"_+", "_", s).strip("_.")
     return s or "unknown"
 
@@ -24,7 +25,7 @@ def guess_ext(url_path: str, details: str) -> str:
         m = re.search(r'\.([A-Za-z0-9]{2,6})(?:$|[?#])', s)
         if m:
             ext = m.group(1).lower()
-            if ext in ("owl","ttl","rdf","xml","nt","trig"):
+            if ext in ("owl", "ttl", "rdf", "xml", "nt", "trig"):
                 return "." + ext
     return ".owl"
 
@@ -69,12 +70,12 @@ def download_file(url: str, out_path: Path) -> Tuple[bool, str, Optional[str]]:
             time.sleep(attempt)
     return False, last_err, None
 
-def find_pattern_files_by_iri(patterns_repo: Path, pattern_iri: str):
-    hits = []
+def find_pattern_files_by_iri(patterns_repo: Path, pattern_iri: str) -> List[Path]:
+    hits: List[Path] = []
     if not patterns_repo.is_dir() or not pattern_iri:
         return hits
     for p in patterns_repo.rglob("*"):
-        if p.is_file() and p.suffix.lower() in (".owl",".ttl"):
+        if p.is_file() and p.suffix.lower() in (".owl", ".ttl"):
             try:
                 with open(p, "r", encoding="utf-8", errors="ignore") as f:
                     if pattern_iri in f.read():
@@ -82,6 +83,14 @@ def find_pattern_files_by_iri(patterns_repo: Path, pattern_iri: str):
             except Exception:
                 pass
     return hits
+
+def url_filename_stem(url_or_path: str, fallback: str = "unknown") -> str:
+    p = urlparse(url_or_path).path or url_or_path
+    name = os.path.basename(p.rstrip("/")) or ""
+    if not name:
+        return fallback
+    stem, _ = os.path.splitext(name)
+    return sanitize_label(stem or fallback)
 
 def main():
     ap = argparse.ArgumentParser(description="Build local dataset from GitHub reuse CSV.")
@@ -119,36 +128,53 @@ def main():
             match_label   = (row.get("match_label") or "").strip()
             url           = (row.get("url") or "").strip()
             details       = (row.get("details") or "").strip()
-            if not match_label or not url:
+            if not url:
                 continue
 
-            repo_s = sanitize_label(match_label)
-            repo_dir = out_root / repo_s
-            patt_dir = repo_dir / "patterns"
+            # --- Build directory name and file stem
+            match_part   = sanitize_label(match_label)
+            file_stem    = url_filename_stem(url, fallback="unknown")
+
+            # --- SKIP if <url filename stem> == <pattern_label> (case-insensitive)
+            if file_stem.lower() == sanitize_label(pattern_label).lower():
+                log(f"[SKIP] pattern_label == ontology stem ({pattern_label}) → skipping {url}")
+                continue
+
+            folder_name  = f"{match_part}_{file_stem}"
+            repo_dir     = out_root / folder_name
+            patt_dir     = repo_dir / "patterns"
             repo_dir.mkdir(parents=True, exist_ok=True)
             patt_dir.mkdir(parents=True, exist_ok=True)
 
+            # --- Download ontology file
             ext = guess_ext(url, details)
-            target = ensure_unique_path(repo_dir / f"{repo_s}{ext}")
-
+            target = repo_dir / f"{folder_name}{ext}"
             ok, msg, saved_path = download_file(url, target)
 
+            # --- Copy pattern file if found
+            copied = 0
             hits = find_pattern_files_by_iri(patt_repo, pattern_iri)
-            for p in hits:
-                dst = ensure_unique_path(patt_dir / p.name)
+            if hits:
+                hit = sorted(hits, key=lambda p: (len(str(p)), p.name))[0]
+                dest_name = f"{sanitize_label(pattern_label)}{hit.suffix.lower() or '.owl'}"
+                dst = patt_dir / dest_name
                 try:
-                    shutil.copy2(p, dst)
+                    shutil.copy2(hit, dst)
+                    copied = 1
                 except Exception as e:
-                    log(f"[copy] failed {p} -> {dst}: {e}")
+                    log(f"[copy] failed {hit} -> {dst}: {e}")
+                    msg += f" | copy_error: {e}"
+            else:
+                msg += " | pattern_not_found_in_repo"
 
             logwriter.writerow({
                 "pattern_label": pattern_label,
                 "pattern_iri": pattern_iri,
                 "match_label": match_label,
-                "sanitized_label": repo_s,
+                "sanitized_label": folder_name,
                 "url": url,
                 "saved_as": saved_path or "",
-                "pattern_files_copied": len(hits),
+                "pattern_files_copied": copied,
                 "status": "ok" if ok else "error",
                 "message": msg
             })

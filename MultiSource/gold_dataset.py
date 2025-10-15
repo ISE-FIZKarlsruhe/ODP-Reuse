@@ -49,8 +49,8 @@ except Exception:
 ONTOLOGY_EXTS = ("*.owl", "*.ttl", "*.rdf", "*.xml", "*.nt", "*.trig")
 PATTERN_EXTS  = ("*.owl", "*.ttl")
 
-DEFAULT_MAX_FILE_BYTES = 1_000_000_000  # 1GB
-DEFAULT_SKIP_SUBSTRS = {"cco"}          # case-insensitive name substrings
+DEFAULT_MAX_FILE_BYTES = 3_000_000_000  # 1GB
+DEFAULT_SKIP_SUBSTRS = {""}          # case-insensitive name substrings
 
 DEFAULT_OUT_CSV = "gold_labels.csv"
 DEFAULT_OUT_DIR = "./gold_out"
@@ -702,7 +702,7 @@ if __name__ == "__main__":
     ap.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="Output directory (CSV + manifests + materialized examples).")
     ap.add_argument("--out-csv", default=DEFAULT_OUT_CSV, help="Output CSV filename (inside --out-dir unless absolute).")
     ap.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_FILE_BYTES, help="Skip files larger than this many bytes.")
-    ap.add_argument("--skip-name", default="cco", help="Comma-separated substrings to skip in filenames (case-insensitive).")
+    ap.add_argument("--skip-name", default="", help="Comma-separated substrings to skip in filenames (case-insensitive).")
     ap.add_argument("--label-threshold", type=float, default=DEFAULT_LABEL_SIM, help="Label/localname similarity threshold (0..1).")
 
     # Labeling thresholds

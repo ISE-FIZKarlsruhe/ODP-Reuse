@@ -56,8 +56,8 @@ ONTOLOGY_EXTS = ("*.owl", "*.ttl", "*.rdf", "*.xml", "*.nt", "*.trig")
 PATTERN_EXTS  = ("*.owl", "*.ttl")
 
 # Skip rules
-DEFAULT_MAX_FILE_BYTES = 1_000_000_000  # 1 GB
-DEFAULT_SKIP_NAME_SUBSTRINGS = {"cco"}  # case-insensitive substrings
+DEFAULT_MAX_FILE_BYTES = 3_000_000_000  # 1 GB
+DEFAULT_SKIP_NAME_SUBSTRINGS = {""}  # case-insensitive substrings
 
 # Label similarity threshold (can override via --label-threshold)
 LABEL_SIM_THRESHOLD = 0.80
@@ -772,39 +772,103 @@ def main(base_dir: str,
     chart_dir = out_dir / "charts"
     dist_dir = out_dir / "distributions"
     dist_dir.mkdir(parents=True, exist_ok=True)
+    # === Unique-pattern counts per ontology (union-level) ===
+    def _bin_edges_and_labels():
+        # 5 bins: =100, [95,100), [90,95), [85,90), [80,85)
+        return [
+            ("eq_100",       lambda v: v == 100.0),
+            ("ge95_lt100",   lambda v: (v is not None) and (v < 100.0) and (v >= 95.0)),
+            ("ge90_lt95",    lambda v: (v is not None) and (v < 95.0)  and (v >= 90.0)),
+            ("ge85_lt90",    lambda v: (v is not None) and (v < 90.0)  and (v >= 85.0)),
+            ("ge80_lt85",    lambda v: (v is not None) and (v < 85.0)  and (v >= 80.0)),
+        ]
+
+    def _safe_float(x):
+        try:
+            return float(x)
+        except Exception:
+            return None
+
+    def _counts_by_bin(df_union_in: pd.DataFrame, colname: str) -> pd.DataFrame:
+        """Return a tall DF: ontology_name, bin_label, count."""
+        if df_union_in.empty or colname not in df_union_in.columns:
+            return pd.DataFrame(columns=["ontology_name","bin","count"])
+        d = df_union_in.copy()
+        d[colname] = d[colname].map(_safe_float)
+        rows = []
+        binspecs = _bin_edges_and_labels()
+        for onto, g in d.groupby("ontology_name"):
+            vals = g[colname].tolist()
+            for bname, pred in binspecs:
+                c = sum(1 for v in vals if pred(v))
+                if c > 0:
+                    rows.append({"ontology_name": onto, "bin": bname, "count": int(c)})
+        out = pd.DataFrame(rows)
+        if not out.empty:
+            out = out.sort_values(["bin", "count"], ascending=[True, False])
+        return out
+
+    def _top20_bar_per_bin(df_counts: pd.DataFrame, title_prefix: str, out_prefix: str):
+        """
+        For each bin, select top-20 ontologies by count, make a bar chart,
+        and write a CSV of the ranked counts.
+        """
+        if df_counts.empty:
+            return
+        for bname, sub in df_counts.groupby("bin", sort=False):
+            sub = sub.sort_values("count", ascending=False).head(20)
+            if sub.empty:
+                continue
+            csv_path = dist_dir / f"{out_prefix}_{bname}.csv"
+            sub.to_csv(csv_path, index=False)
+
+            # Bar chart
+            plt.figure(figsize=(12, 6), dpi=220)
+            plt.bar(sub["ontology_name"], sub["count"])
+            plt.xticks(rotation=75, ha="right")
+            plt.grid(True, axis="y", linestyle="--", linewidth=0.5)
+            plt.xlabel("Ontology")
+            plt.ylabel("Count of unique patterns")
+            plt.title(f"{title_prefix} – Top 20 • Bin: {bname.replace('_',' ')}")
+            plt.tight_layout()
+            plt.savefig(chart_dir / f"{out_prefix}_{bname}.png")
+            plt.close()
 
     def threshold_counts(series: pd.Series, thresholds=(100,90,80,70,60,50,25,10)) -> pd.DataFrame:
         s = series.dropna()
         rows = [{"threshold": t, "count_ge": int((s >= t).sum())} for t in thresholds]
         return pd.DataFrame(rows)
 
-    # Collect series
-    s_file_graph  = df_enriched.get("pct_reused_total", pd.Series(dtype=float))
-    s_file_label  = df_enriched.get("pct_label_reused_total", pd.Series(dtype=float))
-    s_union_graph = df_union.get("pct_union_reused_total", pd.Series(dtype=float))
-    s_union_label = df_union.get("pct_union_label_reused_total", pd.Series(dtype=float))
+    # Collect series (UNIQUE patterns per ontology via df_union)
+    # These are one value per (ontology_name, pattern_name) — duplicates are gone.
+    s_unique_graph = df_union.get("pct_union_reused_total", pd.Series(dtype=float))
+    s_unique_label = df_union.get("pct_union_label_reused_total", pd.Series(dtype=float))
 
-    # Threshold CSVs
-    threshold_counts(s_file_graph).to_csv(dist_dir / "thresholds_file_graph.csv", index=False)
-    threshold_counts(s_file_label).to_csv(dist_dir / "thresholds_file_labels.csv", index=False)
-    threshold_counts(s_union_graph).to_csv(dist_dir / "thresholds_union_graph.csv", index=False)
-    threshold_counts(s_union_label).to_csv(dist_dir / "thresholds_union_labels.csv", index=False)
+    # Threshold CSVs (unique-pattern distributions)
+    threshold_counts(s_unique_graph).to_csv(dist_dir / "thresholds_unique_patterns_graph.csv", index=False)
+    threshold_counts(s_unique_label).to_csv(dist_dir / "thresholds_unique_patterns_labels.csv", index=False)
 
-    # Histograms / CDF / Boxplots
-    _save_hist(s_file_graph,  "File-level % reused (Graph)",  "% reused (file, graph)",  chart_dir / "hist_file_graph.png")
-    _save_hist(s_file_label,  "File-level % reused (Labels)", "% reused (file, labels)", chart_dir / "hist_file_labels.png")
-    _save_hist(s_union_graph, "Union % reused (Graph)",       "% reused (union, graph)", chart_dir / "hist_union_graph.png")
-    _save_hist(s_union_label, "Union % reused (Labels)",      "% reused (union, labels)",chart_dir / "hist_union_labels.png")
+    # Histograms / CDF / Boxplots (unique patterns per ontology)
+    _save_hist(s_unique_graph, "Unique-pattern % reused (Graph)",  "% reused (unique pattern, graph)",  chart_dir / "hist_unique_patterns_graph.png")
+    _save_hist(s_unique_label, "Unique-pattern % reused (Labels)", "% reused (unique pattern, labels)", chart_dir / "hist_unique_patterns_labels.png")
 
-    _save_cdf(s_file_graph,  "CDF: File-level % reused (Graph)",  "% reused (file, graph)",  chart_dir / "cdf_file_graph.png")
-    _save_cdf(s_file_label,  "CDF: File-level % reused (Labels)", "% reused (file, labels)", chart_dir / "cdf_file_labels.png")
-    _save_cdf(s_union_graph, "CDF: Union % reused (Graph)",       "% reused (union, graph)", chart_dir / "cdf_union_graph.png")
-    _save_cdf(s_union_label, "CDF: Union % reused (Labels)",      "% reused (union, labels)",chart_dir / "cdf_union_labels.png")
+    _save_cdf(s_unique_graph, "CDF: Unique-pattern % reused (Graph)",  "% reused (unique pattern, graph)",  chart_dir / "cdf_unique_patterns_graph.png")
+    _save_cdf(s_unique_label, "CDF: Unique-pattern % reused (Labels)", "% reused (unique pattern, labels)", chart_dir / "cdf_unique_patterns_labels.png")
 
-    _save_box(s_file_graph,  "Boxplot: File-level % reused (Graph)",  "% reused", chart_dir / "box_file_graph.png")
-    _save_box(s_file_label,  "Boxplot: File-level % reused (Labels)", "% reused", chart_dir / "box_file_labels.png")
-    _save_box(s_union_graph, "Boxplot: Union % reused (Graph)",       "% reused", chart_dir / "box_union_graph.png")
-    _save_box(s_union_label, "Boxplot: Union % reused (Labels)",      "% reused", chart_dir / "box_union_labels.png")
+    _save_box(s_unique_graph, "Boxplot: Unique-pattern % reused (Graph)",  "% reused", chart_dir / "box_unique_patterns_graph.png")
+    _save_box(s_unique_label, "Boxplot: Unique-pattern % reused (Labels)", "% reused", chart_dir / "box_unique_patterns_labels.png")
+
+    # === Top-20 ontologies by count of unique patterns in % bins (GRAPH) ===
+    graph_counts = _counts_by_bin(df_union, "pct_union_reused_total")
+    _top20_bar_per_bin(graph_counts,
+                       title_prefix="Top 20 Ontologies by #Unique Patterns in Reuse % (Graph)",
+                       out_prefix="top20_unique_patterns_bins_graph")
+
+    # === Top-20 ontologies by count of unique patterns in % bins (LABELS) ===
+    label_counts = _counts_by_bin(df_union, "pct_union_label_reused_total")
+    _top20_bar_per_bin(label_counts,
+                       title_prefix="Top 20 Ontologies by #Unique Patterns in Reuse % (Labels)",
+                       out_prefix="top20_unique_patterns_bins_labels")
 
     # ----------------------------
     # Per-ontology averages and counts
