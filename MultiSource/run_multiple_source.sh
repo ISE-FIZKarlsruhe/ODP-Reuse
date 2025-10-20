@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 # -----------------------------
-export GITHUB_TOKEN="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"
-export GOOGLE_API_KEY="AIzaSyDJZKX-3x2_9n6GbDIODtbUeggrvIxsQSo"
-export GOOGLE_CSE_ID="d7c11cb33a0c34a96"
-export BIOPORTAL_API_KEY="83bc4aa0-edaa-41bf-ba07-f75f9df3a1b9"
-export MATPORTAL_API_KEY="f3c98b81-f941-4a37-a162-e71b6ef43481"
+# Load .env if present and export all variables
+# -----------------------------
+if [ -f ".env" ]; then
+  set -a
+  . ./.env
+  set +a
+fi
 
 # -----------------------------
 # Config
@@ -232,49 +234,58 @@ echo
 # Run the Python script
 # -----------------------------
 #"ontologydesignpatterns.org" (filetype:owl OR filetype:ttl OR filetype:rdf OR filetype:nt OR filetype:trig OR filetype:xml)
-# python3 "$PY_SCRIPT" \
-#   --patterns "ontologydesignpatterns" \
-#   --sources "google" \
-#   --github-per-page 50 \
-#   --github-max-pages "$GITHUB_MAX_PAGES" \
-#   --github-delay-ms 1400 \
-#   --github-max-retries 6 \
-#   --google-pages "$GOOGLE_PAGES" \
-#   --google-max-queries 90 \
-#   --google-skip-on-429 \
-#   --google-min-hits 2 \
-#   --skip-generic \
-#   --out odp_google.csv \
-#   $EXTRA_ARGS
+python3 "$PY_SCRIPT" \
+  --patterns "ontologydesignpatterns" \
+  --sources "google" \
+  --github-per-page 50 \
+  --github-max-pages "$GITHUB_MAX_PAGES" \
+  --github-delay-ms 1400 \
+  --github-max-retries 6 \
+  --google-pages "$GOOGLE_PAGES" \
+  --google-max-queries 90 \
+  --google-skip-on-429 \
+  --google-min-hits 2 \
+  --skip-generic \
+  --out odp_google.csv \
+  $EXTRA_ARGS
 
-# run: all major sources (auto-discovers ODP IRIs)
-# python3 "$PY_SCRIPT" \
-#   --patterns "$(paste -sd, "$PATTERNS_TXT")" \
-#   --sources "$SOURCES" \
-#   --github-per-page 50 \
-#   --github-max-pages "$GITHUB_MAX_PAGES" \
-#   --github-delay-ms 1400 \
-#   --github-max-retries 6 \
-#   --google-pages "$GOOGLE_PAGES" \
-#   --skip-generic \
-#   --out "$OUT_CSV" \
-#   $EXTRA_ARGS
+run: all major sources (auto-discovers ODP IRIs)
+python3 "$PY_SCRIPT" \
+  --patterns "$(paste -sd, "$PATTERNS_TXT")" \
+  --sources "$SOURCES" \
+  --github-per-page 50 \
+  --github-max-pages "$GITHUB_MAX_PAGES" \
+  --github-delay-ms 1400 \
+  --github-max-retries 6 \
+  --google-pages "$GOOGLE_PAGES" \
+  --skip-generic \
+  --out "$OUT_CSV" \
+  $EXTRA_ARGS
   
 
-# # run: add SPARQL endpoint (e.g., LOV; replace with your endpoint)
-# python3 "$PY_SCRIPT" \
-#   --patterns "$(paste -sd, "$PATTERNS_TXT")" \
-#   --sources sparql \
-#   --sparql-endpoint https://lov.linkeddata.es/dataset/lov/sparql \
-#   --google-pages "$GOOGLE_PAGES" \
-#   --skip-generic \
-#   --out report/sparql_results.csv \
-#   $EXTRA_ARGS
+# run: add SPARQL endpoint (e.g., LOV; replace with your endpoint)
+python3 "$PY_SCRIPT" \
+  --patterns "$(paste -sd, "$PATTERNS_TXT")" \
+  --sources sparql \
+  --sparql-endpoint https://lov.linkeddata.es/dataset/lov/sparql \
+  --google-pages "$GOOGLE_PAGES" \
+  --skip-generic \
+  --out report/sparql_results.csv \
+  $EXTRA_ARGS
 
-#python3 build_github_dataset.py --csv report/github.csv --patterns-repo patterns-repository --out-dir github_dataset
+echo "Downloading datasets and building gold standards ..."
+python3 build_github_dataset.py --csv report/github.csv --patterns-repo patterns-repository --out-dir github_dataset
 
-python3 odp_stats.py --base github_dataset --out-dir github_dataset_stats --sim-backend sbert
-#python3 odp_stats.py --base Ontologies_reusingODPs --out-dir Ontologies_reusingODPs_stats --sim-backend sbert
+echo "Ontology and Ontology Design Pattern statistics ..."
+python3 odp_stats.py --base github_dataset --out-dir github_dataset_stats --all-backends
+python3 odp_stats.py --base Ontologies_reusingODPs --out-dir Ontologies_reusingODPs_stats --all-backends
 
-python3 gold_dataset.py --base github_dataset --out-dir gold_out --sim-backend sbert --label-threshold 0.80 --coverage-good 0.30 --connectivity-good 0.60 --connectivity-weak 0.20 --nonreused-relevance-max 0.20  --min-reused-entities 3 --materialize symlink --grouping pair
-#python3 gold_dataset.py --base Ontologies_reusingODPs --out-dir gold_ontology_out --sim-backend sbert --label-threshold 0.80 --coverage-good 0.30 --connectivity-good 0.60 --connectivity-weak 0.20 --nonreused-relevance-max 0.20  --min-reused-entities 3 --materialize symlink --grouping pair
+echo "Building gold standard datasets ..."
+backends=("hybrid" "char" "word" "sbert" "exact")
+for backend in "${backends[@]}"; do
+  python3 gold_dataset.py --base github_dataset --out-dir github_dataset_out --sim-backend "$backend" --materialize symlink --dataset-percents "100"
+  python3 gold_dataset.py --base Ontologies_reusingODPs --out-dir Ontologies_reusingODPs_out --sim-backend "$backend" --materialize symlink --dataset-percents "100"
+done
+python3 gold_dataset.py --base github_dataset --out-dir github_dataset_out --sim-backend exact --materialize symlink --dataset-percents "100" --make-graph-100
+python3 gold_dataset.py --base Ontologies_reusingODPs --out-dir Ontologies_reusingODPs_out --sim-backend exact --materialize symlink --dataset-percents "100" --make-graph-100
+
