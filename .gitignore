@@ -11,6 +11,7 @@ MultiSource/Ontologies_reusingODPs
 MultiSource/Ontologies_reusingODPs_gold
 MultiSource/Ontologies_reusingODPs_stats
 
+Ontologies_reusingODPs/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
