@@ -1,0 +1,9 @@
+requests>=2.31.0
+feedparser>=6.0.10
+pandas>=2.0
+numpy>=1.24
+rdflib>=6.2
+tqdm>=4.66
+matplotlib>=3.8
+sentence-transformers>=2.2.2
+SPARQLWrapper>=2.0.0

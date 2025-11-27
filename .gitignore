@@ -1,3 +1,17 @@
+# output files
+scholar/arxiv/odp_results
+scholar/arxiv/.venv
+scholar/output
+
+MultiSource/patterns-repository
+MultiSource/github_dataset
+MultiSource/github_dataset_gold
+MultiSource/github_dataset_stats
+MultiSource/Ontologies_reusingODPs
+MultiSource/Ontologies_reusingODPs_gold
+MultiSource/Ontologies_reusingODPs_stats
+
+Ontologies_reusingODPs/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -143,6 +157,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.env
+*.env
+.env.*.local
 
 # Spyder project settings
 .spyderproject
