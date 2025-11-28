@@ -142,13 +142,6 @@ Repeat the same for any additional base directory (e.g., `Ontologies_reusingODPs
 
 ---
 
-## Reproducibility Checklist
-
-- **Environment:** use the provided `requirements.txt` and Python 3.10–3.11. Record the exact Python and package versions (`pip freeze > reproducibility/requirements.lock.txt`).  
-- **Configuration:** keep `.env` local. Provide an `.env.example` for collaborators.  
-- **Determinism:** where APIs are queried (Google, GitHub, portals), results may change over time; the pipeline writes **timestamped CSVs** in `report/` and `scholar/output/` to preserve snapshots.  
----
-
 ## Citation
 
 If you use this code or the datasets, please cite the accompanying paper:  
