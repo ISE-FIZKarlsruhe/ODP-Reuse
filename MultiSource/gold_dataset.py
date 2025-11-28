@@ -434,54 +434,55 @@ def has_construct(g: Graph, construct: str) -> bool:
 
 def infer_expressivity_from_graph(g: Graph) -> str:
     """
-    Heuristic DL expressivity label derived from the constructs
-    we already detect in `CONSTRUCT_NAMES`.
+    Map the detected OWL constructs to a *small, fixed* set of
+    well-known DL names:
 
-    It’s not a formally complete DL reasoner, but it’s consistent
-    and good enough for comparative statistics (RQ3).
+        EL, ALC, ALCHIQ, SHOIN, SROIQ
+
+    This is a heuristic and deliberately coarse: we only care about
+    putting each ontology into one of these buckets.
     """
     flags = {c: has_construct(g, c) for c in CONSTRUCT_NAMES}
 
-    # --- Base level: EL vs ALC ---
-    # EL-ish if we do NOT have full negation / disjunction / nominals
+    # "Heavy" boolean stuff: full negation, disjunction, or nominals
     has_heavy_bool = (
         flags.get("CONCEPT_COMPLEX_NEGATION", False)
         or flags.get("CONCEPT_UNION", False)
         or flags.get("NOMINALS", False)
     )
-    base = "ALC" if has_heavy_bool else "EL"
 
-    # --- Feature letters ---
-    feats = []
+    # --- 1) EL vs "ALC and above" ---
+    # If we don't see heavy boolean constructs, treat this as EL.
+    if not has_heavy_bool:
+        return "EL"
 
-    # Role hierarchy / transitivity / complex roles → H / R-ish
-    if flags.get("ROLE_HIERARCHY", False) or flags.get("ROLE_TRANSITIVE", False):
-        feats.append("H")
-    if flags.get("ROLE_COMPLEX", False) or flags.get("ROLE_REFLEXIVITY_CHAINS", False):
-        feats.append("R")
+    # From here on we are at least ALC
 
-    # Inverses
-    if flags.get("ROLE_INVERSE", False):
-        feats.append("I")
+    # Feature flags (very coarse approximations)
+    hasH = flags.get("ROLE_HIERARCHY", False)
+    hasS = flags.get("ROLE_TRANSITIVE", False)  # S = transitive roles
+    hasR = flags.get("ROLE_COMPLEX", False) or flags.get("ROLE_REFLEXIVITY_CHAINS", False)
+    hasI = flags.get("ROLE_INVERSE", False)
+    hasQ = flags.get("Q", False) or flags.get("N", False)  # any kind of cardinality restriction
+    hasO = flags.get("NOMINALS", False)
 
-    # Qualified / number restrictions
-    if flags.get("Q", False) or flags.get("N", False):
-        feats.append("Q")
+    # --- 2) Strongest profile first: SROIQ ---
+    # SROIQ ≈ S + R + (O or I or Q)
+    if hasS and hasR and (hasO or hasI or hasQ):
+        return "SROIQ"
 
-    # Nominals
-    if flags.get("NOMINALS", False):
-        feats.append("O")
+    # --- 3) Next: SHOIN ---
+    # SHOIN ≈ S + H + O + (N/Q or I)
+    if hasS and hasH and hasO and (flags.get("N", False) or hasQ or hasI):
+        return "SHOIN"
 
-    # Datatypes
-    if flags.get("D", False):
-        feats.append("D")
+    # --- 4) Next: ALCHIQ ---
+    # ALCHIQ ≈ ALC + H + I + Q
+    if hasH and hasI and hasQ:
+        return "ALCHIQ"
 
-    # Deduplicate & sort letters to keep it stable
-    if feats:
-        suffix = "".join(sorted(set(feats)))
-        return base + suffix
-    else:
-        return base
+    # --- 5) Otherwise: plain ALC ---
+    return "ALC"
 
 # ----------------------------
 # Histogram helper
@@ -1053,21 +1054,29 @@ def _write_dataset_stats(subset_df: pd.DataFrame,
 
     # Pattern-level constructs + complexity score
     if not df_pattern_constructs.empty:
+        # Save the per-file pattern construct table (unchanged)
         df_pattern_constructs["dl_complexity_score"] = df_pattern_constructs[CONSTRUCT_NAMES].sum(axis=1)
         df_pattern_constructs.to_csv(
             stats_dir / "constructs_presence_per_pattern.csv", index=False
         )
 
-        num_patterns = len(df_pattern_constructs)
+        # === FIX: AGGREGATE BY pattern_name (not pattern_file) ===
+        grp = df_pattern_constructs.groupby("pattern_name")
+        num_patterns = grp.ngroups  # number of unique pattern names
+
         construct_summary_patts = []
         for c in CONSTRUCT_NAMES:
-            count_c = int(df_pattern_constructs[c].sum())
+            # A pattern_name has the construct if ANY of its files have it
+            pattern_has_c = grp[c].max()    # Bool series: one per pattern name
+            count_c = int(pattern_has_c.sum())     # Number of pattern names with this construct
             pct_c = (100.0 * count_c / num_patterns) if num_patterns else 0.0
+
             construct_summary_patts.append({
                 "construct": c,
                 "num_patterns": count_c,
                 "pct_patterns": pct_c
             })
+
         df_constructs_summary_patts = pd.DataFrame(construct_summary_patts)
         df_constructs_summary_patts.to_csv(
             stats_dir / "constructs_presence_summary_patterns.csv", index=False
@@ -1225,6 +1234,454 @@ def _write_dataset_stats(subset_df: pd.DataFrame,
 
     return stats_dir
 
+def build_global_statistics_for_df(df_source: pd.DataFrame,
+                                   out_root: Path,
+                                   label_thresh: float,
+                                   sim_backend: str,
+                                   ngram: int,
+                                   sbert: Optional[SbertBackend],
+                                   sbert_prefilter: float,
+                                   hist_bins: List[int],
+                                   caption_suffix: str = "") -> None:
+    """
+    Build a full global_statistics-style folder for a given DataFrame of pairs.
+
+    It will create:
+      - reuse_extent_per_ontology.csv + reuse_extent_summary(.tex)
+      - pattern_reuse_stats.csv + top10(.tex)
+      - dl_complexity_allpairs/statistics/*  (ontology + pattern constructs, DL complexity)
+      - RQ3 global complexity table + expressivity vs reuse
+      - per-pair complexity tables and construct breakdowns
+    in: out_root/
+    """
+
+    out_root.mkdir(parents=True, exist_ok=True)
+
+    # --------------------
+    # RQ1: Extent of reuse
+    # --------------------
+    reuse_rows = []
+    for repo, grp in df_source.groupby("repo"):
+        onto_file = grp.iloc[0]["ontology_file"]
+        num_patterns = grp["pattern_name"].nunique()
+        num_patterns_reused_label = grp[grp["reused_total_label"] > 0]["pattern_name"].nunique()
+        num_patterns_reused_graph = grp[grp["reused_total_graph"] > 0]["pattern_name"].nunique()
+        max_label_reuse = float(grp["label_reuse_pct"].max())
+        avg_label_reuse = float(grp["label_reuse_pct"].mean())
+        any_reuse_label = bool(num_patterns_reused_label > 0)
+
+        reuse_rows.append({
+            "repo": repo,
+            "ontology_file": onto_file,
+            "num_patterns": num_patterns,
+            "num_patterns_with_label_reuse": num_patterns_reused_label,
+            "num_patterns_with_graph_reuse": num_patterns_reused_graph,
+            "any_reuse_label": int(any_reuse_label),
+            "max_label_reuse_pct": max_label_reuse,
+            "avg_label_reuse_pct": avg_label_reuse,
+        })
+
+    df_reuse_onts = pd.DataFrame(reuse_rows)
+    df_reuse_onts.to_csv(out_root / "reuse_extent_per_ontology.csv", index=False)
+
+    num_onts_global = len(df_reuse_onts)
+    num_onts_with_reuse = int(df_reuse_onts["any_reuse_label"].sum()) if num_onts_global else 0
+    pct_onts_with_reuse = (100.0 * num_onts_with_reuse / num_onts_global) if num_onts_global else 0.0
+    avg_patterns_per_ont = float(df_reuse_onts["num_patterns"].mean()) if num_onts_global else 0.0
+    avg_patterns_with_reuse = float(df_reuse_onts["num_patterns_with_label_reuse"].mean()) if num_onts_global else 0.0
+
+    df_reuse_summary = pd.DataFrame([{
+        "num_ontologies": num_onts_global,
+        "num_ontologies_with_any_pattern_reuse": num_onts_with_reuse,
+        "pct_ontologies_with_any_pattern_reuse": pct_onts_with_reuse,
+        "avg_patterns_per_ontology": avg_patterns_per_ont,
+        "avg_patterns_with_reuse_per_ontology": avg_patterns_with_reuse
+    }])
+    df_reuse_summary.to_csv(out_root / "reuse_extent_summary.csv", index=False)
+
+    write_latex_table(
+        df_reuse_summary,
+        out_root / "reuse_extent_summary.tex",
+        caption=f"Extent of ODP reuse across ontologies {caption_suffix}".strip(),
+        label=f"tab:extent-reuse-{sim_backend}{caption_suffix.replace(' ', '-').replace('≥', 'ge')}"
+    )
+
+    # --------------------
+    # RQ2: Pattern-centric
+    # --------------------
+    usage_cols = [
+        "usage_direct","usage_as_subclass","usage_as_superclass",
+        "usage_as_subproperty","usage_as_superproperty",
+        "usage_via_property","usage_via_restriction","usage_equivalent"
+    ]
+
+    pattern_rows = []
+    for pattern_name, grp in df_source.groupby("pattern_name"):
+        num_pairs = len(grp)
+        num_ontologies_using_pattern = grp[grp["reused_total_label"] > 0]["repo"].nunique()
+        avg_label_reuse = float(grp["label_reuse_pct"].mean())
+        max_label_reuse = float(grp["label_reuse_pct"].max())
+
+        mode_counts = {c: int(grp[c].sum()) for c in usage_cols}
+        total_mode = sum(mode_counts.values()) or 1  # avoid div-by-zero
+        row = {
+            "pattern_name": pattern_name,
+            "num_pairs": num_pairs,
+            "num_ontologies_using_pattern": num_ontologies_using_pattern,
+            "avg_label_reuse_pct": avg_label_reuse,
+            "max_label_reuse_pct": max_label_reuse,
+        }
+        for c in usage_cols:
+            pretty = c.replace("usage_", "")
+            row[f"count_{pretty}"] = mode_counts[c]
+            row[f"pct_{pretty}"] = 100.0 * mode_counts[c] / total_mode
+        pattern_rows.append(row)
+
+    df_pattern_global = pd.DataFrame(pattern_rows)
+    if not df_pattern_global.empty:
+        df_pattern_global.sort_values(
+            ["num_ontologies_using_pattern","avg_label_reuse_pct"],
+            ascending=[False, False],
+            inplace=True
+        )
+    df_pattern_global.to_csv(out_root / "pattern_reuse_stats.csv", index=False)
+
+    if not df_pattern_global.empty:
+        top_k = df_pattern_global.head(10)[[
+            "pattern_name",
+            "num_ontologies_using_pattern",
+            "avg_label_reuse_pct",
+            "max_label_reuse_pct"
+        ]]
+        write_latex_table(
+            top_k,
+            out_root / "pattern_reuse_top10.tex",
+            caption=f"Top 10 most frequently reused patterns {caption_suffix}".strip(),
+            label=f"tab:top-patterns-{sim_backend}{caption_suffix.replace(' ', '-').replace('≥', 'ge')}"
+        )
+
+    # --------------------
+    # DL complexity (all pairs for this df_source)
+    # --------------------
+    dl_root = out_root / "dl_complexity_allpairs"
+    _write_dataset_stats(
+        subset_df=df_source,
+        ds_root=dl_root,
+        label_thresh=label_thresh,
+        sim_backend=sim_backend,
+        ngram=ngram,
+        sbert=sbert,
+        sbert_prefilter=sbert_prefilter,
+        hist_bins=hist_bins
+    )
+
+    # --------------------
+    # RQ3 + per-pair complexity / construct breakdown
+    # --------------------
+    try:
+        constructs_path = dl_root / "statistics" / "constructs_presence_per_ontology.csv"
+        if constructs_path.exists():
+            df_constructs = pd.read_csv(constructs_path)
+
+            # Attach reuse info (any_reuse_label) to each ontology
+            df_complex_reuse = df_constructs.merge(
+                df_reuse_onts[["repo", "ontology_file", "any_reuse_label"]],
+                on=["repo", "ontology_file"],
+                how="left"
+            )
+            df_complex_reuse["any_reuse_label"] = df_complex_reuse["any_reuse_label"].fillna(0).astype(int)
+
+            no_reuse = df_complex_reuse[df_complex_reuse["any_reuse_label"] == 0]
+            with_reuse = df_complex_reuse[df_complex_reuse["any_reuse_label"] == 1]
+
+            def _safe_mean(series):
+                return float(pd.to_numeric(series, errors="coerce").dropna().mean()) if not series.empty else 0.0
+
+            avg_dl_no   = _safe_mean(no_reuse["dl_complexity_score"])
+            avg_dl_with = _safe_mean(with_reuse["dl_complexity_score"])
+            avg_ax_no   = _safe_mean(no_reuse["n_axioms"])
+            avg_ax_with = _safe_mean(with_reuse["n_axioms"])
+
+            def _delta_pct(base, new):
+                return (100.0 * (new - base) / base) if base > 0 else 0.0
+
+            delta_dl = _delta_pct(avg_dl_no,   avg_dl_with)
+            delta_ax = _delta_pct(avg_ax_no,   avg_ax_with)
+
+            expr_no   = no_reuse["expressivity"].mode().iloc[0] if not no_reuse.empty else "N/A"
+            expr_with = with_reuse["expressivity"].mode().iloc[0] if not with_reuse.empty else "N/A"
+            expr_shift = f"{expr_no} → {expr_with}"
+
+            rq3_rows = [
+                {
+                    "Complexity metric": "Avg. DL constructors",
+                    "Ontologies w/o reuse": round(avg_dl_no, 2),
+                    "Ontologies w/ reuse": round(avg_dl_with, 2),
+                    "Δ (%)": f"{delta_dl:+.1f}%",
+                },
+                {
+                    "Complexity metric": "Avg. axioms",
+                    "Ontologies w/o reuse": round(avg_ax_no, 1),
+                    "Ontologies w/ reuse": round(avg_ax_with, 1),
+                    "Δ (%)": f"{delta_ax:+.1f}%",
+                },
+                {
+                    "Complexity metric": "Expressivity level",
+                    "Ontologies w/o reuse": expr_no,
+                    "Ontologies w/ reuse": expr_with,
+                    "Δ (%)": expr_shift,
+                },
+            ]
+            df_rq3 = pd.DataFrame(rq3_rows)
+            df_rq3.to_csv(out_root / "rq3_effect_pattern_reuse_complexity.csv", index=False)
+
+            write_latex_table(
+                df_rq3,
+                out_root / "rq3_effect_pattern_reuse_complexity.tex",
+                caption=f"Effect of pattern reuse on ontology complexity {caption_suffix}".strip(),
+                label=f"tab:rq3-complexity-effect-{sim_backend}{caption_suffix.replace(' ', '-').replace('≥', 'ge')}"
+            )
+
+            # Expressivity vs reuse
+            if "expressivity" in df_complex_reuse.columns:
+                expr_counts = []
+                for expr_val, grp in df_complex_reuse.groupby("expressivity"):
+                    expr_val = expr_val if isinstance(expr_val, str) else "UNKNOWN"
+                    total = len(grp)
+                    with_r = int(grp["any_reuse_label"].sum())
+                    without_r = total - with_r
+                    pct_with = 100.0 * with_r / total if total else 0.0
+                    pct_without = 100.0 * without_r / total if total else 0.0
+                    expr_counts.append({
+                        "expressivity": expr_val,
+                        "num_ontologies": total,
+                        "num_with_reuse": with_r,
+                        "num_without_reuse": without_r,
+                        "pct_with_reuse": pct_with,
+                        "pct_without_reuse": pct_without,
+                    })
+                df_expr_reuse = pd.DataFrame(expr_counts)
+                df_expr_reuse.to_csv(out_root / "rq3_expressivity_vs_reuse.csv", index=False)
+
+                write_latex_table(
+                    df_expr_reuse,
+                    out_root / "rq3_expressivity_vs_reuse.tex",
+                    caption=f"Distribution of DL expressivity for ontologies with and without pattern reuse {caption_suffix}".strip(),
+                    label=f"tab:rq3-expressivity-vs-reuse-{sim_backend}{caption_suffix.replace(' ', '-').replace('≥', 'ge')}"
+                )
+
+            # Construct-level differences
+            construct_diff_rows = []
+            for c in CONSTRUCT_NAMES:
+                if c not in df_complex_reuse.columns:
+                    continue
+                p_no = float(no_reuse[c].mean()) if not no_reuse.empty else 0.0
+                p_with = float(with_reuse[c].mean()) if not with_reuse.empty else 0.0
+                construct_diff_rows.append({
+                    "construct": c,
+                    "pct_ontologies_without_reuse": 100.0 * p_no,
+                    "pct_ontologies_with_reuse": 100.0 * p_with,
+                    "delta_percentage_points": 100.0 * (p_with - p_no),
+                })
+
+            df_construct_diff = pd.DataFrame(construct_diff_rows)
+            df_construct_diff.sort_values("delta_percentage_points", ascending=False, inplace=True)
+            df_construct_diff.to_csv(out_root / "rq3_construct_differences.csv", index=False)
+
+            top_k_constructs = df_construct_diff.head(10)
+            write_latex_table(
+                top_k_constructs,
+                out_root / "rq3_construct_differences_top10.tex",
+                caption=f"Top DL constructs whose presence increases most in ontologies with pattern reuse {caption_suffix}".strip(),
+                label=f"tab:rq3-construct-differences-{sim_backend}{caption_suffix.replace(' ', '-').replace('≥', 'ge')}"
+            )
+
+        # -----------------------------
+        # Per-pair complexity + breakdown
+        # -----------------------------
+        stats_root = dl_root / "statistics"
+        ont_path = stats_root / "constructs_presence_per_ontology.csv"
+        pat_path = stats_root / "constructs_presence_per_pattern.csv"
+
+        if ont_path.exists() and pat_path.exists():
+            df_ont_full = pd.read_csv(ont_path)
+            df_pat_full = pd.read_csv(pat_path)
+
+            ont_fixed = {"repo", "ontology_file", "n_axioms", "expressivity", "dl_complexity_score"}
+            pat_fixed = {"repo", "pattern_file", "pattern_name", "expressivity", "dl_complexity_score"}
+
+            ont_construct_cols = [
+                c for c in df_ont_full.columns
+                if c not in ont_fixed and df_ont_full[c].dtype == bool
+            ]
+            pat_construct_cols = [
+                c for c in df_pat_full.columns
+                if c not in pat_fixed and df_pat_full[c].dtype == bool
+            ]
+            constructs = sorted(set(ont_construct_cols) & set(pat_construct_cols))
+
+            onto_cols = {
+                "n_axioms": "onto_n_axioms",
+                "expressivity": "onto_expressivity",
+                "dl_complexity_score": "onto_dl_complexity",
+            }
+            onto_cols.update({c: f"onto_{c}" for c in constructs})
+            df_ont = df_ont_full[
+                ["repo", "ontology_file", "n_axioms", "expressivity", "dl_complexity_score"] + constructs
+            ].rename(columns=onto_cols)
+
+            pat_cols = {
+                "expressivity": "pattern_expressivity",
+                "dl_complexity_score": "pattern_dl_complexity",
+            }
+            pat_cols.update({c: f"pattern_{c}" for c in constructs})
+            df_pat = df_pat_full[
+                ["repo", "pattern_file", "pattern_name", "expressivity", "dl_complexity_score"] + constructs
+            ].rename(columns=pat_cols)
+
+            df_pairs = df_source.merge(
+                df_ont, on=["repo", "ontology_file"], how="left"
+            ).merge(
+                df_pat, on=["repo", "pattern_file", "pattern_name"], how="left"
+            )
+
+            out_pairs = out_root / "complexity_expressivity_per_pair.csv"
+            df_pairs.to_csv(out_pairs, index=False)
+
+            agg_rows = []
+
+            def _safe_mean2(series):
+                return float(pd.to_numeric(series, errors="coerce").dropna().mean()) if not series.empty else 0.0
+
+            avg_onto_dl    = _safe_mean2(df_pairs["onto_dl_complexity"])
+            avg_pattern_dl = _safe_mean2(df_pairs["pattern_dl_complexity"])
+            avg_onto_ax    = _safe_mean2(df_pairs["onto_n_axioms"])
+
+            agg_rows.append({
+                "Metric": "Avg. ontology DL constructors (per pair)",
+                "Value": avg_onto_dl,
+            })
+            agg_rows.append({
+                "Metric": "Avg. pattern DL constructors (per pair)",
+                "Value": avg_pattern_dl,
+            })
+            agg_rows.append({
+                "Metric": "Avg. ontology axioms (per pair)",
+                "Value": avg_onto_ax,
+            })
+
+            for c in constructs:
+                onto_col = f"onto_{c}"
+                patt_col = f"pattern_{c}"
+
+                if onto_col in df_pairs.columns:
+                    onto_frac = df_pairs[onto_col].fillna(False).astype(bool).mean()
+                    agg_rows.append({
+                        "Metric": f"{c} (ontology side, % pairs)",
+                        "Value": 100.0 * onto_frac,
+                    })
+
+                if patt_col in df_pairs.columns:
+                    patt_frac = df_pairs[patt_col].fillna(False).astype(bool).mean()
+                    agg_rows.append({
+                        "Metric": f"{c} (pattern side, % pairs)",
+                        "Value": 100.0 * patt_frac,
+                    })
+
+            df_pairs_summary = pd.DataFrame(agg_rows)
+            df_pairs_summary.to_csv(
+                out_root / "complexity_expressivity_per_pair_summary.csv",
+                index=False
+            )
+
+            write_latex_table(
+                df_pairs_summary,
+                out_root / "complexity_expressivity_per_pair_summary.tex",
+                caption=(
+                    f"Average logical complexity of ontologies and patterns per ontology–pattern pair {caption_suffix}, "
+                    "including per-construct percentages of pairs where each DL construct is used."
+                ).strip(),
+                label=f"tab:complexity-per-pair-summary-{sim_backend}{caption_suffix.replace(' ', '-').replace('≥', 'ge')}"
+            )
+
+            # Construct-level breakdown (per pair)
+            summary_rows = []
+            total_pairs = len(df_pairs)
+
+            for c in constructs:
+                onto_col = f"onto_{c}"
+                patt_col = f"pattern_{c}"
+                if onto_col not in df_pairs.columns or patt_col not in df_pairs.columns:
+                    continue
+
+                onto_val = df_pairs[onto_col].fillna(False).astype(bool)
+                patt_val = df_pairs[patt_col].fillna(False).astype(bool)
+
+                has_onto = int(onto_val.sum())
+                has_pattern = int(patt_val.sum())
+                only_pattern = int((patt_val & ~onto_val).sum())
+                only_onto = int((onto_val & ~patt_val).sum())
+                both = int((onto_val & patt_val).sum())
+
+                summary_rows.append({
+                    "construct": c,
+                    "num_pairs_total": total_pairs,
+                    "num_pairs_onto_has": has_onto,
+                    "num_pairs_pattern_has": has_pattern,
+                    "num_pairs_pattern_only": only_pattern,
+                    "num_pairs_onto_only": only_onto,
+                    "num_pairs_both": both,
+                    "pct_pairs_onto_has": 100.0 * has_onto / total_pairs if total_pairs else 0.0,
+                    "pct_pairs_pattern_has": 100.0 * has_pattern / total_pairs if total_pairs else 0.0,
+                    "pct_pairs_pattern_only": 100.0 * only_pattern / total_pairs if total_pairs else 0.0,
+                    "pct_pairs_onto_only": 100.0 * only_onto / total_pairs if total_pairs else 0.0,
+                    "pct_pairs_both": 100.0 * both / total_pairs if total_pairs else 0.0,
+                })
+
+            df_construct_breakdown = pd.DataFrame(summary_rows)
+            df_construct_breakdown.to_csv(
+                out_root / "complexity_expressivity_construct_breakdown_per_pair.csv",
+                index=False
+            )
+
+            if not df_construct_breakdown.empty:
+                cols_for_tex = [
+                    "construct",
+                    "pct_pairs_onto_has",
+                    "pct_pairs_pattern_has",
+                    "pct_pairs_pattern_only",
+                    "pct_pairs_onto_only",
+                    "pct_pairs_both",
+                ]
+                df_tex = df_construct_breakdown[cols_for_tex]
+                write_latex_table(
+                    df_tex,
+                    out_root / "complexity_expressivity_construct_breakdown_per_pair.tex",
+                    caption=(
+                        f"Per-construct breakdown of logical features in ontology–pattern pairs {caption_suffix}: "
+                        "how often a construct appears only in the ontology, only in the pattern, or in both."
+                    ).strip(),
+                    label=f"tab:construct-breakdown-per-pair-{sim_backend}{caption_suffix.replace(' ', '-').replace('≥', 'ge')}"
+                )
+
+                # Wide CSV: one row, columns like ROLE_INVERSE_pct_pairs_pattern_only, etc.
+                wide_data = {}
+                for _, row in df_construct_breakdown.iterrows():
+                    c = row["construct"]
+                    for k, v in row.items():
+                        if k == "construct":
+                            continue
+                        col_name = f"{c}_{k}"
+                        wide_data[col_name] = v
+                df_wide = pd.DataFrame([wide_data])
+                df_wide.to_csv(
+                    out_root / "complexity_expressivity_construct_breakdown_per_pair_wide.csv",
+                    index=False
+                )
+
+    except Exception as e:
+        print(f"[WARN] Could not compute global-style statistics for {out_root}: {e}", file=sys.stderr)
+
 # ----------------------------
 # Main
 # ----------------------------
@@ -1354,571 +1811,19 @@ def main(base_dir: str,
         return
 
     # ------------------------------------------------------------------
-    # Global RQ1/RQ2/RQ3-style statistics over ALL pairs (top-level)
+    # Global statistics over ALL pairs (top-level)
     # ------------------------------------------------------------------
-    global_stats_dir = out_dir / "global_statistics"
-    global_stats_dir.mkdir(parents=True, exist_ok=True)
-
-    # RQ1: extent of reuse per ontology (global)
-    reuse_rows = []
-    for repo, grp in df.groupby("repo"):
-        onto_file = grp.iloc[0]["ontology_file"]
-        num_patterns = grp["pattern_name"].nunique()
-        num_patterns_reused_label = grp[grp["reused_total_label"] > 0]["pattern_name"].nunique()
-        num_patterns_reused_graph = grp[grp["reused_total_graph"] > 0]["pattern_name"].nunique()
-        max_label_reuse = float(grp["label_reuse_pct"].max())
-        avg_label_reuse = float(grp["label_reuse_pct"].mean())
-        any_reuse_label = bool(num_patterns_reused_label > 0)
-
-        reuse_rows.append({
-            "repo": repo,
-            "ontology_file": onto_file,
-            "num_patterns": num_patterns,
-            "num_patterns_with_label_reuse": num_patterns_reused_label,
-            "num_patterns_with_graph_reuse": num_patterns_reused_graph,
-            "any_reuse_label": int(any_reuse_label),
-            "max_label_reuse_pct": max_label_reuse,
-            "avg_label_reuse_pct": avg_label_reuse,
-        })
-
-    df_reuse_onts = pd.DataFrame(reuse_rows)
-    df_reuse_onts.to_csv(global_stats_dir / "reuse_extent_per_ontology.csv", index=False)
-
-    num_onts_global = len(df_reuse_onts)
-    num_onts_with_reuse = int(df_reuse_onts["any_reuse_label"].sum()) if num_onts_global else 0
-    pct_onts_with_reuse = (100.0 * num_onts_with_reuse / num_onts_global) if num_onts_global else 0.0
-    avg_patterns_per_ont = float(df_reuse_onts["num_patterns"].mean()) if num_onts_global else 0.0
-    avg_patterns_with_reuse = float(df_reuse_onts["num_patterns_with_label_reuse"].mean()) if num_onts_global else 0.0
-
-    df_reuse_summary = pd.DataFrame([{
-        "num_ontologies": num_onts_global,
-        "num_ontologies_with_any_pattern_reuse": num_onts_with_reuse,
-        "pct_ontologies_with_any_pattern_reuse": pct_onts_with_reuse,
-        "avg_patterns_per_ontology": avg_patterns_per_ont,
-        "avg_patterns_with_reuse_per_ontology": avg_patterns_with_reuse
-    }])
-    df_reuse_summary.to_csv(global_stats_dir / "reuse_extent_summary.csv", index=False)
-
-    write_latex_table(
-        df_reuse_summary,
-        global_stats_dir / "reuse_extent_summary.tex",
-        caption="Extent of ODP reuse across ontologies (all pairs)",
-        label="tab:extent-reuse-global"
-    )
-
-    # RQ2: pattern-centric view (global)
-    pattern_rows = []
-    usage_cols = [
-        "usage_direct","usage_as_subclass","usage_as_superclass",
-        "usage_as_subproperty","usage_as_superproperty",
-        "usage_via_property","usage_via_restriction","usage_equivalent"
-    ]
-
-    for pattern_name, grp in df.groupby("pattern_name"):
-        num_pairs = len(grp)
-        num_ontologies_using_pattern = grp[grp["reused_total_label"] > 0]["repo"].nunique()
-        avg_label_reuse = float(grp["label_reuse_pct"].mean())
-        max_label_reuse = float(grp["label_reuse_pct"].max())
-
-        mode_counts = {c: int(grp[c].sum()) for c in usage_cols}
-        total_mode = sum(mode_counts.values()) or 1  # avoid div-by-zero
-        row = {
-            "pattern_name": pattern_name,
-            "num_pairs": num_pairs,
-            "num_ontologies_using_pattern": num_ontologies_using_pattern,
-            "avg_label_reuse_pct": avg_label_reuse,
-            "max_label_reuse_pct": max_label_reuse,
-        }
-        for c in usage_cols:
-            pretty = c.replace("usage_", "")
-            row[f"count_{pretty}"] = mode_counts[c]
-            row[f"pct_{pretty}"] = 100.0 * mode_counts[c] / total_mode
-        pattern_rows.append(row)
-
-    df_pattern_global = pd.DataFrame(pattern_rows)
-    df_pattern_global.sort_values(
-        ["num_ontologies_using_pattern","avg_label_reuse_pct"],
-        ascending=[False, False],
-        inplace=True
-    )
-    df_pattern_global.to_csv(global_stats_dir / "pattern_reuse_stats.csv", index=False)
-
-    top_k = df_pattern_global.head(10)[[
-        "pattern_name",
-        "num_ontologies_using_pattern",
-        "avg_label_reuse_pct",
-        "max_label_reuse_pct"
-    ]]
-    write_latex_table(
-        top_k,
-        global_stats_dir / "pattern_reuse_top10.tex",
-        caption="Top 10 most frequently reused patterns (all pairs)",
-        label="tab:top-patterns-global"
-    )
-
-    # Global DL complexity stats (all pairs)
-    _write_dataset_stats(
-        subset_df=df,
-        ds_root=global_stats_dir / "dl_complexity_allpairs",
+    build_global_statistics_for_df(
+        df_source=df,
+        out_root=out_dir / "global_statistics",
         label_thresh=label_thresh,
         sim_backend=sim_backend,
         ngram=ngram,
         sbert=sbert,
         sbert_prefilter=sbert_prefilter,
-        hist_bins=hist_bins
+        hist_bins=hist_bins,
+        caption_suffix="(global)"
     )
-    
-    # -------------------------------------------------------
-    # RQ3: Effect of pattern reuse on ontology complexity
-    # -------------------------------------------------------
-    try:
-        constructs_path = global_stats_dir / "dl_complexity_allpairs" / "statistics" / "constructs_presence_per_ontology.csv"
-        if constructs_path.exists():
-            df_constructs_global = pd.read_csv(constructs_path)
-
-            # Attach reuse info (any_reuse_label) to each ontology
-            df_complex_reuse = df_constructs_global.merge(
-                df_reuse_onts[["repo", "ontology_file", "any_reuse_label"]],
-                on=["repo", "ontology_file"],
-                how="left"
-            )
-            df_complex_reuse["any_reuse_label"] = df_complex_reuse["any_reuse_label"].fillna(0).astype(int)
-
-            no_reuse = df_complex_reuse[df_complex_reuse["any_reuse_label"] == 0]
-            with_reuse = df_complex_reuse[df_complex_reuse["any_reuse_label"] == 1]
-
-            def _safe_mean(series):
-                return float(pd.to_numeric(series, errors="coerce").dropna().mean()) if not series.empty else 0.0
-
-            avg_dl_no   = _safe_mean(no_reuse["dl_complexity_score"])
-            avg_dl_with = _safe_mean(with_reuse["dl_complexity_score"])
-            avg_ax_no   = _safe_mean(no_reuse["n_axioms"])
-            avg_ax_with = _safe_mean(with_reuse["n_axioms"])
-
-            def _delta_pct(base, new):
-                return (100.0 * (new - base) / base) if base > 0 else 0.0
-
-            delta_dl = _delta_pct(avg_dl_no,   avg_dl_with)
-            delta_ax = _delta_pct(avg_ax_no,   avg_ax_with)
-
-            # Expressivity shift: most frequent expressivity w/o vs w/ reuse
-            expr_no   = no_reuse["expressivity"].mode().iloc[0] if not no_reuse.empty else "N/A"
-            expr_with = with_reuse["expressivity"].mode().iloc[0] if not with_reuse.empty else "N/A"
-            expr_shift = f"{expr_no} → {expr_with}"
-
-            # Main RQ3 table (global) – formatted for your paper
-            rq3_rows = [
-                {
-                    "Complexity metric": "Avg. DL constructors",
-                    "Ontologies w/o reuse": round(avg_dl_no, 2),
-                    "Ontologies w/ reuse": round(avg_dl_with, 2),
-                    "Δ (%)": f"{delta_dl:+.1f}%",
-                },
-                {
-                    "Complexity metric": "Avg. axioms",
-                    "Ontologies w/o reuse": round(avg_ax_no, 1),
-                    "Ontologies w/ reuse": round(avg_ax_with, 1),
-                    "Δ (%)": f"{delta_ax:+.1f}%",
-                },
-                {
-                    "Complexity metric": "Expressivity level",
-                    "Ontologies w/o reuse": expr_no,
-                    "Ontologies w/ reuse": expr_with,
-                    "Δ (%)": expr_shift,
-                },
-            ]
-            df_rq3 = pd.DataFrame(rq3_rows)
-            df_rq3.to_csv(global_stats_dir / "rq3_effect_pattern_reuse_complexity.csv", index=False)
-
-            write_latex_table(
-                df_rq3,
-                global_stats_dir / "rq3_effect_pattern_reuse_complexity.tex",
-                caption="Effect of pattern reuse on ontology complexity (global)",
-                label="tab:rq3-complexity-effect-global"
-            )
-
-            # Expressivity distribution w/ vs w/o reuse (more detailed than the 1-row shift)
-            if "expressivity" in df_complex_reuse.columns:
-                expr_counts = []
-                for expr_val, grp in df_complex_reuse.groupby("expressivity"):
-                    expr_val = expr_val if isinstance(expr_val, str) else "UNKNOWN"
-                    total = len(grp)
-                    with_r = int(grp["any_reuse_label"].sum())
-                    without_r = total - with_r
-                    pct_with = 100.0 * with_r / total if total else 0.0
-                    pct_without = 100.0 * without_r / total if total else 0.0
-                    expr_counts.append({
-                        "expressivity": expr_val,
-                        "num_ontologies": total,
-                        "num_with_reuse": with_r,
-                        "num_without_reuse": without_r,
-                        "pct_with_reuse": pct_with,
-                        "pct_without_reuse": pct_without,
-                    })
-                df_expr_reuse = pd.DataFrame(expr_counts)
-                df_expr_reuse.to_csv(global_stats_dir / "rq3_expressivity_vs_reuse.csv", index=False)
-
-                write_latex_table(
-                    df_expr_reuse,
-                    global_stats_dir / "rq3_expressivity_vs_reuse.tex",
-                    caption="Distribution of DL expressivity for ontologies with and without pattern reuse",
-                    label="tab:rq3-expressivity-vs-reuse"
-                )
-
-            # "Where does complexity come from?" – construct-level differences
-            construct_diff_rows = []
-            for c in CONSTRUCT_NAMES:
-                if c not in df_complex_reuse.columns:
-                    continue
-                p_no = float(no_reuse[c].mean()) if not no_reuse.empty else 0.0
-                p_with = float(with_reuse[c].mean()) if not with_reuse.empty else 0.0
-                construct_diff_rows.append({
-                    "construct": c,
-                    "pct_ontologies_without_reuse": 100.0 * p_no,
-                    "pct_ontologies_with_reuse": 100.0 * p_with,
-                    "delta_percentage_points": 100.0 * (p_with - p_no),
-                })
-
-            df_construct_diff = pd.DataFrame(construct_diff_rows)
-            df_construct_diff.sort_values(
-                "delta_percentage_points",
-                ascending=False,
-                inplace=True
-            )
-            df_construct_diff.to_csv(global_stats_dir / "rq3_construct_differences.csv", index=False)
-
-            top_k_constructs = df_construct_diff.head(10)
-            write_latex_table(
-                top_k_constructs,
-                global_stats_dir / "rq3_construct_differences_top10.tex",
-                caption="Top DL constructs whose presence increases most in ontologies with pattern reuse",
-                label="tab:rq3-construct-differences"
-            )
-    except Exception as e:
-        print(f"[WARN] Could not compute RQ3 complexity-effect tables: {e}", file=sys.stderr)
-
-    
-    # -------------------------------------------------------
-    # Per (ontology, pattern) pair: complexity + expressivity
-    # with full DL construct flags for ontology and pattern
-    # -------------------------------------------------------
-    try:
-        stats_root = global_stats_dir / "dl_complexity_allpairs" / "statistics"
-        ont_path = stats_root / "constructs_presence_per_ontology.csv"
-        pat_path = stats_root / "constructs_presence_per_pattern.csv"
-
-        if ont_path.exists() and pat_path.exists():
-            df_ont_full = pd.read_csv(ont_path)
-            df_pat_full = pd.read_csv(pat_path)
-
-            # Identify construct columns as all boolean columns except the fixed metadata ones
-            ont_fixed = {"repo", "ontology_file", "n_axioms", "expressivity", "dl_complexity_score"}
-            pat_fixed = {"repo", "pattern_file", "pattern_name", "expressivity", "dl_complexity_score"}
-
-            ont_construct_cols = [
-                c for c in df_ont_full.columns
-                if c not in ont_fixed and df_ont_full[c].dtype == bool
-            ]
-            pat_construct_cols = [
-                c for c in df_pat_full.columns
-                if c not in pat_fixed and df_pat_full[c].dtype == bool
-            ]
-
-            # Use the intersection of constructs present on both sides
-            constructs = sorted(set(ont_construct_cols) & set(pat_construct_cols))
-
-            # --- Build ontology-side frame with prefixed columns ---
-            onto_cols = {
-                "n_axioms": "onto_n_axioms",
-                "expressivity": "onto_expressivity",
-                "dl_complexity_score": "onto_dl_complexity",
-            }
-            onto_cols.update({c: f"onto_{c}" for c in constructs})
-
-            df_ont = df_ont_full[
-                ["repo", "ontology_file", "n_axioms", "expressivity", "dl_complexity_score"] + constructs
-            ].rename(columns=onto_cols)
-
-            # --- Build pattern-side frame with prefixed columns ---
-            pat_cols = {
-                "expressivity": "pattern_expressivity",
-                "dl_complexity_score": "pattern_dl_complexity",
-            }
-            pat_cols.update({c: f"pattern_{c}" for c in constructs})
-
-            df_pat = df_pat_full[
-                ["repo", "pattern_file", "pattern_name", "expressivity", "dl_complexity_score"] + constructs
-            ].rename(columns=pat_cols)
-
-            # --- Merge into the master pair DataFrame `df` ---
-            df_pairs = df.merge(
-                df_ont,
-                on=["repo", "ontology_file"],
-                how="left"
-            ).merge(
-                df_pat,
-                on=["repo", "pattern_file", "pattern_name"],
-                how="left"
-            )
-
-            # Save the full per-pair matrix
-            out_pairs = global_stats_dir / "complexity_expressivity_per_pair.csv"
-            df_pairs.to_csv(out_pairs, index=False)
-
-            # ---------------------------------------------------
-            # Summary: averages + per-construct "averages"
-            # (fractions of pairs where construct is used)
-            # ---------------------------------------------------
-            agg_rows = []
-
-            def _safe_mean(series):
-                return float(pd.to_numeric(series, errors="coerce").dropna().mean()) if not series.empty else 0.0
-
-            avg_onto_dl    = _safe_mean(df_pairs["onto_dl_complexity"])
-            avg_pattern_dl = _safe_mean(df_pairs["pattern_dl_complexity"])
-            avg_onto_ax    = _safe_mean(df_pairs["onto_n_axioms"])
-
-            agg_rows.append({
-                "Metric": "Avg. ontology DL constructors (per pair)",
-                "Value": avg_onto_dl,
-            })
-            agg_rows.append({
-                "Metric": "Avg. pattern DL constructors (per pair)",
-                "Value": avg_pattern_dl,
-            })
-            agg_rows.append({
-                "Metric": "Avg. ontology axioms (per pair)",
-                "Value": avg_onto_ax,
-            })
-
-            # Per-construct: % of pairs where ontology / pattern uses the construct
-            for c in constructs:
-                onto_col = f"onto_{c}"
-                patt_col = f"pattern_{c}"
-
-                if onto_col in df_pairs.columns:
-                    onto_frac = df_pairs[onto_col].fillna(False).astype(bool).mean()
-                    agg_rows.append({
-                        "Metric": f"{c} (ontology side, % pairs)",
-                        "Value": 100.0 * onto_frac,
-                    })
-
-                if patt_col in df_pairs.columns:
-                    patt_frac = df_pairs[patt_col].fillna(False).astype(bool).mean()
-                    agg_rows.append({
-                        "Metric": f"{c} (pattern side, % pairs)",
-                        "Value": 100.0 * patt_frac,
-                    })
-
-            df_pairs_summary = pd.DataFrame(agg_rows)
-            df_pairs_summary.to_csv(
-                global_stats_dir / "complexity_expressivity_per_pair_summary.csv",
-                index=False
-            )
-
-            write_latex_table(
-                df_pairs_summary,
-                global_stats_dir / "complexity_expressivity_per_pair_summary.tex",
-                caption=(
-                    "Average logical complexity of ontologies and patterns per ontology–pattern pair, "
-                    "including per-construct percentages of pairs where each DL construct is used."
-                ),
-                label="tab:complexity-per-pair-summary"
-            )
-
-            # ---------------------------------------------------
-            # Construct-level breakdown: where does complexity come from?
-            # For each construct, count:
-            #   - onto has it
-            #   - pattern has it
-            #   - only pattern (pattern=1, onto=0)
-            #   - only ontology (onto=1, pattern=0)
-            #   - both
-            # ---------------------------------------------------
-            summary_rows = []
-            total_pairs = len(df_pairs)
-
-            for c in constructs:
-                onto_col = f"onto_{c}"
-                patt_col = f"pattern_{c}"
-                if onto_col not in df_pairs.columns or patt_col not in df_pairs.columns:
-                    continue
-
-                onto_val = df_pairs[onto_col].fillna(False).astype(bool)
-                patt_val = df_pairs[patt_col].fillna(False).astype(bool)
-
-                has_onto = int(onto_val.sum())
-                has_pattern = int(patt_val.sum())
-                only_pattern = int((patt_val & ~onto_val).sum())
-                only_onto = int((onto_val & ~patt_val).sum())
-                both = int((onto_val & patt_val).sum())
-
-                summary_rows.append({
-                    "construct": c,
-                    "num_pairs_total": total_pairs,
-                    "num_pairs_onto_has": has_onto,
-                    "num_pairs_pattern_has": has_pattern,
-                    "num_pairs_pattern_only": only_pattern,
-                    "num_pairs_onto_only": only_onto,
-                    "num_pairs_both": both,
-                    "pct_pairs_onto_has": 100.0 * has_onto / total_pairs if total_pairs else 0.0,
-                    "pct_pairs_pattern_has": 100.0 * has_pattern / total_pairs if total_pairs else 0.0,
-                    "pct_pairs_pattern_only": 100.0 * only_pattern / total_pairs if total_pairs else 0.0,
-                    "pct_pairs_onto_only": 100.0 * only_onto / total_pairs if total_pairs else 0.0,
-                    "pct_pairs_both": 100.0 * both / total_pairs if total_pairs else 0.0,
-                })
-
-            df_construct_breakdown = pd.DataFrame(summary_rows)
-            df_construct_breakdown.to_csv(
-                global_stats_dir / "complexity_expressivity_construct_breakdown_per_pair.csv",
-                index=False
-            )
-
-            if not df_construct_breakdown.empty:
-                # Long LaTeX table: one row per construct
-                cols_for_tex = [
-                    "construct",
-                    "pct_pairs_onto_has",
-                    "pct_pairs_pattern_has",
-                    "pct_pairs_pattern_only",
-                    "pct_pairs_onto_only",
-                    "pct_pairs_both",
-                ]
-                df_tex = df_construct_breakdown[cols_for_tex]
-                write_latex_table(
-                    df_tex,
-                    global_stats_dir / "complexity_expressivity_construct_breakdown_per_pair.tex",
-                    caption=(
-                        "Per-construct breakdown of logical features in ontology–pattern pairs: "
-                        "how often a construct appears only in the ontology, only in the pattern, or in both."
-                    ),
-                    label="tab:construct-breakdown-per-pair"
-                )
-
-                # Wide CSV: one row, columns like ROLE_INVERSE_pct_pairs_pattern_only, etc.
-                wide_data = {}
-                for _, row in df_construct_breakdown.iterrows():
-                    c = row["construct"]
-                    for k, v in row.items():
-                        if k == "construct":
-                            continue
-                        col_name = f"{c}_{k}"
-                        wide_data[col_name] = v
-                df_wide = pd.DataFrame([wide_data])
-                df_wide.to_csv(
-                    global_stats_dir / "complexity_expressivity_construct_breakdown_per_pair_wide.csv",
-                    index=False
-                )
-
-    except Exception as e:
-        print(f"[WARN] Could not compute per-pair complexity/expressivity tables: {e}", file=sys.stderr)
-
-    # -------------------------------------------------------
-    # Per (ontology, pattern) pair: complexity + expressivity
-    # -------------------------------------------------------
-    try:
-        stats_root = global_stats_dir / "dl_complexity_allpairs" / "statistics"
-        ont_path = stats_root / "constructs_presence_per_ontology.csv"
-        pat_path = stats_root / "constructs_presence_per_pattern.csv"
-
-        if ont_path.exists() and pat_path.exists():
-            df_ont = pd.read_csv(ont_path)[
-                ["repo", "ontology_file", "n_axioms", "expressivity", "dl_complexity_score"]
-            ].rename(columns={
-                "n_axioms": "onto_n_axioms",
-                "expressivity": "onto_expressivity",
-                "dl_complexity_score": "onto_dl_complexity",
-            })
-
-            df_pat = pd.read_csv(pat_path)[
-                ["repo", "pattern_file", "pattern_name", "expressivity", "dl_complexity_score"]
-            ].rename(columns={
-                "expressivity": "pattern_expressivity",
-                "dl_complexity_score": "pattern_dl_complexity",
-            })
-
-            # df is the master all_pairs_metrics DataFrame in main()
-            df_pairs = df.merge(
-                df_ont,
-                on=["repo", "ontology_file"],
-                how="left"
-            ).merge(
-                df_pat,
-                on=["repo", "pattern_file", "pattern_name"],
-                how="left"
-            )
-
-            out_pairs = global_stats_dir / "complexity_expressivity_per_pair.csv"
-            df_pairs.to_csv(out_pairs, index=False)
-
-            # ---------------------------------------------------
-            # Summary: averages + per-construct "averages"
-            # (i.e., % of pairs where each construct is present)
-            # ---------------------------------------------------
-            agg_rows = []
-
-            def _safe_mean(series):
-                return float(pd.to_numeric(series, errors="coerce").dropna().mean()) if not series.empty else 0.0
-
-            # Overall DL scores and axioms
-            avg_onto_dl    = _safe_mean(df_pairs["onto_dl_complexity"])
-            avg_pattern_dl = _safe_mean(df_pairs["pattern_dl_complexity"])
-            avg_onto_ax    = _safe_mean(df_pairs["onto_n_axioms"])
-
-            agg_rows.append({
-                "Metric": "Avg. ontology DL constructors (per pair)",
-                "Value": avg_onto_dl,
-            })
-            agg_rows.append({
-                "Metric": "Avg. pattern DL constructors (per pair)",
-                "Value": avg_pattern_dl,
-            })
-            agg_rows.append({
-                "Metric": "Avg. ontology axioms (per pair)",
-                "Value": avg_onto_ax,
-            })
-
-            # Per-construct "averages" (fractions of pairs) for ontology and pattern
-            # `common_constructs` comes from earlier in this block where we built df_ont/df_pat
-            total_pairs = len(df_pairs) if len(df_pairs) > 0 else 1  # avoid div by zero
-
-            for c in common_constructs:
-                onto_col = f"onto_{c}"
-                patt_col = f"pattern_{c}"
-
-                if onto_col in df_pairs.columns:
-                    onto_frac = df_pairs[onto_col].fillna(False).astype(bool).mean()  # 0..1
-                    agg_rows.append({
-                        "Metric": f"{c} (ontology side, % pairs)",
-                        "Value": 100.0 * onto_frac,
-                    })
-
-                if patt_col in df_pairs.columns:
-                    patt_frac = df_pairs[patt_col].fillna(False).astype(bool).mean()
-                    agg_rows.append({
-                        "Metric": f"{c} (pattern side, % pairs)",
-                        "Value": 100.0 * patt_frac,
-                    })
-
-            df_pairs_summary = pd.DataFrame(agg_rows)
-            df_pairs_summary.to_csv(
-                global_stats_dir / "complexity_expressivity_per_pair_summary.csv",
-                index=False
-            )
-
-            write_latex_table(
-                df_pairs_summary,
-                global_stats_dir / "complexity_expressivity_per_pair_summary.tex",
-                caption=(
-                    "Average logical complexity of ontologies and patterns per ontology–pattern pair, "
-                    "including per-construct percentages of pairs where each DL construct is used."
-                ),
-                label="tab:complexity-per-pair-summary"
-            )
-
-
-    except Exception as e:
-        print(f"[WARN] Could not compute per-pair complexity/expressivity table: {e}", file=sys.stderr)
 
     # ---------------------------
     # Build datasets by thresholds
@@ -1960,168 +1865,21 @@ def main(base_dir: str,
             hist_bins=hist_bins
         )
 
-        # --------------------------------------------------------
-        # SUBSET-specific global_statistics (e.g., 100_exact/...)
-        # --------------------------------------------------------
-        subset_global_stats_dir = ds_root / "global_statistics"
-        subset_global_stats_dir.mkdir(parents=True, exist_ok=True)
-
-        # RQ1: extent of reuse per ontology (subset)
-        reuse_rows_sub = []
-        for repo, grp in subset.groupby("repo"):
-            onto_file = grp.iloc[0]["ontology_file"]
-            num_patterns = grp["pattern_name"].nunique()
-            num_patterns_reused_label = grp[grp["reused_total_label"] > 0]["pattern_name"].nunique()
-            num_patterns_reused_graph = grp[grp["reused_total_graph"] > 0]["pattern_name"].nunique()
-            max_label_reuse = float(grp["label_reuse_pct"].max())
-            avg_label_reuse = float(grp["label_reuse_pct"].mean())
-            any_reuse_label = bool(num_patterns_reused_label > 0)
-
-            reuse_rows_sub.append({
-                "repo": repo,
-                "ontology_file": onto_file,
-                "num_patterns": num_patterns,
-                "num_patterns_with_label_reuse": num_patterns_reused_label,
-                "num_patterns_with_graph_reuse": num_patterns_reused_graph,
-                "any_reuse_label": int(any_reuse_label),
-                "max_label_reuse_pct": max_label_reuse,
-                "avg_label_reuse_pct": avg_label_reuse,
-            })
-
-        df_reuse_onts_sub = pd.DataFrame(reuse_rows_sub)
-        df_reuse_onts_sub.to_csv(subset_global_stats_dir / "reuse_extent_per_ontology.csv", index=False)
-
-        if df_reuse_onts_sub.empty:
-            # No ontologies in this subset: write empty summary + skip pattern stats & DL stats
-            pd.DataFrame([{
-                "num_ontologies": 0,
-                "num_ontologies_with_any_pattern_reuse": 0,
-                "pct_ontologies_with_any_pattern_reuse": 0.0,
-                "avg_patterns_per_ontology": 0.0,
-                "avg_patterns_with_reuse_per_ontology": 0.0
-            }]).to_csv(subset_global_stats_dir / "reuse_extent_summary.csv", index=False)
-            # You can also skip DL complexity for this subset, or call _write_dataset_stats(subset=empty)
-            continue
-
-        num_onts_sub = len(df_reuse_onts_sub)
-        num_onts_with_reuse_sub = int(df_reuse_onts_sub["any_reuse_label"].sum()) if num_onts_sub else 0
-        pct_onts_with_reuse_sub = (100.0 * num_onts_with_reuse_sub / num_onts_sub) if num_onts_sub else 0.0
-        avg_patterns_per_ont_sub = float(df_reuse_onts_sub["num_patterns"].mean()) if num_onts_sub else 0.0
-        avg_patterns_with_reuse_sub = float(df_reuse_onts_sub["num_patterns_with_label_reuse"].mean()) if num_onts_sub else 0.0
-
-        df_reuse_summary_sub = pd.DataFrame([{
-            "num_ontologies": num_onts_sub,
-            "num_ontologies_with_any_pattern_reuse": num_onts_with_reuse_sub,
-            "pct_ontologies_with_any_pattern_reuse": pct_onts_with_reuse_sub,
-            "avg_patterns_per_ontology": avg_patterns_per_ont_sub,
-            "avg_patterns_with_reuse_per_ontology": avg_patterns_with_reuse_sub
-        }])
-        df_reuse_summary_sub.to_csv(subset_global_stats_dir / "reuse_extent_summary.csv", index=False)
-
-        write_latex_table(
-            df_reuse_summary_sub,
-            subset_global_stats_dir / "reuse_extent_summary.tex",
-            caption=f"Extent of ODP reuse across ontologies (subset ≥{P}%)",
-            label=f"tab:extent-reuse-{P}"
-        )
-
-        # RQ2: pattern-centric view (subset)
-        pattern_rows_sub = []
-        for pattern_name, grp in subset.groupby("pattern_name"):
-            num_pairs = len(grp)
-            num_ontologies_using_pattern = grp[grp["reused_total_label"] > 0]["repo"].nunique()
-            avg_label_reuse = float(grp["label_reuse_pct"].mean())
-            max_label_reuse = float(grp["label_reuse_pct"].max())
-
-            mode_counts_sub = {c: int(grp[c].sum()) for c in usage_cols}
-            total_mode_sub = sum(mode_counts_sub.values()) or 1
-            row_sub = {
-                "pattern_name": pattern_name,
-                "num_pairs": num_pairs,
-                "num_ontologies_using_pattern": num_ontologies_using_pattern,
-                "avg_label_reuse_pct": avg_label_reuse,
-                "max_label_reuse_pct": max_label_reuse,
-            }
-            for c in usage_cols:
-                pretty = c.replace("usage_", "")
-                row_sub[f"count_{pretty}"] = mode_counts_sub[c]
-                row_sub[f"pct_{pretty}"] = 100.0 * mode_counts_sub[c] / total_mode_sub
-            pattern_rows_sub.append(row_sub)
-
-        df_pattern_sub = pd.DataFrame(pattern_rows_sub)
-        if df_pattern_sub.empty:
-            df_pattern_sub.to_csv(subset_global_stats_dir / "pattern_reuse_stats.csv", index=False)
-        else:
-            df_pattern_sub.sort_values(
-                ["num_ontologies_using_pattern","avg_label_reuse_pct"],
-                ascending=[False, False],
-                inplace=True
-            )
-            df_pattern_sub.to_csv(subset_global_stats_dir / "pattern_reuse_stats.csv", index=False)
-
-            top_k_sub = df_pattern_sub.head(10)[[
-                "pattern_name",
-                "num_ontologies_using_pattern",
-                "avg_label_reuse_pct",
-                "max_label_reuse_pct"
-            ]]
-            write_latex_table(
-                top_k_sub,
-                subset_global_stats_dir / "pattern_reuse_top10.tex",
-                caption=f"Top 10 most frequently reused patterns (subset ≥{P}%)",
-                label=f"tab:top-patterns-{P}"
-            )
-
-        # DL complexity stats for this subset
-        _write_dataset_stats(
-            subset_df=subset,
-            ds_root=subset_global_stats_dir / "dl_complexity_allpairs",
+        # Subset-specific global_statistics, e.g. 100_exact/global_statistics
+        build_global_statistics_for_df(
+            df_source=subset,
+            out_root=ds_root / "global_statistics",
             label_thresh=label_thresh,
             sim_backend=sim_backend,
             ngram=ngram,
             sbert=sbert,
             sbert_prefilter=sbert_prefilter,
-            hist_bins=hist_bins
+            hist_bins=hist_bins,
+            caption_suffix=f"(subset ≥{P}%)"
         )
 
         print(f"[OK] Built dataset ≥{P}% ({sim_backend}) at: {ds_root}")
 
-    # Optional: build a graph-only 100% reuse dataset
-    if make_graph_100:
-        subset_g100 = df[df["reused_total_graph"] == df["pattern_total"]].copy()
-        ds_root_g = out_dir / "graph_100"
-        (ds_root_g / "ontology").mkdir(parents=True, exist_ok=True)
-        (ds_root_g / "patterns").mkdir(parents=True, exist_ok=True)
-
-        for r in subset_g100.itertuples():
-            onto_src = Path(r.ontology_file).resolve()
-            patt_src = Path(r.pattern_file).resolve()
-            onto_dst = ds_root_g / "ontology" / f"{Path(r.ontology_file).name}"
-            patt_dst = ds_root_g / "patterns" / f"{Path(r.pattern_file).name}"
-
-            if materialize_mode == "copy":
-                _copy_file(onto_src, onto_dst)
-                _copy_file(patt_src, patt_dst)
-            else:
-                if not _safe_symlink(onto_src, onto_dst):
-                    _copy_file(onto_src, onto_dst)
-                if not _safe_symlink(patt_src, patt_dst):
-                    _copy_file(patt_src, patt_dst)
-
-        subset_g100.to_csv(ds_root_g / "dataset_manifest.csv", index=False)
-
-        _write_dataset_stats(
-            subset_df=subset_g100,
-            ds_root=ds_root_g,
-            label_thresh=label_thresh,
-            sim_backend=sim_backend,
-            ngram=ngram,
-            sbert=sbert,
-            sbert_prefilter=sbert_prefilter,
-            hist_bins=hist_bins
-        )
-        print(f"[OK] Built dataset graph_100 (graph-only 100% reuse) at: {ds_root_g}")
-
 
     # Optional: build a graph-only 100% reuse dataset
     if make_graph_100:
@@ -2157,7 +1915,21 @@ def main(base_dir: str,
             sbert_prefilter=sbert_prefilter,
             hist_bins=hist_bins
         )
+        
+        build_global_statistics_for_df(
+            df_source=subset_g100,
+            out_root=ds_root_g / "global_statistics",
+            label_thresh=label_thresh,
+            sim_backend=sim_backend,
+            ngram=ngram,
+            sbert=sbert,
+            sbert_prefilter=sbert_prefilter,
+            hist_bins=hist_bins,
+            caption_suffix="(graph_100)"
+        )
+        
         print(f"[OK] Built dataset graph_100 (graph-only 100% reuse) at: {ds_root_g}")
+
 
 # ----------------------------
 # CLI
