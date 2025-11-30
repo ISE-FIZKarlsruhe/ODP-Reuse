@@ -1060,17 +1060,15 @@ def _write_dataset_stats(subset_df: pd.DataFrame,
             stats_dir / "constructs_presence_per_pattern.csv", index=False
         )
 
-        # === FIX: AGGREGATE BY pattern_name (not pattern_file) ===
+        # === AGGREGATE BY pattern_name FOR CONSTRUCT SUMMARY (already fixed) ===
         grp = df_pattern_constructs.groupby("pattern_name")
         num_patterns = grp.ngroups  # number of unique pattern names
 
         construct_summary_patts = []
         for c in CONSTRUCT_NAMES:
-            # A pattern_name has the construct if ANY of its files have it
-            pattern_has_c = grp[c].max()    # Bool series: one per pattern name
-            count_c = int(pattern_has_c.sum())     # Number of pattern names with this construct
+            pattern_has_c = grp[c].max()    # Bool per pattern
+            count_c = int(pattern_has_c.sum())
             pct_c = (100.0 * count_c / num_patterns) if num_patterns else 0.0
-
             construct_summary_patts.append({
                 "construct": c,
                 "num_patterns": count_c,
@@ -1089,13 +1087,29 @@ def _write_dataset_stats(subset_df: pd.DataFrame,
             label="tab:dl-constructs-patterns"
         )
 
-        # Expressivity distribution for patterns
+        # === NEW: EXPRESSIVITY DISTRIBUTION OVER UNIQUE PATTERNS ===
         if "expressivity" in df_pattern_constructs.columns:
-            expr_counts_p = df_pattern_constructs["expressivity"].fillna("UNKNOWN").value_counts().reset_index()
+            # For each pattern_name, keep the row with the highest DL complexity score
+            patt_expr = (
+                df_pattern_constructs
+                .sort_values("dl_complexity_score", ascending=False)
+                .groupby("pattern_name", as_index=False)
+                .first()[["pattern_name", "expressivity"]]
+            )
+
+            expr_counts_p = (
+                patt_expr["expressivity"]
+                .fillna("UNKNOWN")
+                .value_counts()
+                .reset_index()
+            )
             expr_counts_p.columns = ["expressivity", "num_patterns"]
             total_patts = expr_counts_p["num_patterns"].sum()
             expr_counts_p["pct_patterns"] = 100.0 * expr_counts_p["num_patterns"] / total_patts
-            expr_counts_p.to_csv(stats_dir / "expressivity_distribution_patterns.csv", index=False)
+
+            expr_counts_p.to_csv(
+                stats_dir / "expressivity_distribution_patterns.csv", index=False
+            )
 
             write_latex_table(
                 expr_counts_p,
@@ -1268,7 +1282,7 @@ def build_global_statistics_for_df(df_source: pd.DataFrame,
         num_patterns_reused_graph = grp[grp["reused_total_graph"] > 0]["pattern_name"].nunique()
         max_label_reuse = float(grp["label_reuse_pct"].max())
         avg_label_reuse = float(grp["label_reuse_pct"].mean())
-        any_reuse_label = bool(num_patterns_reused_label > 0)
+        any_reuse_label = bool(num_patterns_reused_graph > 0)
 
         reuse_rows.append({
             "repo": repo,
@@ -1883,16 +1897,29 @@ def main(base_dir: str,
 
     # Optional: build a graph-only 100% reuse dataset
     if make_graph_100:
-        subset_g100 = df[df["reused_total_graph"] == df["pattern_total"]].copy()
+        # Only patterns with at least one entity and complete graph reuse
+        mask_full_graph_reuse = (
+            (df["pattern_total"] > 0) &
+            (df["reused_total_graph"] == df["pattern_total"])
+            # optionally also require real usage (not just import):
+            # & (df["usage_import_only"] == 0)
+        )
+        subset_g100 = df[mask_full_graph_reuse].copy()
+
         ds_root_g = out_dir / "graph_100"
+
+        # --- IMPORTANT: reset graph_100 so ontology/ and patterns/ match the new subset ---
+        if ds_root_g.exists():
+            shutil.rmtree(ds_root_g)
+
         (ds_root_g / "ontology").mkdir(parents=True, exist_ok=True)
         (ds_root_g / "patterns").mkdir(parents=True, exist_ok=True)
 
         for r in subset_g100.itertuples():
             onto_src = Path(r.ontology_file).resolve()
             patt_src = Path(r.pattern_file).resolve()
-            onto_dst = ds_root_g / "ontology" / f"{Path(r.ontology_file).name}"
-            patt_dst = ds_root_g / "patterns" / f"{Path(r.pattern_file).name}"
+            onto_dst = ds_root_g / "ontology" / Path(r.ontology_file).name
+            patt_dst = ds_root_g / "patterns" / Path(r.pattern_file).name
 
             if materialize_mode == "copy":
                 _copy_file(onto_src, onto_dst)
@@ -1903,8 +1930,10 @@ def main(base_dir: str,
                 if not _safe_symlink(patt_src, patt_dst):
                     _copy_file(patt_src, patt_dst)
 
+        # manifest for the graph_100 dataset
         subset_g100.to_csv(ds_root_g / "dataset_manifest.csv", index=False)
 
+        # stats for graph_100
         _write_dataset_stats(
             subset_df=subset_g100,
             ds_root=ds_root_g,
@@ -1915,7 +1944,7 @@ def main(base_dir: str,
             sbert_prefilter=sbert_prefilter,
             hist_bins=hist_bins
         )
-        
+
         build_global_statistics_for_df(
             df_source=subset_g100,
             out_root=ds_root_g / "global_statistics",
@@ -1927,9 +1956,8 @@ def main(base_dir: str,
             hist_bins=hist_bins,
             caption_suffix="(graph_100)"
         )
-        
-        print(f"[OK] Built dataset graph_100 (graph-only 100% reuse) at: {ds_root_g}")
 
+        print(f"[OK] Built dataset graph_100 (graph-only 100% reuse) at: {ds_root_g}")
 
 # ----------------------------
 # CLI
