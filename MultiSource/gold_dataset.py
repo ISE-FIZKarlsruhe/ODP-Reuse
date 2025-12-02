@@ -1699,7 +1699,6 @@ def build_global_statistics_for_df(df_source: pd.DataFrame,
 # ----------------------------
 # Main
 # ----------------------------
-
 def main(base_dir: str,
          out_dir: Path,
          out_csv: Path,
@@ -1714,7 +1713,9 @@ def main(base_dir: str,
          materialize_mode: str,
          dataset_percents: List[int],
          hist_bins: List[int],
-         make_graph_100: bool):
+         make_graph_100: bool,
+         graph_dataset_percents: List[int]):
+
 
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1895,69 +1896,77 @@ def main(base_dir: str,
         print(f"[OK] Built dataset ≥{P}% ({sim_backend}) at: {ds_root}")
 
 
-    # Optional: build a graph-only 100% reuse dataset
-    if make_graph_100:
-        # Only patterns with at least one entity and complete graph reuse
-        mask_full_graph_reuse = (
-            (df["pattern_total"] > 0) &
-            (df["reused_total_graph"] == df["pattern_total"])
-            # optionally also require real usage (not just import):
-            # & (df["usage_import_only"] == 0)
-        )
-        subset_g100 = df[mask_full_graph_reuse].copy()
+        # Optional: build graph_X datasets based on coverage_graph (graph reuse %)
+    if make_graph_100 or graph_dataset_percents:
+        # Backwards compatibility: if only --make-graph-100 is used, build just graph_100
+        if not graph_dataset_percents and make_graph_100:
+            graph_thresholds = [100]
+        else:
+            # If both are given and 100 is included, that's fine; we'll deduplicate.
+            graph_thresholds = sorted(set(graph_dataset_percents))
 
-        ds_root_g = out_dir / "graph_100"
+        for G in graph_thresholds:
+            # coverage_graph = reused_total_graph / pattern_total
+            mask = (
+                (df["pattern_total"] > 0) &
+                (df["coverage_graph"] * 100.0 >= G)
+                # you could also add: & (df["usage_import_only"] == 0)
+            )
+            subset_g = df[mask].copy()
 
-        # --- IMPORTANT: reset graph_100 so ontology/ and patterns/ match the new subset ---
-        if ds_root_g.exists():
-            shutil.rmtree(ds_root_g)
+            ds_root_g = out_dir / f"graph_{G}"
 
-        (ds_root_g / "ontology").mkdir(parents=True, exist_ok=True)
-        (ds_root_g / "patterns").mkdir(parents=True, exist_ok=True)
+            # Reset the folder so ontology/ and patterns/ match the new subset exactly
+            if ds_root_g.exists():
+                shutil.rmtree(ds_root_g)
 
-        for r in subset_g100.itertuples():
-            onto_src = Path(r.ontology_file).resolve()
-            patt_src = Path(r.pattern_file).resolve()
-            onto_dst = ds_root_g / "ontology" / Path(r.ontology_file).name
-            patt_dst = ds_root_g / "patterns" / Path(r.pattern_file).name
+            (ds_root_g / "ontology").mkdir(parents=True, exist_ok=True)
+            (ds_root_g / "patterns").mkdir(parents=True, exist_ok=True)
 
-            if materialize_mode == "copy":
-                _copy_file(onto_src, onto_dst)
-                _copy_file(patt_src, patt_dst)
-            else:
-                if not _safe_symlink(onto_src, onto_dst):
+            for r in subset_g.itertuples():
+                onto_src = Path(r.ontology_file).resolve()
+                patt_src = Path(r.pattern_file).resolve()
+                onto_dst = ds_root_g / "ontology" / Path(r.ontology_file).name
+                patt_dst = ds_root_g / "patterns" / Path(r.pattern_file).name
+
+                if materialize_mode == "copy":
                     _copy_file(onto_src, onto_dst)
-                if not _safe_symlink(patt_src, patt_dst):
                     _copy_file(patt_src, patt_dst)
+                else:
+                    if not _safe_symlink(onto_src, onto_dst):
+                        _copy_file(onto_src, onto_dst)
+                    if not _safe_symlink(patt_src, patt_dst):
+                        _copy_file(patt_src, patt_dst)
 
-        # manifest for the graph_100 dataset
-        subset_g100.to_csv(ds_root_g / "dataset_manifest.csv", index=False)
+            # manifest for this graph_X dataset
+            subset_g.to_csv(ds_root_g / "dataset_manifest.csv", index=False)
 
-        # stats for graph_100
-        _write_dataset_stats(
-            subset_df=subset_g100,
-            ds_root=ds_root_g,
-            label_thresh=label_thresh,
-            sim_backend=sim_backend,
-            ngram=ngram,
-            sbert=sbert,
-            sbert_prefilter=sbert_prefilter,
-            hist_bins=hist_bins
-        )
+            # stats for graph_X
+            _write_dataset_stats(
+                subset_df=subset_g,
+                ds_root=ds_root_g,
+                label_thresh=label_thresh,
+                sim_backend=sim_backend,
+                ngram=ngram,
+                sbert=sbert,
+                sbert_prefilter=sbert_prefilter,
+                hist_bins=hist_bins
+            )
 
-        build_global_statistics_for_df(
-            df_source=subset_g100,
-            out_root=ds_root_g / "global_statistics",
-            label_thresh=label_thresh,
-            sim_backend=sim_backend,
-            ngram=ngram,
-            sbert=sbert,
-            sbert_prefilter=sbert_prefilter,
-            hist_bins=hist_bins,
-            caption_suffix="(graph_100)"
-        )
+            build_global_statistics_for_df(
+                df_source=subset_g,
+                out_root=ds_root_g / "global_statistics",
+                label_thresh=label_thresh,
+                sim_backend=sim_backend,
+                ngram=ngram,
+                sbert=sbert,
+                sbert_prefilter=sbert_prefilter,
+                hist_bins=hist_bins,
+                caption_suffix=f"(graph_{G})"
+            )
 
-        print(f"[OK] Built dataset graph_100 (graph-only 100% reuse) at: {ds_root_g}")
+            print(f"[OK] Built dataset graph_{G} (coverage_graph ≥ {G}%) at: {ds_root_g}")
+
 
 # ----------------------------
 # CLI
@@ -1993,6 +2002,9 @@ if __name__ == "__main__":
                     help="Comma-separated integer bin edges for histogram CSVs, e.g., '0,1,2,5,10,20,50'.")
     ap.add_argument("--make-graph-100", action="store_true",
                     help="Also materialize a graph-only dataset where coverage_graph == 1.0 into <out-dir>/graph_100/.")
+    ap.add_argument("--graph-dataset-percents", default="",
+                    help="Comma-separated graph reuse % thresholds (based on coverage_graph), e.g. '100,80,20'. "
+                         "If empty, only graph_100 is created when --make-graph-100 is used.")
 
     args = ap.parse_args()
 
@@ -2009,8 +2021,11 @@ if __name__ == "__main__":
     skip_set = {s.strip().lower() for s in args.skip_name.split(",") if s.strip()}
     dataset_percents = [int(p.strip()) for p in args.dataset_percents.split(",") if p.strip()]
     hist_bins = [int(b.strip()) for b in args.hist_bins.split(",") if b.strip()]
+    graph_dataset_percents = [int(p.strip()) for p in args.graph_dataset_percents.split(",") if p.strip()]
+
     if len(hist_bins) < 2:
         hist_bins = DEFAULT_HIST_BINS
+
 
     main(
         base_dir=base_dir,
@@ -2028,5 +2043,5 @@ if __name__ == "__main__":
         dataset_percents=dataset_percents,
         hist_bins=hist_bins,
         make_graph_100=bool(args.make_graph_100),
+        graph_dataset_percents=graph_dataset_percents,
     )
-# 
