@@ -1,0 +1,72 @@
+nohup: ignoring input
+[WARN] Could not parse pattern: OBO/uberon/patterns/anatomical_wall.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/endochondral_bone.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/gland_acinus.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/gland_duct.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/innervates_branching.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/luminal_space_of.owl
+[OK] Wrote OBO_out/all_pairs_metrics.csv (976 rows)
+[OK] Built dataset ≥100% (exact) at: OBO_out/100_exact
+[WARN] Could not parse pattern: Ontologies_reusingODPs/DMRO-AgentParticipantRole/patterns/ParticipantRole.owl
+[WARN] No ontology in: Ontologies_reusingODPs/cco
+[WARN] Could not parse ontology: Ontologies_reusingODPs/demkg-edit/demkg-edit.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/ssn/patterns/sso.ttl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/anatomical_wall.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/endochondral_bone.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/gland_acinus.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/gland_duct.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/innervates_branching.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/luminal_space_of.owl
+[OK] Wrote Ontologies_reusingODPs_out2/all_pairs_metrics.csv (1142 rows)
+[OK] Built dataset ≥100% (exact) at: Ontologies_reusingODPs_out2/100_exact
+[WARN] Could not parse pattern: noOBO/DMRO-AgentParticipantRole/patterns/ParticipantRole.owl
+[WARN] No ontology in: noOBO/cco
+[WARN] Could not parse ontology: noOBO/demkg-edit/demkg-edit.owl
+[WARN] Could not parse pattern: noOBO/ssn/patterns/sso.ttl
+[OK] Wrote noOBO_out/all_pairs_metrics.csv (166 rows)
+[OK] Built dataset ≥100% (exact) at: noOBO_out/100_exact
+[WARN] Could not parse pattern: OBO/uberon/patterns/anatomical_wall.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/endochondral_bone.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/gland_acinus.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/gland_duct.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/innervates_branching.owl
+[WARN] Could not parse pattern: OBO/uberon/patterns/luminal_space_of.owl
+[OK] Wrote OBO_out/all_pairs_metrics.csv (976 rows)
+[OK] Built dataset ≥100% (exact) at: OBO_out/100_exact
+[OK] Built dataset graph_100 (graph-only 100% reuse) at: OBO_out/graph_100
+[OK] Built dataset graph_100 (graph-only 100% reuse) at: OBO_out/graph_100
+[WARN] Could not parse pattern: Ontologies_reusingODPs/DMRO-AgentParticipantRole/patterns/ParticipantRole.owl
+[WARN] No ontology in: Ontologies_reusingODPs/cco
+[WARN] Could not parse ontology: Ontologies_reusingODPs/demkg-edit/demkg-edit.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/ssn/patterns/sso.ttl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/anatomical_wall.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/endochondral_bone.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/gland_acinus.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/gland_duct.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/innervates_branching.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/luminal_space_of.owl
+[OK] Wrote Ontologies_reusingODPs_out2/all_pairs_metrics.csv (1142 rows)
+[OK] Built dataset ≥100% (exact) at: Ontologies_reusingODPs_out2/100_exact
+[OK] Built dataset graph_100 (graph-only 100% reuse) at: Ontologies_reusingODPs_out2/graph_100
+[OK] Built dataset graph_100 (graph-only 100% reuse) at: Ontologies_reusingODPs_out2/graph_100
+[WARN] Could not parse pattern: noOBO/DMRO-AgentParticipantRole/patterns/ParticipantRole.owl
+[WARN] No ontology in: noOBO/cco
+[WARN] Could not parse ontology: noOBO/demkg-edit/demkg-edit.owl
+[WARN] Could not parse pattern: noOBO/ssn/patterns/sso.ttl
+[OK] Wrote noOBO_out/all_pairs_metrics.csv (166 rows)
+[OK] Built dataset ≥100% (exact) at: noOBO_out/100_exact
+[OK] Built dataset graph_100 (graph-only 100% reuse) at: noOBO_out/graph_100
+[OK] Built dataset graph_100 (graph-only 100% reuse) at: noOBO_out/graph_100
+[WARN] Could not parse pattern: Ontologies_reusingODPs/DMRO-AgentParticipantRole/patterns/ParticipantRole.owl
+[WARN] No ontology in: Ontologies_reusingODPs/cco
+[WARN] Could not parse ontology: Ontologies_reusingODPs/demkg-edit/demkg-edit.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/ssn/patterns/sso.ttl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/anatomical_wall.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/endochondral_bone.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/gland_acinus.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/gland_duct.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/innervates_branching.owl
+[WARN] Could not parse pattern: Ontologies_reusingODPs/uberon/patterns/luminal_space_of.owl
+[OK] Wrote Ontologies_reusingODPs_out3/all_pairs_metrics.csv (1142 rows)
+[OK] Built dataset ≥100% (exact) at: Ontologies_reusingODPs_out3/100_exact
+./run.sh: line 34: unexpected EOF while looking for matching `"'
