@@ -1,0 +1,17 @@
+ontology_id,ontology_dir,pattern,pattern_file,n_pattern_entities,n_reused_entities,coverage_pct,complete_reuse,n_label_entities
+ComponencyPattern,../../corpus/noOBO/ComponencyPattern,partof,../../corpus/noOBO/ComponencyPattern/patterns/partof.owl,2,2,100.0,1,0
+ObjectWithStates,../../corpus/noOBO/ObjectWithStates,set,../../corpus/noOBO/ObjectWithStates/patterns/set.owl,4,2,50.0,0,0
+ObjectWithStates,../../corpus/noOBO/ObjectWithStates,situation,../../corpus/noOBO/ObjectWithStates/patterns/situation.owl,3,3,100.0,1,0
+pso,../../corpus/noOBO/pso,participation,../../corpus/noOBO/pso/patterns/participation.owl,4,2,50.0,0,0
+pso,../../corpus/noOBO/pso,timeindexedsituation,../../corpus/noOBO/pso/patterns/timeindexedsituation.owl,9,5,55.56,0,0
+pso,../../corpus/noOBO/pso,timeinterval,../../corpus/noOBO/pso/patterns/timeinterval.owl,4,4,100.0,1,0
+pwo,../../corpus/noOBO/pwo,basicplan,../../corpus/noOBO/pwo/patterns/basicplan.owl,29,6,20.69,0,0
+pwo,../../corpus/noOBO/pwo,controlflow,../../corpus/noOBO/pwo/patterns/controlflow.owl,23,7,30.43,0,0
+pwo,../../corpus/noOBO/pwo,participation,../../corpus/noOBO/pwo/patterns/participation.owl,4,4,100.0,1,0
+pwo,../../corpus/noOBO/pwo,sequence,../../corpus/noOBO/pwo/patterns/sequence.owl,4,3,75.0,0,0
+pwo,../../corpus/noOBO/pwo,timeindexedsituation,../../corpus/noOBO/pwo/patterns/timeindexedsituation.owl,9,7,77.78,0,0
+pwo,../../corpus/noOBO/pwo,timeinterval,../../corpus/noOBO/pwo/patterns/timeinterval.owl,4,2,50.0,0,0
+timeindexedclassificationPattern,../../corpus/noOBO/timeindexedclassificationPattern,countingas,../../corpus/noOBO/timeindexedclassificationPattern/patterns/countingas.owl,5,5,100.0,1,0
+timeindexedclassificationPattern,../../corpus/noOBO/timeindexedclassificationPattern,timeindexedsituationPattern,../../corpus/noOBO/timeindexedclassificationPattern/patterns/timeindexedsituationPattern.owl,9,6,66.67,0,0
+timeindexedsituationPattern,../../corpus/noOBO/timeindexedsituationPattern,situation,../../corpus/noOBO/timeindexedsituationPattern/patterns/situation.owl,3,3,100.0,1,0
+timeindexedsituationPattern,../../corpus/noOBO/timeindexedsituationPattern,timeinterval,../../corpus/noOBO/timeindexedsituationPattern/patterns/timeinterval.owl,4,1,25.0,0,0

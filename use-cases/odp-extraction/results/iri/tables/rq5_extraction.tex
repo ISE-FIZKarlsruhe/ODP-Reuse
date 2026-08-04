@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\small
+\caption{RQ5: automatic ODP extraction on the quality-gated complete-reuse subset. Entity-level precision/recall/$F_1$, macro-averaged over ontologies. \textsc{oracle} selects clustering hyper-parameters by argmax $F_1$ against the ground truth (an upper bound, and what prior work reported); \textsc{unsup.} selects them by silhouette without the ground truth. The gap is the contribution of oracle model selection.}
+\label{tab:rq5_extraction}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{ll|l|rrr|rrr|r}
+\toprule
+\textbf{Dataset} & \textbf{Model} & \textbf{Clust.} & \multicolumn{3}{c|}{\textsc{oracle}} & \multicolumn{3}{c|}{\textsc{unsup.}} & $\Delta F_1$ \\
+ & & & P & R & $F_1$ & P & R & $F_1$ & \\
+\midrule
+GitHub & OWL2Vec* & K-Means & 0.428 & 0.767 & 0.453 & 0.285 & 0.749 & 0.321 & 0.132 \\
+GitHub & OWL2Vec* & HDBSCAN & 0.369 & 0.551 & 0.358 & 0.253 & 0.428 & 0.243 & 0.115 \\
+GitHub & RDF2Vec & K-Means & 0.440 & 0.775 & 0.468 & 0.259 & 0.761 & 0.300 & 0.167 \\
+GitHub & RDF2Vec & HDBSCAN & 0.365 & 0.526 & 0.348 & 0.264 & 0.435 & 0.259 & 0.089 \\
+Paper \& Repo & OWL2Vec* & K-Means & 0.615 & 0.657 & 0.541 & 0.477 & 0.621 & 0.448 & 0.092 \\
+Paper \& Repo & OWL2Vec* & HDBSCAN & 0.423 & 0.447 & 0.365 & 0.373 & 0.393 & 0.324 & 0.041 \\
+Paper \& Repo & RDF2Vec & K-Means & 0.601 & 0.665 & 0.554 & 0.437 & 0.665 & 0.435 & 0.119 \\
+Paper \& Repo & RDF2Vec & HDBSCAN & 0.456 & 0.445 & 0.365 & 0.356 & 0.397 & 0.305 & 0.060 \\
+\bottomrule
+\end{tabular}
+\end{table}

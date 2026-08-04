@@ -1,0 +1,4 @@
+dataset,n_ontologies,mean_n_C,mean_n_OP,mean_n_DP,mean_added_C,mean_added_OP,mean_added_DP,pct_entities_added
+OBO,8,52953.25,189.62,0.0,39180.12,182.25,0.0,74.07
+github,442,33.9,27.7,7.95,31.27,24.71,7.73,91.6
+noOBO,51,39.86,25.0,11.9,35.1,19.84,11.63,86.72

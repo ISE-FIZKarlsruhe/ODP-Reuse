@@ -1,0 +1,23 @@
+# Dependencies for the ODP recommendation use case (recobench).
+# Install on top of the repository-root requirements.txt.
+
+# core: metrics, protocols, data loading
+numpy>=1.24
+scipy>=1.10
+rdflib>=6.2
+
+# content-based and CF backends
+sentence-transformers>=2.2.2
+torch>=2.0
+
+# the Doc2Vec re-implementation of ODPReco's scoring idea
+# NOTE: gensim <4.3.3 imports scipy.triu, removed in scipy>=1.13; recobench
+# applies a shim automatically, but pinning a recent gensim avoids it.
+gensim>=4.3.3
+
+# learned fusion (Phase 4) and the fine-tuning phase (Phase 5)
+scikit-learn>=1.3
+
+# local-LLM backends (llm_rerank / llm_generative / llm_pointwise).
+# Also requires the Ollama daemon with `qwen2.5:7b-instruct` pulled.
+ollama>=0.3.0

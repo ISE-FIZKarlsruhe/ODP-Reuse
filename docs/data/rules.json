@@ -1,0 +1,110 @@
+[
+ {
+  "portion": "GitHub",
+  "discovered": 1887,
+  "bands": [
+   {
+    "rule": "Unparseable",
+    "n": 268,
+    "color": "#8b8b9e"
+   },
+   {
+    "rule": "Is a pattern copy",
+    "n": 36,
+    "color": "#ff5d73"
+   },
+   {
+    "rule": "Duplicate of another",
+    "n": 203,
+    "color": "#ff9f45"
+   },
+   {
+    "rule": "Stub / too small",
+    "n": 539,
+    "color": "#ffd23f"
+   },
+   {
+    "rule": "No pattern overlap",
+    "n": 399,
+    "color": "#7c5cff"
+   },
+   {
+    "rule": "Kept",
+    "n": 442,
+    "color": "#00c9a7"
+   }
+  ]
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "discovered": 78,
+  "bands": [
+   {
+    "rule": "Unparseable",
+    "n": 1,
+    "color": "#8b8b9e"
+   },
+   {
+    "rule": "Is a pattern copy",
+    "n": 0,
+    "color": "#ff5d73"
+   },
+   {
+    "rule": "Duplicate of another",
+    "n": 0,
+    "color": "#ff9f45"
+   },
+   {
+    "rule": "Stub / too small",
+    "n": 1,
+    "color": "#ffd23f"
+   },
+   {
+    "rule": "No pattern overlap",
+    "n": 25,
+    "color": "#7c5cff"
+   },
+   {
+    "rule": "Kept",
+    "n": 51,
+    "color": "#00c9a7"
+   }
+  ]
+ },
+ {
+  "portion": "DOS-DP",
+  "discovered": 8,
+  "bands": [
+   {
+    "rule": "Unparseable",
+    "n": 0,
+    "color": "#8b8b9e"
+   },
+   {
+    "rule": "Is a pattern copy",
+    "n": 0,
+    "color": "#ff5d73"
+   },
+   {
+    "rule": "Duplicate of another",
+    "n": 0,
+    "color": "#ff9f45"
+   },
+   {
+    "rule": "Stub / too small",
+    "n": 0,
+    "color": "#ffd23f"
+   },
+   {
+    "rule": "No pattern overlap",
+    "n": 0,
+    "color": "#7c5cff"
+   },
+   {
+    "rule": "Kept",
+    "n": 8,
+    "color": "#00c9a7"
+   }
+  ]
+ }
+]

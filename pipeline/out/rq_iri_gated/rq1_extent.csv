@@ -1,0 +1,4 @@
+dataset,onto_analysed,onto_gate_passed,onto_reuse_gated,onto_complete_gated,onto_reuse,patterns_reuse,onto_complete,patterns_complete,mean_patterns_per_onto,ge_10pct,ge_10pct_share,ge_30pct,ge_30pct_share,ge_50pct,ge_50pct_share,ge_70pct,ge_70pct_share,ge_90pct,ge_90pct_share,ge_100pct,ge_100pct_share
+OBO,8,8,8,8,8,420,8,290,94.75,8,100.0,8,100.0,8,100.0,8,100.0,8,100.0,8,100.0
+github,442,442,442,37,442,45,37,20,1.51,233,52.71,97,21.95,66,14.93,48,10.86,41,9.28,37,8.37
+noOBO,51,51,51,6,51,45,6,5,1.76,38,74.51,20,39.22,16,31.37,9,17.65,7,13.73,6,11.76

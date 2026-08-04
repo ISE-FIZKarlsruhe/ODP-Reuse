@@ -1,0 +1,11 @@
+rank,pattern,n_ontologies
+1,DUL,20
+2,situation,7
+3,actorODP,4
+4,resourceODP,4
+5,timeinterval,4
+6,processODP,3
+7,participation,3
+8,IOLite,3
+9,timeindexedsituation,3
+10,list,2

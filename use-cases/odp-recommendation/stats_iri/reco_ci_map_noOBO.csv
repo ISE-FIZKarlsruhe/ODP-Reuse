@@ -1,0 +1,7 @@
+recommender,n,mean_map,ci_lo_95,ci_hi_95,ci_width,citable
+popularity,14,0.4137,0.2247,0.6315,0.4068,YES
+ontology_knn_cf,14,0.406,0.2107,0.631,0.4203,YES
+embed_ontology_knn_cf,14,0.3813,0.1867,0.6107,0.424,YES
+embed_item_datasetcatalog[st_all-MiniLM-L6-v2],14,0.1857,0.0845,0.2937,0.2092,YES
+doc2vec,14,0.1341,0.0429,0.2341,0.1912,QUALIFIED
+random,14,0.1305,0.0538,0.2197,0.1659,YES

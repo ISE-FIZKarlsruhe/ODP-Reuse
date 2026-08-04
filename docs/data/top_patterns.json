@@ -1,0 +1,182 @@
+[
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalAbsenceOfAnatomicalEntity",
+  "n": 3,
+  "rank": 1
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalAbsenceOfAnatomicalEntityInLocation",
+  "n": 3,
+  "rank": 2
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalAbsenceOfBiologicalProcess",
+  "n": 3,
+  "rank": 3
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalAbsenceOfBiologicalProcessInLocation",
+  "n": 3,
+  "rank": 4
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalAbsenceOfChemicalEntityInLocation",
+  "n": 3,
+  "rank": 5
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalAgenesisOfAnatomicalEntity",
+  "n": 3,
+  "rank": 6
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalAnatomicalEntity",
+  "n": 3,
+  "rank": 7
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalBiologicalProcess",
+  "n": 3,
+  "rank": 8
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalBiologicalProcessInLocation",
+  "n": 3,
+  "rank": 9
+ },
+ {
+  "portion": "DOS-DP",
+  "pattern": "abnormalColorOfAnatomicalEntity",
+  "n": 3,
+  "rank": 10
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "DUL",
+  "n": 188,
+  "rank": 1
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "situation",
+  "n": 60,
+  "rank": 2
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "collectionentity",
+  "n": 48,
+  "rank": 3
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "partof",
+  "n": 35,
+  "rank": 4
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "timeinterval",
+  "n": 34,
+  "rank": 5
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "participation",
+  "n": 30,
+  "rank": 6
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "timeindexedsituation",
+  "n": 26,
+  "rank": 7
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "objectrole",
+  "n": 26,
+  "rank": 8
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "sequence",
+  "n": 19,
+  "rank": 9
+ },
+ {
+  "portion": "GitHub",
+  "pattern": "description",
+  "n": 15,
+  "rank": 10
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "DUL",
+  "n": 20,
+  "rank": 1
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "situation",
+  "n": 7,
+  "rank": 2
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "actorODP",
+  "n": 4,
+  "rank": 3
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "resourceODP",
+  "n": 4,
+  "rank": 4
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "timeinterval",
+  "n": 4,
+  "rank": 5
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "processODP",
+  "n": 3,
+  "rank": 6
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "participation",
+  "n": 3,
+  "rank": 7
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "IOLite",
+  "n": 3,
+  "rank": 8
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "timeindexedsituation",
+  "n": 3,
+  "rank": 9
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "pattern": "list",
+  "n": 2,
+  "rank": 10
+ }
+]

@@ -1,0 +1,11 @@
+rank,pattern,n_ontologies
+1,abnormalAbsenceOfAnatomicalEntity,3
+2,abnormalAbsenceOfAnatomicalEntityInLocation,3
+3,abnormalAbsenceOfBiologicalProcess,3
+4,abnormalAbsenceOfBiologicalProcessInLocation,3
+5,abnormalAbsenceOfChemicalEntityInLocation,3
+6,abnormalAgenesisOfAnatomicalEntity,3
+7,abnormalAnatomicalEntity,3
+8,abnormalBiologicalProcess,3
+9,abnormalBiologicalProcessInLocation,3
+10,abnormalColorOfAnatomicalEntity,3

@@ -1,0 +1,50 @@
+[
+ {
+  "view": "github-reuse",
+  "ontologies": 442,
+  "pairs": 669,
+  "patterns": 45,
+  "complete": 47,
+  "median_entities": 61
+ },
+ {
+  "view": "github-complete",
+  "ontologies": 37,
+  "pairs": 100,
+  "patterns": 28,
+  "complete": 47,
+  "median_entities": 122
+ },
+ {
+  "view": "noOBO-reuse",
+  "ontologies": 51,
+  "pairs": 90,
+  "patterns": 45,
+  "complete": 6,
+  "median_entities": 43
+ },
+ {
+  "view": "noOBO-complete",
+  "ontologies": 6,
+  "pairs": 16,
+  "patterns": 11,
+  "complete": 6,
+  "median_entities": 11
+ },
+ {
+  "view": "OBO-reuse",
+  "ontologies": 8,
+  "pairs": 758,
+  "patterns": 420,
+  "complete": 620,
+  "median_entities": 32095
+ },
+ {
+  "view": "OBO-complete",
+  "ontologies": 8,
+  "pairs": 758,
+  "patterns": 420,
+  "complete": 620,
+  "median_entities": 32095
+ }
+]

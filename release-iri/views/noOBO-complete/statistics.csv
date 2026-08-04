@@ -1,0 +1,2 @@
+n_ontologies,n_pairs,n_distinct_patterns,n_complete_pairs,n_complete_ontologies,mean_patterns_per_ontology,median_entities_per_ontology,mean_entities_per_ontology,mean_coverage_pct,onto_ge_10pct,onto_ge_30pct,onto_ge_50pct,onto_ge_70pct,onto_ge_90pct,onto_ge_100pct
+6,16,11,6,6,2.67,11,25.5,68.82,6,6,6,6,6,6

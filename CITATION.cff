@@ -1,0 +1,75 @@
+cff-version: 1.2.0
+title: >-
+  ODP-Reuse: a quality-gated benchmark of Ontology Design Pattern reuse
+message: >-
+  If you use this dataset or code, please cite both the software/dataset (this
+  file) and the accompanying paper (see preferred-citation).
+type: dataset
+license: CC-BY-4.0
+version: 1.1.0
+date-released: '2026-07-30'
+repository-code: https://github.com/ISE-FIZKarlsruhe/ODP-Reuse
+url: https://doi.org/10.5281/zenodo.17751740
+abstract: >-
+  Ontologies that verifiably reuse Ontology Design Patterns, published as an
+  unfiltered corpus plus six quality-gated views, with the ontology-to-pattern
+  mapping, per-view statistics, and a complete record of how the corpus was
+  filtered. Every ontology carries a gate verdict and, where it was excluded, the
+  rule and evidence for the exclusion; all removals are independently
+  re-verifiable from the source files. Ships a reproducible pipeline and two
+  worked use cases: ODP recommendation and automatic ODP extraction.
+keywords:
+  - ontology design patterns
+  - ontology reuse
+  - benchmark
+  - knowledge graphs
+  - semantic web
+  - OWL
+  - data quality
+  - reproducibility
+authors:
+  - family-names: Norouzi
+    given-names: Ebrahim
+    orcid: https://orcid.org/0000-0002-2691-6995
+    affiliation: FIZ Karlsruhe -- Leibniz Institute for Information Infrastructure
+  - family-names: Hertling
+    given-names: Sven
+    orcid: https://orcid.org/0000-0003-0333-5888
+    affiliation: FIZ Karlsruhe / University of Mannheim
+  - family-names: Waitelonis
+    given-names: Jörg
+    orcid: https://orcid.org/0000-0001-7192-7143
+    affiliation: FIZ Karlsruhe -- Leibniz Institute for Information Infrastructure
+  - family-names: Sack
+    given-names: Harald
+    orcid: https://orcid.org/0000-0001-7069-9804
+    affiliation: FIZ Karlsruhe / Karlsruhe Institute of Technology
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.17751740
+    description: Concept DOI — always resolves to the latest version
+  - type: doi
+    value: 10.5281/zenodo.17751741
+    description: Version 1.0.0
+# preferred-citation is what a reader should put in their bibliography.
+# Update the status when the paper is accepted. Without this block, the message
+# field tells users to cite a paper the file does not identify.
+preferred-citation:
+  type: article
+  title: >-
+    ODP-Reuse: a quality-gated benchmark of Ontology Design Pattern reuse
+  authors:
+    - family-names: Norouzi
+      given-names: Ebrahim
+      orcid: https://orcid.org/0000-0002-2691-6995
+    - family-names: Hertling
+      given-names: Sven
+      orcid: https://orcid.org/0000-0003-0333-5888
+    - family-names: Waitelonis
+      given-names: Jörg
+      orcid: https://orcid.org/0000-0001-7192-7143
+    - family-names: Sack
+      given-names: Harald
+      orcid: https://orcid.org/0000-0001-7069-9804
+  year: 2026
+  status: submitted

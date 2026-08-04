@@ -1,0 +1,56 @@
+[
+ {
+  "label": "dataset-informed CF vs no-dataset floor",
+  "portion": "GitHub",
+  "delta": 0.8222,
+  "lo": 0.7538,
+  "hi": 0.884,
+  "n": 89,
+  "sig": true
+ },
+ {
+  "label": "CF vs popularity prior",
+  "portion": "GitHub",
+  "delta": 0.2013,
+  "lo": 0.1372,
+  "hi": 0.2709,
+  "n": 89,
+  "sig": true
+ },
+ {
+  "label": "CF vs Doc2Vec content matching",
+  "portion": "GitHub",
+  "delta": 0.8052,
+  "lo": 0.7293,
+  "hi": 0.8739,
+  "n": 89,
+  "sig": true
+ },
+ {
+  "label": "dataset-informed CF vs no-dataset floor",
+  "portion": "Paper &amp; Repository",
+  "delta": 0.2754,
+  "lo": 0.0371,
+  "hi": 0.5247,
+  "n": 14,
+  "sig": false
+ },
+ {
+  "label": "CF vs popularity prior",
+  "portion": "Paper &amp; Repository",
+  "delta": -0.0078,
+  "lo": -0.0659,
+  "hi": 0.0503,
+  "n": 14,
+  "sig": false
+ },
+ {
+  "label": "CF vs Doc2Vec content matching",
+  "portion": "Paper &amp; Repository",
+  "delta": 0.2718,
+  "lo": 0.0158,
+  "hi": 0.5464,
+  "n": 14,
+  "sig": false
+ }
+]

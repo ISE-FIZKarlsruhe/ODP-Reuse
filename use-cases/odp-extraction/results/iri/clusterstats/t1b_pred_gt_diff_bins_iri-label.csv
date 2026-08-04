@@ -1,0 +1,13 @@
+portion,model,clusterer,regime,source,n_ontologies,n_le_-3,pct_le_-3,n_-2_to_-1,pct_-2_to_-1,n_0,pct_0,n_+1_to_+2,pct_+1_to_+2,n_+3_to_+5,pct_+3_to_+5,n_+6_to_+9,pct_+6_to_+9,n_ge_+10,pct_ge_+10
+github,owl2vec,kmeans,oracle,published,448,8,1.79,3,0.67,2,0.45,99,22.1,121,27.01,215,47.99,0,0.0
+github,owl2vec,kmeans,unsup,published,448,5,1.12,7,1.56,9,2.01,155,34.6,41,9.15,231,51.56,0,0.0
+github,rdf2vec,kmeans,oracle,published,448,8,1.79,3,0.67,3,0.67,80,17.86,118,26.34,236,52.68,0,0.0
+github,rdf2vec,kmeans,unsup,published,448,10,2.23,8,1.79,21,4.69,196,43.75,63,14.06,150,33.48,0,0.0
+noOBO,owl2vec,kmeans,oracle,published,54,2,3.7,1,1.85,0,0.0,11,20.37,20,37.04,20,37.04,0,0.0
+noOBO,owl2vec,kmeans,unsup,published,54,2,3.7,2,3.7,8,14.81,11,20.37,3,5.56,28,51.85,0,0.0
+noOBO,rdf2vec,kmeans,oracle,published,54,3,5.56,1,1.85,1,1.85,6,11.11,16,29.63,27,50.0,0,0.0
+noOBO,rdf2vec,kmeans,unsup,published,54,0,0.0,5,9.26,9,16.67,14,25.93,6,11.11,20,37.04,0,0.0
+ALL,owl2vec,kmeans,oracle,published,502,10,1.99,4,0.8,2,0.4,110,21.91,141,28.09,235,46.81,0,0.0
+ALL,owl2vec,kmeans,unsup,published,502,7,1.39,9,1.79,17,3.39,166,33.07,44,8.76,259,51.59,0,0.0
+ALL,rdf2vec,kmeans,oracle,published,502,11,2.19,4,0.8,4,0.8,86,17.13,134,26.69,263,52.39,0,0.0
+ALL,rdf2vec,kmeans,unsup,published,502,10,1.99,13,2.59,30,5.98,210,41.83,69,13.75,170,33.86,0,0.0

@@ -1,0 +1,7 @@
+ontology_id,dataset,n_pattern_files,n_triples,n_entities_narrow,n_entities_wide,n_own_entities,n_gt_patterns,n_complete_patterns,max_reuse_pct
+ComponencyPattern,noOBO,2,30,5,5,3,1,1,100.0
+ObjectWithStates,noOBO,3,55,11,11,6,2,1,100.0
+pso,noOBO,3,312,30,72,62,3,1,100.0
+pwo,noOBO,6,263,42,46,24,6,1,100.0
+timeindexedclassificationPattern,noOBO,2,50,11,10,1,2,1,100.0
+timeindexedsituationPattern,noOBO,2,73,10,9,5,2,1,100.0

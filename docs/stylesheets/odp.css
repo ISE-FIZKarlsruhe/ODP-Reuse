@@ -1,0 +1,253 @@
+/* ==========================================================================
+   ODP-Reuse — visual identity
+   --------------------------------------------------------------------------
+   Deliberately not a default docs theme. The corpus is mostly REJECTED data,
+   so the design leads with that: an oversized funnel, warm/electric accents,
+   and a hard editorial grid. Bright by default; the dark scheme inverts rather
+   than dims.
+   ========================================================================== */
+
+[data-md-color-scheme='odp-bright'] {
+  --md-primary-fg-color:        #1b1033;
+  --md-primary-fg-color--light: #2d1b55;
+  --md-primary-fg-color--dark:  #120a24;
+  --md-accent-fg-color:         #ff2e63;
+  --md-default-bg-color:        #fffdf9;
+  --md-default-fg-color:        #1b1033;
+  --md-default-fg-color--light: #4a3f66;
+  --md-typeset-a-color:         #6c2bd9;
+
+  --odp-coral:  #ff2e63;
+  --odp-amber:  #ffb703;
+  --odp-violet: #7c5cff;
+  --odp-mint:   #00c9a7;
+  --odp-ink:    #1b1033;
+  --odp-paper:  #fffdf9;
+  --odp-line:   rgba(27, 16, 51, .12);
+  --odp-panel:  #fff;
+  --odp-shadow: 0 1px 2px rgba(27,16,51,.06), 0 8px 28px rgba(27,16,51,.07);
+}
+
+[data-md-color-scheme='slate'] {
+  --odp-coral: #ff5d7e; --odp-amber: #ffc94a; --odp-violet: #a58cff;
+  --odp-mint: #2ee6c0;  --odp-ink: #f2eefb;
+  --odp-paper: var(--md-default-bg-color);
+  --odp-line: rgba(255,255,255,.14);
+  --odp-panel: rgba(255,255,255,.04);
+  --odp-shadow: 0 8px 28px rgba(0,0,0,.35);
+}
+
+.md-typeset { --md-typeset-table-color: var(--odp-line); }
+.md-header { border-bottom: 1px solid var(--odp-line); }
+
+/* ---------- hero ---------------------------------------------------------- */
+
+.odp-hero {
+  padding: 3.5rem 0 2rem;
+  border-bottom: 3px solid var(--odp-ink);
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+.odp-hero::before {                      /* off-grid accent slab */
+  content: '';
+  position: absolute; inset: 0 auto auto -6vw;
+  width: 4vw; height: 100%;
+  background: linear-gradient(180deg, var(--odp-coral), var(--odp-violet));
+  border-radius: 0 6px 6px 0;
+  opacity: .9;
+}
+.md-typeset .odp-hero h1 {
+  font-size: clamp(2.1rem, 5.2vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -.035em;
+  font-weight: 800;
+  max-width: 20ch;
+  margin: 0 0 .9rem;
+  color: var(--odp-ink);
+}
+.odp-hero > p:first-of-type {
+  font-size: 1.08rem;
+  max-width: 62ch;
+  color: var(--md-default-fg-color--light);
+}
+.odp-version {
+  display: inline-block; margin-top: 1.4rem;
+  font: 600 .68rem/1 'JetBrains Mono', monospace;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: .42rem .7rem; border-radius: 999px;
+  background: var(--odp-ink); color: var(--odp-paper);
+}
+
+/* ---------- stat row ------------------------------------------------------ */
+
+.odp-stat-row {
+  display: grid; gap: .8rem; margin: 2.2rem 0 .5rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+.odp-stat {
+  padding: 1.05rem 1rem; border-radius: 14px;
+  background: var(--odp-panel); border: 1px solid var(--odp-line);
+  display: flex; flex-direction: column; gap: .2rem;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.odp-stat:hover { transform: translateY(-3px); box-shadow: var(--odp-shadow); }
+.odp-stat b {
+  font-size: 1.85rem; font-weight: 800; letter-spacing: -.03em;
+  line-height: 1; font-variant-numeric: tabular-nums;
+}
+.odp-stat span {
+  font-size: .74rem; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--md-default-fg-color--light);
+}
+.odp-stat--hero {
+  background: linear-gradient(135deg, var(--odp-coral), var(--odp-violet));
+  border-color: transparent; color: #fff;
+}
+.odp-stat--hero span { color: rgba(255,255,255,.86); }
+.odp-stat--muted { opacity: .62; }
+
+/* ---------- cards --------------------------------------------------------- */
+
+.odp-cards {
+  display: grid; gap: .9rem; margin: 1.6rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+.md-typeset a.odp-card {
+  display: block; padding: 1.15rem 1.1rem 1.2rem;
+  border: 1px solid var(--odp-line); border-radius: 14px;
+  background: var(--odp-panel); color: inherit; text-decoration: none;
+  position: relative; overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.md-typeset a.odp-card::after {          /* accent wash on hover */
+  content: ''; position: absolute; inset: auto -30% -60% auto;
+  width: 70%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, var(--odp-amber), transparent 68%);
+  opacity: 0; transition: opacity .22s ease;
+}
+.md-typeset a.odp-card:hover {
+  transform: translateY(-4px); box-shadow: var(--odp-shadow);
+  border-color: var(--odp-violet);
+}
+.md-typeset a.odp-card:hover::after { opacity: .3; }
+.md-typeset a.odp-card small {
+  display: block; margin-top: .35rem; font-size: .78rem; line-height: 1.5;
+  color: var(--md-default-fg-color--light);
+}
+.md-typeset a.odp-card .twemoji { color: var(--odp-coral); }
+
+/* ---------- split panels -------------------------------------------------- */
+
+.odp-split {
+  display: grid; gap: 1rem; margin: 1.4rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.odp-panel {
+  padding: 1.2rem 1.15rem; border-radius: 14px;
+  border: 1px solid var(--odp-line); background: var(--odp-panel);
+  border-top: 4px solid var(--odp-violet);
+}
+.odp-panel--a { border-top-color: var(--odp-coral); }
+.odp-panel--b { border-top-color: var(--odp-mint); }
+.md-typeset .odp-panel h3 { margin-top: 0; }
+
+.odp-note {
+  border-left: 4px solid var(--odp-amber);
+  background: color-mix(in srgb, var(--odp-amber) 9%, transparent);
+  padding: .85rem 1rem; border-radius: 0 10px 10px 0; margin: 1.2rem 0;
+  font-size: .87rem;
+}
+
+/* ---------- pipeline flow ------------------------------------------------- */
+
+.odp-flow { counter-reset: step; margin: 1.6rem 0; }
+.odp-step {
+  position: relative; padding: 1rem 0 1.3rem 3.4rem;
+  border-left: 2px solid var(--odp-line); margin-left: 1.1rem;
+}
+.odp-step:last-child { border-left-color: transparent; }
+.odp-step::before {
+  content: attr(data-n);
+  position: absolute; left: -1.15rem; top: .8rem;
+  width: 2.3rem; height: 2.3rem; border-radius: 50%;
+  display: grid; place-items: center;
+  font: 700 .9rem/1 'JetBrains Mono', monospace;
+  background: var(--odp-ink); color: var(--odp-paper);
+  box-shadow: 0 0 0 5px var(--md-default-bg-color);
+}
+.odp-step:nth-child(2)::before { background: var(--odp-coral); }
+.odp-step:nth-child(3)::before { background: var(--odp-amber); color: var(--odp-ink); }
+.odp-step:nth-child(4)::before { background: var(--odp-violet); }
+.odp-step:nth-child(5)::before { background: var(--odp-mint); color: var(--odp-ink); }
+.md-typeset .odp-step h3 { margin: 0 0 .35rem; font-size: 1.02rem; letter-spacing: -.01em; }
+.odp-step code { font-size: .74rem; }
+
+/* ---------- visualisations ------------------------------------------------ */
+
+.odp-viz {
+  margin: 1.5rem 0; padding: 1rem;
+  border: 1px solid var(--odp-line); border-radius: 14px;
+  background: var(--odp-panel); min-height: 200px;
+}
+.odp-viz--tall { min-height: 480px; }
+.odp-viz svg { display: block; width: 100%; height: auto; overflow: visible; }
+.odp-viz text { font-family: 'Outfit', system-ui, sans-serif; fill: var(--odp-ink); }
+.odp-viz .odp-axis text { font-size: 11px; fill: var(--md-default-fg-color--light); }
+.odp-viz .odp-axis line, .odp-viz .odp-axis path { stroke: var(--odp-line); }
+.odp-viz .odp-band { cursor: pointer; transition: opacity .15s ease; }
+.odp-viz .odp-band:hover { opacity: .78; }
+.odp-viz .odp-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.odp-tip {
+  position: fixed; z-index: 40; pointer-events: none; opacity: 0;
+  background: var(--odp-ink); color: var(--odp-paper);
+  padding: .5rem .65rem; border-radius: 9px; font-size: .78rem;
+  line-height: 1.35; max-width: 260px; box-shadow: var(--odp-shadow);
+  transition: opacity .12s ease;
+}
+.odp-tip b { color: var(--odp-amber); }
+
+/* ---------- pattern chips ------------------------------------------------- */
+
+.odp-chips { display: flex; flex-wrap: wrap; gap: .42rem; margin: 1.1rem 0; }
+.odp-chip {
+  font: 500 .78rem/1 'JetBrains Mono', monospace;
+  padding: .48rem .7rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--odp-line); background: var(--odp-panel);
+  color: var(--odp-ink); display: inline-flex; align-items: center; gap: .42rem;
+  transition: background .15s ease, color .15s ease, transform .15s ease;
+}
+.odp-chip span {
+  font-size: .64rem; padding: .16rem .34rem; border-radius: 999px;
+  background: var(--odp-line);
+}
+.odp-chip:hover, .odp-chip[aria-pressed='true'] {
+  background: var(--odp-violet); color: #fff; transform: translateY(-2px);
+  border-color: transparent;
+}
+.odp-chip:hover span, .odp-chip[aria-pressed='true'] span {
+  background: rgba(255,255,255,.25);
+}
+
+/* ---------- tables -------------------------------------------------------- */
+
+.md-typeset table:not([class]) {
+  border: 1px solid var(--odp-line); border-radius: 12px;
+  overflow: hidden; font-size: .82rem;
+}
+.md-typeset table:not([class]) th {
+  background: var(--odp-ink); color: var(--odp-paper);
+  font-weight: 600; letter-spacing: .02em;
+}
+.md-typeset table:not([class]) td { font-variant-numeric: tabular-nums; }
+.md-typeset table:not([class]) tr:hover td {
+  background: color-mix(in srgb, var(--odp-violet) 7%, transparent);
+}
+
+@media (max-width: 640px) {
+  .odp-hero::before { display: none; }
+  .odp-step { padding-left: 2.8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .odp-stat, .md-typeset a.odp-card, .odp-chip { transition: none; }
+}

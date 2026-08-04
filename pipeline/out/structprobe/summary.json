@@ -1,0 +1,70 @@
+{
+  "ontologies_scanned": 1696,
+  "pairs_evaluated": 2691,
+  "ontologies_with_zero_iri_overlap_on_every_pattern": 966,
+  "S1_pairs": 0,
+  "S1_ontologies": 0,
+  "S2_pairs": 28,
+  "S2_ontologies": 18,
+  "S2_only_pairs": 28,
+  "S1_rate_of_scanned": 0.0,
+  "S2_rate_of_scanned": 0.01061,
+  "S1_fp_confirmed_pairs": 0,
+  "S1_fp_rejected_pairs": 0,
+  "S1_fp_unavailable_pairs": 0,
+  "S1_by_drop_reason": {},
+  "S2_by_drop_reason": {
+    "(kept)": 2,
+    "G5_has_gt": 14,
+    "G3_duplicate": 2
+  },
+  "S1_by_dataset": {},
+  "S1_perturbation_profile": {},
+  "S1_patterns": {},
+  "S2_by_dataset": {
+    "github": 14,
+    "noOBO": 4
+  },
+  "S2_perturbation_profile": {
+    "namespace_only": 28
+  },
+  "S2_perturbed_keys_by_class": {
+    "namespace_only": 117
+  },
+  "S2_patterns": {
+    "descriptionandsituation": 4,
+    "region": 1,
+    "componency": 2,
+    "classification": 4,
+    "description": 2,
+    "partof": 7,
+    "situation": 2,
+    "place": 3,
+    "ontopic": 1,
+    "constituency": 1,
+    "collectionentity": 1
+  },
+  "S2_fp_confirmed_pairs": 0,
+  "S2_fp_rejected_pairs": 28,
+  "S2_max_pattern_size": 13,
+  "S2_vs_human_adjudication": {
+    "counts": {
+      "reuse": 6,
+      "not_reuse": 4,
+      "not_an_adjudication_item": 14,
+      "deferred_unanimous_not_reuse": 4
+    },
+    "precision_on_explicitly_judged": 0.6,
+    "n_explicitly_judged": 10,
+    "precision_counting_deferred_as_not_reuse": 0.4286,
+    "n_including_deferred": 14,
+    "label_mode_precision_for_comparison": 0.215
+  },
+  "skipped": {
+    "pattern_no_entities": 371,
+    "pattern_parse_error": 6,
+    "file_too_large": 8
+  },
+  "distinct_pattern_stems_yielding_no_entities": 6,
+  "ontologies_affected_by_empty_pattern_entities": 299
+}

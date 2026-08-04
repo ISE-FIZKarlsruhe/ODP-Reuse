@@ -1,0 +1,4 @@
+portion,n_ontologies,n_ontologies_multi_gt,mean_n_gt,median_n_gt,max_n_gt,mean_gt_size,median_gt_size,p90_gt_size,n_ontologies_with_gt_overlap,pct_ontologies_with_gt_overlap,pct_multiGT_ontologies_with_gt_overlap,n_pairs_total,n_pairs_overlapping,pct_pairs_overlapping,n_pairs_nested,pct_pairs_nested,mean_frac_gt_entities_multi,mean_frac_gt_entities_multi_multiGT,mean_gt_entity_share_of_ontology,median_gt_entity_share_of_ontology,mean_partition_ceiling_f1,mean_partition_ceiling_f1_multiGT,min_partition_ceiling_f1,n_ontologies_ceiling_below_0_9
+github,450,101,1.516,1.0,11,5.81,2.0,10.0,77,17.11,76.24,613,253,41.27,145,23.65,0.0878,0.3914,0.139,0.0725,0.9637,0.8383,0.3333,55
+noOBO,54,23,1.741,1.0,6,7.73,3.0,14.0,12,22.22,52.17,72,22,30.56,7,9.72,0.0668,0.1568,0.2621,0.1958,0.977,0.9459,0.7622,6
+ALL,504,124,1.54,1.0,11,6.04,2.0,11.0,89,17.66,71.77,685,275,40.15,152,22.19,0.0856,0.3478,0.1522,0.0794,0.9651,0.8583,0.3333,61

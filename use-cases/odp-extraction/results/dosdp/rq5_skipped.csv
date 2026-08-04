@@ -1,0 +1,9 @@
+dataset,ontology,reason,detail
+OBO,cl,too_many_entities,19159>5000
+OBO,go,too_many_entities,51650>5000
+OBO,hp,too_many_entities,32095>5000
+OBO,maxo,too_many_entities,7257>5000
+OBO,mondo-simple,too_many_entities,30331>5000
+OBO,uberon,too_many_entities,27275>5000
+OBO,upheno,too_many_entities,193638>5000
+OBO,zp,too_many_entities,63975>5000

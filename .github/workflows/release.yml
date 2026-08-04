@@ -1,0 +1,148 @@
+name: Release
+
+# Tag -> GitHub Release -> Zenodo version, in one step.
+#
+#   git tag -a v1.1.0 -m "Repair empty pattern files; +181 GT pairs"
+#   git push origin v1.1.0
+#
+# Produces a stable code tag, a GitHub Release with checksummed artefacts, and a
+# new Zenodo version under the EXISTING concept DOI (10.5281/zenodo.17751740) so
+# v1 and every later version share one citable identifier.
+#
+# A tagged, checksummed, archived release is what makes a result citable at an
+# exact state, and what lets a third party reproduce it years later. This
+# workflow makes that automatic rather than a thing someone must remember.
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish, e.g. v1.1.0'
+        required: true
+      publish_zenodo:
+        description: 'Publish to Zenodo (unchecked = leave a draft)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  ZENODO_CONCEPT: '17751740'     # concept DOI 10.5281/zenodo.17751740; v1 = 17751741
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11', cache: pip }
+
+      - name: Resolve version
+        id: v
+        run: |
+          V="${{ github.event.inputs.version || github.ref_name }}"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "bare=${V#v}"  >> "$GITHUB_OUTPUT"
+
+      # The tag must agree with what the repository claims about itself, or the
+      # citation metadata silently drifts from the artefact.
+      - name: Check CITATION.cff matches the tag
+        run: |
+          python - <<'PY'
+          import re, sys, pathlib
+          want = "${{ steps.v.outputs.bare }}"
+          p = pathlib.Path("CITATION.cff")
+          if not p.is_file():
+              sys.exit("::error::CITATION.cff is missing")
+          txt = p.read_text(encoding="utf-8")
+          m = re.search(r'^version:\s*["\']?([^"\'\s]+)', txt, re.M)
+          if not m:
+              sys.exit("::error::CITATION.cff has no version field")
+          if m.group(1) != want:
+              sys.exit(f"::error::CITATION.cff version {m.group(1)} != tag {want}")
+          if "TODO" in txt:
+              sys.exit("::error::CITATION.cff still contains TODO placeholders")
+          print(f"CITATION.cff version {want} OK")
+          PY
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r pipeline/requirements.txt requests
+
+      # Two artefact classes with different homes.
+      #
+      #   GitHub  small, textual, diffable: views, manifest, audit, docs, source.
+      #           Changes between versions are reviewable in the browser and show
+      #           as real diffs in a pull request.
+      #   Zenodo  the corpus (~2.7 GB, with single files above GitHub's 100 MB
+      #           hard limit: cco.owl, go.owl, mondo-simple.owl, upheno.owl,
+      #           zp.owl). Git would retain every version of it forever.
+      #
+      # Everything is checksummed, and both halves carry the same version string
+      # so they cannot drift apart.
+      - name: Package artefacts
+        id: pack
+        run: |
+          V="${{ steps.v.outputs.version }}"
+          mkdir -p dist
+          tar czf "dist/odp-reuse-metadata-$V.tar.gz" \
+            --exclude='release-*/corpus' --exclude='release-*/*-hashed' \
+            release-iri
+          tar czf "dist/odp-reuse-src-$V.tar.gz" \
+            pipeline use-cases MultiSource scholar \
+            requirements.txt README.md LICENSE CITATION.cff \
+            .github/workflows
+          if [ -d release-iri/corpus ]; then
+            tar czf "dist/odp-reuse-corpus-$V.tar.gz" release-iri/corpus
+          else
+            echo "::warning::release-iri/corpus absent — Zenodo receives metadata only."
+          fi
+          cd dist && sha256sum * > SHA256SUMS.txt
+          for f in *.tar.gz; do echo "$f  $(du -h "$f" | cut -f1)"; done
+
+      # A GitHub release asset is capped at 2 GB; fail loudly rather than have
+      # the upload truncate.
+      - name: Guard GitHub asset sizes
+        run: |
+          for f in dist/odp-reuse-metadata-*.tar.gz dist/odp-reuse-src-*.tar.gz; do
+            sz=$(stat -c%s "$f")
+            [ "$sz" -lt 1900000000 ] || {
+              echo "::error::$f is $((sz/1000000)) MB — too large for a GitHub asset"
+              exit 1; }
+          done
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.v.outputs.version }}
+          generate_release_notes: true
+          files: |
+            dist/odp-reuse-metadata-*.tar.gz
+            dist/odp-reuse-src-*.tar.gz
+            dist/SHA256SUMS.txt
+
+      # New Zenodo VERSION under the existing concept DOI. Left as a draft unless
+      # explicitly published, because a Zenodo publish is irreversible.
+      - name: Zenodo version
+        if: env.ZENODO_TOKEN != ''
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+        run: |
+          python pipeline/zenodo_publish.py \
+            --concept "${{ env.ZENODO_CONCEPT }}" \
+            --version "${{ steps.v.outputs.version }}" \
+            --metadata release-iri/zenodo.json \
+            --files dist/*.tar.gz \
+            ${{ (github.event.inputs.publish_zenodo == 'true' || startsWith(github.ref, 'refs/tags/')) && '--publish' || '' }}
+
+      - name: Note when Zenodo is not configured
+        if: env.ZENODO_TOKEN == ''
+        run: |
+          echo "::warning::ZENODO_TOKEN not set — GitHub Release created, Zenodo skipped."
+          echo "Add a personal token (scopes: deposit:write, deposit:actions) as the ZENODO_TOKEN secret."

@@ -1,0 +1,113 @@
+[
+ {
+  "portion": "DOS-DP",
+  "roles": [
+   {
+    "role": "direct",
+    "pct": 0.13
+   },
+   {
+    "role": "subclass of pattern",
+    "pct": 0.29
+   },
+   {
+    "role": "superclass of pattern",
+    "pct": 0.23
+   },
+   {
+    "role": "subproperty of pattern",
+    "pct": 0.0
+   },
+   {
+    "role": "superproperty of pattern",
+    "pct": 0.0
+   },
+   {
+    "role": "used as property",
+    "pct": 0.0
+   },
+   {
+    "role": "in restriction",
+    "pct": 99.29
+   },
+   {
+    "role": "equivalence",
+    "pct": 0.06
+   }
+  ]
+ },
+ {
+  "portion": "GitHub",
+  "roles": [
+   {
+    "role": "direct",
+    "pct": 31.78
+   },
+   {
+    "role": "subclass of pattern",
+    "pct": 13.9
+   },
+   {
+    "role": "superclass of pattern",
+    "pct": 4.52
+   },
+   {
+    "role": "subproperty of pattern",
+    "pct": 10.23
+   },
+   {
+    "role": "superproperty of pattern",
+    "pct": 0.92
+   },
+   {
+    "role": "used as property",
+    "pct": 18.26
+   },
+   {
+    "role": "in restriction",
+    "pct": 17.43
+   },
+   {
+    "role": "equivalence",
+    "pct": 2.96
+   }
+  ]
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "roles": [
+   {
+    "role": "direct",
+    "pct": 37.55
+   },
+   {
+    "role": "subclass of pattern",
+    "pct": 17.25
+   },
+   {
+    "role": "superclass of pattern",
+    "pct": 6.11
+   },
+   {
+    "role": "subproperty of pattern",
+    "pct": 10.5
+   },
+   {
+    "role": "superproperty of pattern",
+    "pct": 0.16
+   },
+   {
+    "role": "used as property",
+    "pct": 0.32
+   },
+   {
+    "role": "in restriction",
+    "pct": 25.23
+   },
+   {
+    "role": "equivalence",
+    "pct": 2.89
+   }
+  ]
+ }
+]

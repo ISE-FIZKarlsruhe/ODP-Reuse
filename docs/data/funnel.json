@@ -1,0 +1,38 @@
+[
+ {
+  "rule": "G4_substantive",
+  "label": "Stub / too small",
+  "n": 540,
+  "color": "#ffd23f"
+ },
+ {
+  "rule": "KEPT",
+  "label": "Kept",
+  "n": 501,
+  "color": "#00c9a7"
+ },
+ {
+  "rule": "G5_has_gt",
+  "label": "No pattern overlap",
+  "n": 424,
+  "color": "#7c5cff"
+ },
+ {
+  "rule": "G1_parse",
+  "label": "Unparseable",
+  "n": 269,
+  "color": "#8b8b9e"
+ },
+ {
+  "rule": "G3_duplicate",
+  "label": "Duplicate of another",
+  "n": 203,
+  "color": "#ff9f45"
+ },
+ {
+  "rule": "G2_pattern_copy",
+  "label": "Is a pattern copy",
+  "n": 36,
+  "color": "#ff5d73"
+ }
+]

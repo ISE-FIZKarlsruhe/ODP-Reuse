@@ -1,0 +1,7 @@
+recommender,uses_odp_reuse_data,n_test_ontologies,MAP,P@1,R@5,R@10,MRR,nDCG@10,Hit@10,citable,citation_note
+ontology_knn_cf,yes,235,0.8152,0.7787,0.8627,0.9087,0.8316,0.8464,0.9277,YES,"full test set, n=23"
+embed_ontology_knn_cf,yes,235,0.7506,0.6851,0.835,0.8863,0.7734,0.7941,0.9191,YES,"full test set, n=23"
+popularity,yes,235,0.6071,0.5574,0.6737,0.7561,0.6353,0.6536,0.8043,YES,"full test set, n=23"
+embed_item_datasetcatalog[st_all-MiniLM-L6-v2],yes,235,0.111,0.0809,0.1451,0.3017,0.1352,0.163,0.3404,YES,"full test set, n=23"
+doc2vec,yes,235,0.0699,0.0213,0.1018,0.2573,0.0808,0.1177,0.3021,QUALIFIED,"re-implementation of ODPReco's Doc2Vec idea, NOT the ODPReco jar; label it as such"
+random,no,235,0.0306,0.0085,0.058,0.1274,0.0423,0.0567,0.1617,YES,floor baseline

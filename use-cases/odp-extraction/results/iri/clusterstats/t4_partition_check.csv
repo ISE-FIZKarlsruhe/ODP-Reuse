@@ -1,0 +1,3 @@
+clusterer,n_clusterings_checked,n_clusterings_forming_a_partition,n_clusterings_with_overlapping_clusters,n_clusterings_with_any_noise,verdict
+kmeans,8386,8386,0,0,hard partition of the non-noise entities
+hdbscan,2908,2908,0,2641,hard partition of the non-noise entities

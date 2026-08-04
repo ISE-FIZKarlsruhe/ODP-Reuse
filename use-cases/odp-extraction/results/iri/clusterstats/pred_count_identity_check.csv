@@ -1,0 +1,10 @@
+config,k,n_rows,n_rows_where_n_predicted_eq_k,n_rows_where_n_predicted_lt_k,min_n_predicted,max_n_predicted
+kmeans_k2,2,982,982,0,2,2
+kmeans_k3,3,976,976,0,3,3
+kmeans_k4,4,964,964,0,4,4
+kmeans_k5,5,950,950,0,5,5
+kmeans_k6,6,932,932,0,6,6
+kmeans_k7,7,912,912,0,7,7
+kmeans_k8,8,900,900,0,8,8
+kmeans_k9,9,892,892,0,9,9
+kmeans_k10,10,878,878,0,10,10

@@ -1,0 +1,7 @@
+portion,model,clusterer,n_ontologies_with_2_le_ngt_le_10,mean_f1_k_eq_ngt,mean_f1_oracle_selected,mean_f1_unsup_selected,pct_ontologies_where_k_eq_ngt_is_the_oracle_choice,pct_ontologies_where_k_eq_ngt_beats_unsup,mean_oracle_k,mean_ngt
+github,owl2vec,kmeans,94,0.1512,0.329,0.246,1.06,3.19,7.91,3.1
+github,rdf2vec,kmeans,94,0.1385,0.3116,0.221,3.19,1.06,8.02,3.1
+noOBO,owl2vec,kmeans,22,0.3465,0.5494,0.4439,0.0,4.55,7.0,2.77
+noOBO,rdf2vec,kmeans,22,0.3086,0.5644,0.396,0.0,9.09,7.0,2.77
+ALL,owl2vec,kmeans,116,0.1883,0.3708,0.2836,0.86,3.45,7.74,3.03
+ALL,rdf2vec,kmeans,116,0.1708,0.3595,0.2542,2.59,2.59,7.83,3.03

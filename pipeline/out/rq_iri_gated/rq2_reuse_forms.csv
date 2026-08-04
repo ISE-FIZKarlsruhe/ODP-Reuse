@@ -1,0 +1,4 @@
+dataset,total_role_occurrences,direct,direct_pct,subclass_of_pattern,subclass_of_pattern_pct,superclass_of_pattern,superclass_of_pattern_pct,subproperty_of_pattern,subproperty_of_pattern_pct,superproperty_of_pattern,superproperty_of_pattern_pct,used_as_property,used_as_property_pct,in_restriction,in_restriction_pct,equivalence,equivalence_pct
+OBO,139943597,177823,0.13,403111,0.29,321366,0.23,6306,0.0,1415,0.0,0,0.0,138944862,99.29,88714,0.06
+github,12094,3844,31.78,1681,13.9,547,4.52,1237,10.23,111,0.92,2208,18.26,2108,17.43,358,2.96
+noOBO,1867,701,37.55,322,17.25,114,6.11,196,10.5,3,0.16,6,0.32,471,25.23,54,2.89

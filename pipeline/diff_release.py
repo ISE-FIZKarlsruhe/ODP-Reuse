@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+diff_release.py -- compare a fresh harvest against the published release and
+report what changed, as the quarterly workflow's payload.
+
+Answers, for a new harvest:
+
+  * which ontologies are NEW (discovered now, absent from the release)
+  * which ontology-pattern PAIRS are new -- the headline number, because a new
+    pair is new evidence of reuse
+  * which ontologies GAINED or LOST ground truth (a pattern was published,
+    withdrawn, or repaired)
+  * which ontologies DISAPPEARED (repository deleted or made private)
+  * how the quality gate's verdict shifted, per rule
+
+Sets GitHub Actions outputs `has_changes`, `new_pairs`, `new_ontologies` and
+writes `REPORT.md` for the issue body.
+
+Usage
+-----
+    python diff_release.py --old release/MANIFEST.csv \\
+        --new harvest/out/MANIFEST.csv --out harvest/diff
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import os
+from collections import Counter
+from pathlib import Path
+
+
+def load(p: Path) -> dict[tuple[str, str], dict]:
+    if not p.is_file():
+        return {}
+    with p.open(encoding="utf-8") as fh:
+        return {(r["dataset"], r["ontology_id"]): r for r in csv.DictReader(fh)}
+
+
+def gt(r: dict) -> int:
+    return int(r.get("n_gt_patterns") or 0)
+
+
+def complete(r: dict) -> int:
+    return int(r.get("n_complete_patterns") or 0)
+
+
+def kept(r: dict) -> bool:
+    return not r.get("drop_reason")
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--old", required=True, type=Path)
+    ap.add_argument("--new", required=True, type=Path)
+    ap.add_argument("--old-pairs", type=Path)
+    ap.add_argument("--new-root", type=Path)
+    ap.add_argument("--out", required=True, type=Path)
+    args = ap.parse_args()
+    args.out.mkdir(parents=True, exist_ok=True)
+
+    old, new = load(args.old), load(args.new)
+    added = sorted(set(new) - set(old))
+    gone = sorted(set(old) - set(new))
+    common = sorted(set(old) & set(new))
+
+    gained = [(k, gt(old[k]), gt(new[k])) for k in common if gt(new[k]) > gt(old[k])]
+    lost = [(k, gt(old[k]), gt(new[k])) for k in common if gt(new[k]) < gt(old[k])]
+    newly_kept = [k for k in common if kept(new[k]) and not kept(old[k])]
+    newly_dropped = [k for k in common if not kept(new[k]) and kept(old[k])]
+
+    new_pairs = (sum(gt(new[k]) for k in added)
+                 + sum(b - a for _k, a, b in gained))
+    new_complete = (sum(complete(new[k]) for k in added)
+                    + sum(max(0, complete(new[k]) - complete(old[k]))
+                          for k in common))
+
+    rules_old = Counter(r["drop_reason"].split(":", 1)[0] or "KEPT"
+                        for r in old.values())
+    rules_new = Counter(r["drop_reason"].split(":", 1)[0] or "KEPT"
+                        for r in new.values())
+
+    has_changes = bool(added or gone or gained or lost
+                       or newly_kept or newly_dropped)
+
+    L = [f"# Quarterly harvest diff", "",
+         f"- corpus: **{len(old)} → {len(new)}** ontologies",
+         f"- **new ontology–pattern pairs: {new_pairs}**",
+         f"- new complete-reuse pairs: {new_complete}",
+         f"- newly discovered ontologies: {len(added)}",
+         f"- ontologies that disappeared upstream: {len(gone)}",
+         f"- gained ground truth: {len(gained)} · lost: {len(lost)}",
+         f"- newly passing the gate: {len(newly_kept)} · newly dropped: {len(newly_dropped)}",
+         ""]
+
+    if added:
+        L += ["## Newly discovered ontologies", "",
+              "| dataset | ontology | patterns | complete | gate |",
+              "|---|---|---:|---:|---|"]
+        for k in added[:60]:
+            r = new[k]
+            L.append(f"| {k[0]} | `{k[1]}` | {gt(r)} | {complete(r)} | "
+                     f"{r['drop_reason'].split(':', 1)[0] or '**kept**'} |")
+        if len(added) > 60:
+            L.append(f"\n_…and {len(added) - 60} more; see `new_ontologies.csv`._")
+        L.append("")
+
+    if gained:
+        L += ["## Gained ground truth", "",
+              "| dataset | ontology | before | after |", "|---|---|---:|---:|"]
+        for (ds, o), a, b in gained[:40]:
+            L.append(f"| {ds} | `{o}` | {a} | {b} |")
+        L.append("")
+
+    if gone:
+        L += ["## Disappeared upstream", "",
+              "These were in the release but are no longer discoverable — the "
+              "repository was deleted, renamed or made private. The published "
+              "release keeps them; this is a provenance note, not a deletion.", "",
+              *[f"- `{o}` ({ds})" for ds, o in gone[:40]], ""]
+
+    L += ["## Gate verdict shift", "",
+          "| rule | before | after | Δ |", "|---|---:|---:|---:|"]
+    for rule in sorted(set(rules_old) | set(rules_new)):
+        a, b = rules_old.get(rule, 0), rules_new.get(rule, 0)
+        L.append(f"| {rule} | {a} | {b} | {b - a:+d} |")
+    L += ["", "---", "",
+          "Generated by `.github/workflows/quarterly-harvest.yml`. Every removal "
+          "in this harvest was re-verified against the source files; the run "
+          "fails if any cannot be reproduced.", ""]
+
+    (args.out / "REPORT.md").write_text("\n".join(L), encoding="utf-8")
+
+    def dump(name, rows, cols):
+        if not rows:
+            return
+        with (args.out / name).open("w", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
+            w.writeheader()
+            w.writerows(rows)
+
+    dump("new_ontologies.csv", [new[k] for k in added],
+         ["dataset", "ontology_id", "n_pattern_files", "n_gt_patterns",
+          "n_complete_patterns", "drop_reason"])
+    dump("gained_ground_truth.csv",
+         [{"dataset": k[0], "ontology_id": k[1], "before": a, "after": b}
+          for k, a, b in gained], ["dataset", "ontology_id", "before", "after"])
+    dump("disappeared.csv", [old[k] for k in gone],
+         ["dataset", "ontology_id", "n_gt_patterns", "drop_reason"])
+
+    print(f"new pairs: {new_pairs}   new ontologies: {len(added)}   "
+          f"disappeared: {len(gone)}")
+
+    gh = os.environ.get("GITHUB_OUTPUT")
+    if gh:
+        with open(gh, "a", encoding="utf-8") as fh:
+            fh.write(f"has_changes={'true' if has_changes else 'false'}\n")
+            fh.write(f"new_pairs={new_pairs}\n")
+            fh.write(f"new_ontologies={len(added)}\n")
+
+
+if __name__ == "__main__":
+    main()

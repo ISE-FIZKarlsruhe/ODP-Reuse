@@ -1,0 +1,7 @@
+reference,n_ontologies_in_published_jsonl,n_present_in_reference,n_agree_on_n_gt,n_disagree,ontology,n_entities,note
+pairs.csv,493,493,493,0,,,
+MANIFEST.n_gt_patterns,493,493,493,0,,,
+cluster_diagnostics_rerun,493,491,491,0,,,
+pairs.csv n_reused (instance SIZES),493,,493,0,,,
+no_candidate_configuration,,,,,github/StenDoipanni_XKG_event-sequences,2,k>=n for every k in the grid; scored 0 by construction
+no_candidate_configuration,,,,,github/aschimmenti_ESWC-2024-OKE_doc_data_0,2,k>=n for every k in the grid; scored 0 by construction

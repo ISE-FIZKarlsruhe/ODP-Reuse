@@ -1,0 +1,9 @@
+dataset,method,clusterer,n_ontologies,oracle_precision,oracle_recall,oracle_f1,unsup_precision,unsup_recall,unsup_f1,oracle_gap_f1
+github,owl2vec,kmeans,442,0.4276,0.7669,0.4529,0.2854,0.7494,0.3207,0.1322
+github,owl2vec,hdbscan,442,0.3695,0.551,0.3579,0.2533,0.4281,0.2432,0.1147
+github,rdf2vec,kmeans,442,0.4402,0.775,0.4678,0.2589,0.7606,0.3005,0.1673
+github,rdf2vec,hdbscan,442,0.3654,0.526,0.3485,0.2637,0.435,0.2592,0.0893
+noOBO,owl2vec,kmeans,51,0.6151,0.6574,0.5408,0.4771,0.6214,0.4484,0.0924
+noOBO,owl2vec,hdbscan,51,0.4229,0.4466,0.365,0.3726,0.3928,0.324,0.041
+noOBO,rdf2vec,kmeans,51,0.6005,0.6655,0.554,0.4368,0.6649,0.4352,0.1188
+noOBO,rdf2vec,hdbscan,51,0.4563,0.445,0.3654,0.3563,0.3966,0.3053,0.0601

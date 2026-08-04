@@ -1,0 +1,8 @@
+dataset,cause,n,pct_of_dataset_g5
+github,remodelled_confirmed,8,2.0
+github,remodelled_candidate,60,15.0
+github,no_pattern_entities,5,1.3
+github,disjoint,326,81.7
+noOBO,remodelled_confirmed,3,12.0
+noOBO,remodelled_candidate,6,24.0
+noOBO,disjoint,16,64.0

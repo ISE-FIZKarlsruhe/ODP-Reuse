@@ -1,0 +1,4 @@
+comparison,method_a,method_b,n_paired,mean_delta_map,ci_lo_95,ci_hi_95,p_bootstrap,p_sign_test,win_loss_tie,significant_at_0.05,note
+dataset-informed CF vs no-dataset floor,ontology_knn_cf,random,89,0.8222,0.7538,0.884,0.0,0.0,85/1/3,yes,headline claim: does the ODP-Reuse data help at all
+CF vs popularity prior,ontology_knn_cf,popularity,89,0.2013,0.1372,0.2709,0.0,0.0,31/2/56,yes,is CF better than 'recommend the most reused patterns'
+CF vs Doc2Vec content matching,ontology_knn_cf,doc2vec,89,0.8052,0.7293,0.8739,0.0,0.0,83/3/3,yes,CF vs a correct re-implementation of ODPReco's scoring idea

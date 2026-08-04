@@ -1,0 +1,65 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix dul: <http://www.loa-cnr.it/ontologies/DUL.owl#> .  
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+################################################################
+# Classes
+################################################################
+
+ssn:Stimulus a owl:Class ;
+  rdfs:subClassOf dul:Event ;
+  rdfs:label "Stimulus"@en ;
+  rdfs:comment "A detectable environmental change that triggers a sensor."@en .
+
+ssn:Sensor a owl:Class ;
+  rdfs:label "Sensor"@en ;
+  rdfs:comment "A device or mechanism that registers or detects a stimulus."@en .
+
+ssn:Observation a owl:Class ;
+  rdfs:subClassOf dul:Event ;
+  rdfs:label "Observation"@en ;
+  rdfs:comment "The act or result of measurement or detection performed by a sensor."@en .
+
+ssn:Property a owl:Class ;
+  rdfs:label "Property"@en ;
+  rdfs:comment "A measurable property or characteristic of a feature of interest."@en .
+
+ssn:FeatureOfInterest a owl:Class ;
+  rdfs:label "FeatureOfInterest"@en ;
+  rdfs:comment "The entity in the world whose property is observed."@en .
+
+################################################################
+# Object Properties (relations)
+################################################################
+
+ssn:hasStimulus a owl:ObjectProperty ;
+  rdfs:domain ssn:Observation ;
+  rdfs:range ssn:Stimulus ;
+  rdfs:label "has stimulus"@en ;
+  rdfs:comment "The stimulus that triggers / is involved in the observation."@en .
+
+ssn:madeBySensor a owl:ObjectProperty ;
+  rdfs:domain ssn:Observation ;
+  rdfs:range ssn:Sensor ;
+  rdfs:label "made by sensor"@en ;
+  rdfs:comment "The sensor that made the observation."@en .
+
+ssn:observes a owl:ObjectProperty ;
+  rdfs:domain ssn:Observation ;
+  rdfs:range ssn:Property ;
+  rdfs:label "observes"@en ;
+  rdfs:comment "Which property the observation is about."@en .
+
+ssn:hasResult a owl:ObjectProperty ;
+  rdfs:domain ssn:Observation ;
+  rdfs:range ssn:Property ;  # or some “Result” class / value class
+  rdfs:label "has result"@en ;
+  rdfs:comment "The result (value or state) yielded by the observation."@en .
+
+ssn:isPropertyOf a owl:ObjectProperty ;
+  rdfs:domain ssn:Property ;
+  rdfs:range ssn:FeatureOfInterest ;
+  rdfs:label "is property of"@en ;
+  rdfs:comment "Associates a property with the feature of interest."@en .

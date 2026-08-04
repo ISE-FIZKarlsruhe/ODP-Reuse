@@ -1,0 +1,13 @@
+gated GitHub ontologies analysed : 442
+
+Share of an ontology's WIDE entity set that consists of entities it
+reused from a pattern -- i.e. the part of the CF feature that is
+literally the pattern's own vocabulary:
+  mean   : 15.5%
+  median : 7.4%
+  quartiles : 2.1% / 7.4% / 20.0%
+  >=25% of the file is reused pattern vocabulary : 96 ontologies (22%)
+  >=50% : 35 (8%)
+
+mean reused patterns per ontology : 1.51
+ontologies reusing exactly 1 pattern : 345 (78%)

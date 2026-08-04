@@ -1,0 +1,11 @@
+rank,pattern,n_ontologies
+1,timeinterval,3
+2,situation,2
+3,participation,2
+4,timeindexedsituation,2
+5,partof,1
+6,set,1
+7,basicplan,1
+8,controlflow,1
+9,sequence,1
+10,countingas,1

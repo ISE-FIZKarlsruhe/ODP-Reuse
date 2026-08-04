@@ -1,0 +1,95 @@
+site_name: ODP-Reuse
+site_description: A quality-gated benchmark of Ontology Design Pattern reuse
+site_url: https://ise-fizkarlsruhe.github.io/ODP-Reuse/
+repo_url: https://github.com/ISE-FIZKarlsruhe/ODP-Reuse
+repo_name: ISE-FIZKarlsruhe/ODP-Reuse
+edit_uri: ''
+
+theme:
+  name: material
+  language: en
+  font:
+    text: Outfit          # geometric, high-contrast — deliberately not the usual Roboto
+    code: JetBrains Mono
+  icon:
+    logo: material/hexagon-multiple-outline
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.tooltips
+    - search.suggest
+    - search.highlight
+    - toc.follow
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: odp-bright
+      toggle: { icon: material/weather-night, name: Dark }
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle: { icon: material/weather-sunny, name: Light }
+
+plugins:
+  - search
+  # Renders the reused ODPs as interactive graphs, in-page.
+  # Only the 68 patterns reused by the GitHub and Paper/Repo portions are
+  # vendored under docs/patterns/ (1.4 MB); the 420 DOS-DP templates reused by
+  # the OBO portion are far larger and live on Zenodo.
+  # Regenerate the whole site with: python pipeline/gen_site.py
+  - ontoink
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc: { permalink: '#' }
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed: { alternate_style: true }
+  - pymdownx.highlight: { anchor_linenums: true }
+  - pymdownx.inlinehilite
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/odp.css
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js
+  - javascripts/viz.js
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ISE-FIZKarlsruhe/ODP-Reuse
+    - icon: material/database
+      link: https://doi.org/10.5281/zenodo.17751740
+  generator: false
+
+nav:
+  - Overview: index.md
+  - How it is built:
+      - Pipeline: pipeline.md
+      - Filters and parameters: filters.md
+  - Findings:
+      - Research questions: rqs.md
+      - Use cases: use-cases.md
+  - The data:
+      - Datasets: datasets.md
+      - Patterns: patterns.md
+      - Using the dataset: using.md
+      - Get it: download.md
+  - Changelog: changelog.md

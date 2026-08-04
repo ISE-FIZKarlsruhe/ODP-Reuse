@@ -1,0 +1,66 @@
+[
+ {
+  "portion": "GitHub",
+  "method": "owl2vec",
+  "clusterer": "kmeans",
+  "oracle": 0.4529,
+  "unsup": 0.3207,
+  "n": 442
+ },
+ {
+  "portion": "GitHub",
+  "method": "owl2vec",
+  "clusterer": "hdbscan",
+  "oracle": 0.3579,
+  "unsup": 0.2432,
+  "n": 442
+ },
+ {
+  "portion": "GitHub",
+  "method": "rdf2vec",
+  "clusterer": "kmeans",
+  "oracle": 0.4678,
+  "unsup": 0.3005,
+  "n": 442
+ },
+ {
+  "portion": "GitHub",
+  "method": "rdf2vec",
+  "clusterer": "hdbscan",
+  "oracle": 0.3485,
+  "unsup": 0.2592,
+  "n": 442
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "method": "owl2vec",
+  "clusterer": "kmeans",
+  "oracle": 0.5408,
+  "unsup": 0.4484,
+  "n": 51
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "method": "owl2vec",
+  "clusterer": "hdbscan",
+  "oracle": 0.365,
+  "unsup": 0.324,
+  "n": 51
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "method": "rdf2vec",
+  "clusterer": "kmeans",
+  "oracle": 0.554,
+  "unsup": 0.4352,
+  "n": 51
+ },
+ {
+  "portion": "Paper &amp; Repository",
+  "method": "rdf2vec",
+  "clusterer": "hdbscan",
+  "oracle": 0.3654,
+  "unsup": 0.3053,
+  "n": 51
+ }
+]

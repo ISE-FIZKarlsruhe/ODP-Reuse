@@ -1,163 +1,115 @@
-# ODP Reuse Benchmark: Harvesting, Classifying, and Verifying Ontology Design Pattern Reuse
+# ODP-Reuse — a quality-gated benchmark of Ontology Design Pattern reuse
 
-This repository provides a reproducible pipeline to (i) **collect papers about Ontology Design Patterns (ODPs)**, (ii) **identify ontologies that cite and/or reuse ODPs**, and (iii) **quantify and validate reuse** across multiple sources (Google, GitHub, OntoPortal instances, and SPARQL endpoints). The final products are (a) a **statistics report** for ODP reuse, and (b) a **gold-standard dataset** of ontologies that reuse **100%** of the patterns detected for them.
+Which ontologies **actually** reuse Ontology Design Patterns, and how much of each
+pattern do they reuse? This repository harvests candidate ontologies from code
+repositories, publications and ontology portals, verifies reuse entity by entity,
+and publishes the result as an **unfiltered corpus plus six quality-gated views**.
 
-> **Paper link:** <a href="https://doi.org/" target="_blank">DOI</a>
+Every ontology carries a gate verdict and, where it was excluded, the rule and the
+evidence for the exclusion — so any rule can be disputed and re-run rather than
+taken on trust.
 
+| | |
+|---|---|
+| Ontologies harvested | **1,973** |
+| Pass the quality gate | **501** (25.4%) — GitHub 442 · Paper & Repository 51 · DOS-DP 8 |
+| Verified reuse pairs | **1,517** over **488** distinct patterns |
+| Reuse a pattern *in full* | **51** ontologies |
 
----
+📖 **[Full documentation](https://ise-fizkarlsruhe.github.io/ODP-Reuse/)** ·
+💾 **[Data on Zenodo](https://doi.org/10.5281/zenodo.17751740)** ·
+🚀 **[How to use the dataset](https://ise-fizkarlsruhe.github.io/ODP-Reuse/using/)**
 
-## Contents
+## Get the data
 
-- `scholar/` – paper-centric pipeline
-  - `arxiv/odp_paper_harvester.py` – harvests ODP-related papers from **arXiv, OpenAlex, Crossref, and Unpaywall** (PDF retrieval best-effort).
-  - `paper_citations_openalex.py` – queries OpenAlex for per-paper citation counts/metadata.
-  - `classify_odp_reuse.py` – rule-based screening of citing papers for likely ODP reuse.
-  - `odp_summary_and_plots.py`, `odp_figures.py` – produces summary tables and figures under `scholar/output/`.
-  - `arxiv/run.sh` – minimal example (creates venv, installs `arxiv/requirements.txt`, runs harvester).
-- `MultiSource/` – ontology-centric pipeline
-  - `odp_multi_source_finder.py` – discovers ontologies reusing ODPs by searching **Google Custom Search**, **GitHub Code Search**, **BioPortal**, **MatPortal**, **LOV**, and optionally **SPARQL** endpoints. It can auto-discover pattern IRIs from the official `odpa/patterns-repository`.
-  - `build_github_dataset.py` – builds a local dataset from a GitHub reuse CSV, cloning candidate repos and structuring them on disk.
-  - `odp_stats.py` – computes reuse statistics from local repositories/ontologies and generates plots.
-  - `gold_dataset.py` – materializes a **gold-standard dataset** filtered to ontologies that reuse **100%** of their detected patterns; supports multiple similarity backends.
-  - `run_multiple_source.sh` – example orchestration script; sources `.env`, clones the pattern repo, runs statistics, and builds gold datasets.
-- `scholar/output/` – default output location for the paper pipeline.
-- `.env.example` – template for API keys used by the multi-source search (see _Configuration_).
+The corpus itself (several GiB of OWL) lives on Zenodo. The **tables** — the
+ontology-to-pattern mapping, per-view statistics, the manifest and the audit — are
+in this repository under `release-iri/` and are what most users need:
 
----
+```python
+import pandas as pd
+pairs = pd.read_csv("release-iri/views/github-reuse/pairs.csv")
+M = pairs.pivot_table(index="ontology_id", columns="pattern",
+                      values="n_reused_entities", fill_value=0)
+```
 
-## Data Sources
+`release-iri/MANIFEST.csv` is the unfiltered record of all 1,973 ontologies with
+`stage_reached` and `drop_reason`, so you can re-derive a corpus under your own
+gate instead of ours. See [Using the dataset](https://ise-fizkarlsruhe.github.io/ODP-Reuse/using/)
+for the column reference and the three traps worth knowing about — chiefly that
+`coverage_pct` is a share of the *pattern*, and that the three portions must never
+be pooled into one average.
 
-- **Papers:** arXiv, OpenAlex, Crossref, Unpaywall (PDF retrieval when possible).
-- **Ontology reuse (web/code):** Google Custom Search (programmable search), GitHub Code Search.
-- **Ontology portals:** BioPortal and MatPortal (OntoPortal stack).
-- **Linked data catalogs:** LOV API and/or SPARQL endpoint(s).
+## Layout
 
----
+| Path | What it is |
+|---|---|
+| `release-iri/` | the release: manifest, six views, gate summary, audit evidence |
+| `pipeline/` | the six-stage pipeline — discover · repair · normalise · gate · audit · publish |
+| `use-cases/odp-extraction/` | UC1 — the corpus as **ground truth** for unsupervised ODP extraction |
+| `use-cases/odp-recommendation/` | UC2 — the corpus as **training signal** for ODP recommendation |
+| `MultiSource/`, `scholar/` | the harvesters: ontology discovery, and the ODP literature survey |
+| `docs/` | the documentation site (MkDocs), generated from the release |
 
-## Installation
-
-We recommend Python **3.10–3.11** and a virtual environment.
+## Reproducing
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-python -m pip install --upgrade pip
+python -m venv .venv && . .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-A consolidated `requirements.txt` is provided in this folder (baseline derived from imports). The submodule `scholar/arxiv/requirements.txt` is also kept for the minimal arXiv harvester demo.
-
----
-
-## Configuration
-
-Create a `.env` file at the project root with the following variables (copy from `.env.example`):
-
-```dotenv
-GOOGLE_API_KEY=...
-GOOGLE_CSE_ID=...
-GITHUB_TOKEN=...
-BIOPORTAL_API_KEY=...
-MATPORTAL_API_KEY=...
-```
-
----
-
-## Reproducible Pipelines
-
-### A) Harvest ODP Papers (scholar/arxiv)
-
-1. Create and activate a fresh environment (see _Installation_).  
-2. Install arXiv harvester deps (already covered by top-level `requirements.txt`; alternatively: `pip install -r scholar/arxiv/requirements.txt`).  
-3. Run the harvester with explicit queries and a contact email:
+The gate and the release are rebuilt from the corpus with:
 
 ```bash
-cd scholar/arxiv
-python odp_paper_harvester.py   --query "ontology design pattern"   --query "ontology pattern reuse"   --email your.name@example.edu   --outdir ../output/odp_results   --filter_big_publishers   --attempt_institutional_pdf
+python pipeline/build_manifest.py  --corpus <corpus-root> --out pipeline/out
+python pipeline/audit_filters.py   --manifest pipeline/out/MANIFEST.csv
+python pipeline/build_release.py   --manifest pipeline/out/MANIFEST.csv --out release-iri
+python pipeline/gen_site.py                       # regenerate docs/ from the release
 ```
 
-Outputs (under `scholar/output/` by default) include metadata tables and any retrieved PDFs.
-
-Optionally augment with OpenAlex citations:
+Two checks guard against drift, and both should pass before any commit:
 
 ```bash
-cd ..
-python paper_citations_openalex.py --input ./output/odp_results/metadata.csv --out ./output/citations.csv
+python paper-iri/verify_numbers.py    # every headline number vs the released CSVs
+python pipeline/check_repo_claims.py  # every path the manuscript cites is present
 ```
 
-Classify likely ODP reuse in citing papers:
+`verify_numbers.py` reports how many assertions it ran — 108 in a fresh clone,
+140 in a working tree that also holds the unpublished companion track. It is the
+reason four errors in the tables were caught rather than published.
 
-```bash
-python classify_odp_reuse.py   --input ./output/citations.csv   --pattern-library-dir ../MultiSource/patterns   --log-dir ./output/logs   --out ./output/classified.csv
-```
+Harvesting is **not** re-runnable to the same result: it queries live APIs
+(GitHub, Google, BioPortal, MatPortal, LOV), so the reproducible artefact is the
+archived Zenodo deposition, not a re-run of the harvester. Credentials for a fresh
+harvest go in `.env` — see `.env.example`.
 
-Produce summaries and figures:
+## Use cases
 
-```bash
-python odp_summary_and_plots.py --input ./output/classified.csv --outdir ./output/wop
-python odp_figures.py --input ./output/classified.csv --outdir ./output/wop/figures
-```
+Two demonstrations that the corpus is *consumable*, not merely descriptive:
 
----
+- **UC1 · extraction** — recover ODP instances by embedding and clustering, with
+  no knowledge of which patterns an ontology reuses. On 442 gate-passing GitHub
+  ontologies the best unsupervised configuration reaches F₁ **0.321**, where an
+  oracle that tunes against the answer reaches **0.453**. Both are reported,
+  because only one of them is achievable.
+- **UC2 · recommendation** — recommend the ODPs a new ontology should reuse. A
+  recommender built on the reuse matrix beats the best that pattern documentation
+  alone supports by **+0.805 MAP** (95% CI [+0.729, +0.874], 83/3/3 wins,
+  sign test *p* < 0.001, *n* = 89 paired ontologies).
 
-### B) Discover Ontology Reuse from Multiple Sources (MultiSource)
-
-Prepare credentials in `.env` (see _Configuration_). Then:
-
-```bash
-cd MultiSource
-bash run_multiple_source.sh
-```
-
-Or run the main components explicitly.
-
-**1) Multi-source finder:** harvest candidate ontologies reusing ODPs by IRI.
-
-```bash
-python odp_multi_source_finder.py   --patterns-repo ./patterns-repository \ 
-  --sources github,google,bioportal,matportal,lov   --query-limit 200   --out report/
-```
-
-**2) Build a local GitHub dataset** from the finder’s CSV (clones repos and organizes files).
-
-```bash
-python build_github_dataset.py   --csv report/github.csv   --patterns-repo ./patterns-repository   --out-dir github_dataset
-```
-
-**3) Compute reuse statistics** (character/word/SBERT/backends; plots saved to output directory).
-
-```bash
-python odp_stats.py   --base github_dataset   --out-dir github_dataset_stats   --all-backends
-```
-
-**4) Materialize the gold-standard dataset** (ontologies that reuse **100%** of their detected patterns).
-
-```bash
-# Pick a backend: hybrid | char | word | sbert | exact
-python gold_dataset.py   --base github_dataset   --out-dir gold_github   --sim-backend hybrid   --materialize symlink   --dataset-percents "100"   --make-graph-100
-```
-
-Repeat the same for any additional base directory (e.g., `Ontologies_reusingODPs`).
-
----
-
-## Reproducibility Checklist
-
-- **Environment:** use the provided `requirements.txt` and Python 3.10–3.11. Record the exact Python and package versions (`pip freeze > reproducibility/requirements.lock.txt`).  
-- **Configuration:** keep `.env` local. Provide an `.env.example` for collaborators.  
-- **Determinism:** where APIs are queried (Google, GitHub, portals), results may change over time; the pipeline writes **timestamped CSVs** in `report/` and `scholar/output/` to preserve snapshots.  
----
+Read `use-cases/*/CAVEATS.md` **before citing any number** — each records which
+claims survive a paired significance test and which do not.
 
 ## Citation
 
-If you use this code or the datasets, please cite the accompanying paper:  
-**“ODP Reuse Benchmark …”** <a href="https://doi.org/" target="_blank">DOI</a>
-
-
----
+Cite the dataset via its Zenodo concept DOI, which always resolves to the latest
+version: [10.5281/zenodo.17751740](https://doi.org/10.5281/zenodo.17751740).
+Machine-readable metadata is in [`CITATION.cff`](CITATION.cff). The accompanying
+paper is under review; its citation will be added here once it is accepted.
 
 ## License
 
-This project is released under the [MIT License](LICENSE).
-
+Code is [MIT](LICENSE). The **data** — the corpus, the views and the derived
+tables — is **CC BY 4.0**, as recorded in `CITATION.cff` and on Zenodo. The
+third-party pattern libraries the pipeline reads are not redistributed here; each
+keeps its own licence.
