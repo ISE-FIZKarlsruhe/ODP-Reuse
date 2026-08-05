@@ -6,6 +6,25 @@
 (function () {
   'use strict';
 
+  // viz.js is always served from <site-root>/javascripts/viz.js, so its own URL
+  // yields the site root whatever page is being viewed.
+  //
+  // This matters because every data-src is site-root-relative ("data/foo.json").
+  // fetch() resolves a relative URL against the PAGE, and mkdocs-material uses
+  // directory URLs, so on /ODP-Reuse/filters/ the browser asked for
+  // /ODP-Reuse/filters/data/rules.json and got a 404 -- every figure below the
+  // site root failed, and navigation.instant made the root page fail too once it
+  // had been navigated away from and back.
+  const SITE_ROOT = (function () {
+    const s = document.currentScript
+      || document.querySelector('script[src*="javascripts/viz.js"]');
+    try {
+      return s ? new URL('../', s.src).href : new URL('./', location.href).href;
+    } catch (e) {
+      return new URL('./', location.href).href;
+    }
+  })();
+
   const tip = (() => {
     let el = null;
     return {
@@ -29,8 +48,10 @@
     .getPropertyValue(v).trim();
 
   async function load(el) {
-    const r = await fetch(el.dataset.src);
-    if (!r.ok) throw new Error(el.dataset.src + ': ' + r.status);
+    // Resolved against SITE_ROOT, not the page: see the note at the top.
+    const url = new URL(el.dataset.src, SITE_ROOT).href;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(url + ': ' + r.status);
     return r.json();
   }
 
