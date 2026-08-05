@@ -32,6 +32,14 @@ EXT = (".csv", ".md", ".py", ".json", ".tex", ".owl", ".ttl", ".yml", ".cff",
        ".txt", ".bib", ".sh", ".xlsx", ".jsonl")
 
 TOKEN_RE = re.compile(r"\\(?:texttt|path|url)\{([^{}]*)\}")
+
+# A \url pointing into this repository is a claim about repository content just as
+# much as a \texttt path is -- and a more dangerous one, because it renders as a
+# link a reviewer will click. Skipping URLs let a footnote promising
+# scholar/ODPs_WOP.csv (which does not exist) pass unnoticed.
+SELF_URL = re.compile(
+    r"https?://github\.com/ISE-FIZKarlsruhe/ODP-Reuse/(?:blob|tree|raw)/"
+    r"[^/]+/(?P<path>[^\s}#?]+)")
 # LaTeX escapes its underscores; undo that plus a few common wrappers.
 UNESCAPE = ((r"\_", "_"), (r"\-", "-"), (r"-{}-", "--"), (r"\%", "%"),
             (r"\&", "&"), (r"\#", "#"), (r"\$", "$"), ("~", ""))
@@ -144,6 +152,10 @@ def main() -> None:
                 if looks_like_path(tok):
                     seen.setdefault(canonical(tok), set()).add(
                         str(src.relative_to(ROOT)).replace("\\", "/"))
+            # URLs into this repository, resolved to the paths they promise
+            for m in SELF_URL.finditer(text.replace("\\_", "_")):
+                seen.setdefault(m.group("path").rstrip("/"), set()).add(
+                    str(src.relative_to(ROOT)).replace("\\", "/") + " [url]")
 
     print(f"== repository claims: {len(seen)} distinct paths cited by "
           f"{', '.join(p.name for p in papers if p.is_dir())} ==\n")

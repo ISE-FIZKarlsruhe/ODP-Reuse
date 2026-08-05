@@ -56,15 +56,26 @@ pattern namespace" over-counts, because it also flags ontologies that legitimate
 
 **G3** — all 203 in the GitHub portion. `duplicate_of` names the retained file.
 
-**G4** — of the 729 dropped: **540 have zero** own entities, 84 have 1–4, 105 have
-5–9. The threshold of 10 is **arbitrary** and the distribution has no gap to read
-it off; §D2 prices the choice and shows that no finding depends on it. It also
-shows the rule is expressed in the wrong units — a share would separate a small
-ontology from a near-copy of a pattern library, and an absolute count cannot.
+**G4** — all **540** dropped have **exactly zero** own entities; there is no
+1–9 tail among the removals, because the released threshold is 1. The cut
+therefore sits on a genuine discontinuity in the distribution — "contributes
+nothing at all" against "contributes something" — rather than at an arbitrary
+point on a continuum. For contrast, the smallest *kept* ontology contributes 1
+own entity and the median kept contributes 50, and 72 of the 501 kept sit in the
+1–9 band, so the superseded threshold of 10 would have discarded 72 genuine
+reusers. §D2 prices every alternative: relaxing to 0 keeps 8 more (509), tighten-
+ing to 10 loses 72 (429), and the headline mean patterns per GitHub ontology
+moves by at most 0.02 (1.51 to 1.53) across thresholds 0–4. The rule is still expressed in the wrong units:
+a share would separate a small ontology from a near-copy of a pattern library,
+and an absolute count cannot.
 
-**G5** — all 307 are `no_pattern_overlap`. Read this rule with §B2 in mind: before
-the repair it fired 459 times, and 152 of those were a fetch failure rather than a
-modelling fact.
+**G5** — all **424** are `no_pattern_overlap`: 399 GitHub, 25 noOBO. Of the 399
+GitHub cases, 326 (81.7%) are wholly disjoint from the candidate pattern, 60
+(15.0%) and 8 (2.0%) are candidate and confirmed remodellings whose identifiers
+were renamed, and 5 (1.3%) name a pattern that yielded no entity to compare
+against (`out/g5/g5_causes.csv`). Read this rule with §B2 in mind: before the
+repair it fired more often, and a large share of those were a fetch failure
+rather than a modelling fact.
 
 ### Two normalisations applied before any filter
 

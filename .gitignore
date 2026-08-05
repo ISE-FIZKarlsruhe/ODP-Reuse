@@ -413,3 +413,11 @@ pipeline/out_obo/**
 # The IRI-anonymised twin of the corpus: several GiB of N-Triples, built by
 # pipeline/hash_corpus.py and published as a Zenodo file, never through git.
 release-*/corpus-hashed/
+
+# --- Zenodo upload staging ----------------------------------------------------
+# Archives built for a deposition are derived artefacts of files that are either
+# already tracked or deliberately Zenodo-only. corpus.zip alone is over a
+# gigabyte, and GitHub rejects a single file above 100 MiB, so an accidental
+# `git add -A` while staging a release would fail the push.
+release-*/*.zip
+release-*/zenodo/
