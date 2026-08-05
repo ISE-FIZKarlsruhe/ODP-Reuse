@@ -1,0 +1,45 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/coparticipation.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix participation: <http://www.ontologydesignpatterns.org/cp/owl/participation.owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+participation:Event owl:equivalentClass [ a owl:Restriction ;
+            owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+            owl:onClass participation:Object ;
+            owl:onProperty participation:hasParticipant ] .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+<http://www.ontologydesignpatterns.org/cp/owl/coparticipation.owl> a owl:Ontology ;
+    rdfs:comment """The co-participation pattern. 
+This pattern re-uses the participation pattern and is extracted from DOLCE-UltraLite by partial clone of elements.
+This minimal pattern is useful to abstract from specific or domain-oriented 'thematic role' relations, such as 'agent', 'patient', 'instrument', 'product', 'provides', 'activator', etc.
+A property chain allows to derive coparticipation from simple participation relations. For a more complete version of this pattern, see the functionalsituation.owl pattern.""" ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/participation.owl>,
+        <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> ;
+    owl:versionInfo """1.1 added rdfs:isDefinedBy for all named entities
+2.0 used OWL2 property chain, added defining axiom for Event having at least 2 participants"""^^xsd:string,
+        "Created with TopBraid Composer"^^xsd:string .
+
+:coparticipatesWith a owl:ObjectProperty,
+        owl:SymmetricProperty ;
+    rdfs:label "coparticipates with"@en ;
+    rdfs:domain participation:Object ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/coparticipation.owl> ;
+    rdfs:range participation:Object ;
+    owl:inverseOf :coparticipatesWith ;
+    owl:propertyChainAxiom ( participation:isParticipantIn participation:hasParticipant ) .
+
+participation:Object a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :coparticipatesWith ;
+            owl:someValuesFrom participation:Object ] .
+

@@ -1,0 +1,102 @@
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#NaturalPerson> a owl:Class .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation> a owl:Class .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasConstituent> a owl:ObjectProperty .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isObjectIncludedIn> a owl:ObjectProperty .
+
+<https://w3id.org/smartenvironment/patterns/object.owl> a owl:Ontology ;
+    dcterms:created "2017-10-22"^^xsd:date ;
+    dcterms:title "Smart Environment Object Ontology Pattern"^^xsd:string ;
+    vann:preferredNamespacePrefix "se-object"^^xsd:date ;
+    cpannotationschema:coversRequirements "What are node holders, in other words, which objects are used as the holder of sensors in a smart environment?"^^xsd:string,
+        "What are smart objects, in other words, which objects are the interest of an observation process?"^^xsd:string ;
+    cpannotationschema:isSpecializationOf <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl>,
+        ssn:,
+        <https://w3id.org/smartenvironment/patterns/geometry.owl> ;
+    rdfs:comment """This pattern relies on both the SSN ontology and DUL in order to represent an object in the context of a smart environment. Using this model we categorize the objects in to two groups of Smart Object and NodeHolder.
+
+Due to usual difficulties to install sensors in a smart environment it is common that some other objects (i.e. NodeHolder) are used to hosts sensors so as to observe the situation of other objects (i.e. SmartObject). Using this pattern we are able to diffrentiate between these two types of objects."""^^xsd:string ;
+    owl:imports <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl>,
+        ssn:,
+        <https://w3id.org/smartenvironment/patterns/geometry.owl> ;
+    skos:definition """This pattern relies on both the SSN ontology and DUL in order to represent an object in the context of a smart environment. Using this model we categorize the objects in to two groups of Smart Object and NodeHolder.
+
+Due to usual difficulties to install sensors in a smart environment it is common that some other objects (i.e. NodeHolder) are used to hosts sensors so as to observe the situation of other objects (i.e. SmartObject). Using this pattern we are able to diffrentiate between these two types of objects."""^^xsd:string .
+
+<https://w3id.org/smartenvironment/patterns/object.owl#Agent> a owl:Class ;
+    rdfs:label "agent"@en ;
+    rdfs:comment "Describes any agent (e.g., human, pet, etc) in a smart environment that can participate in an event or activity."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Event> ;
+            owl:onProperty <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isParticipantIn> ],
+        <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent>,
+        <https://w3id.org/smartenvironment/patterns/object.owl#MobileObject> ;
+    skos:definition "Describes any agent (e.g., human, pet, etc) in a smart environment that can participate in an event or activity."@en .
+
+<https://w3id.org/smartenvironment/patterns/object.owl#NodeHolder> a owl:Class ;
+    rdfs:label "node holder"@en ;
+    rdfs:comment "Describes any object in a smart environment, which is used to host network modules such as nodes or node stations."@en ;
+    rdfs:subClassOf sosa:Platform,
+        <https://w3id.org/smartenvironment/patterns/object.owl#Object> ;
+    skos:definition "Describes any object in a smart environment, which is used to host network modules such as nodes or node stations."@en .
+
+<https://w3id.org/smartenvironment/patterns/object.owl#SmartObject> a owl:Class ;
+    rdfs:label "smart object"@en ;
+    rdfs:comment "Describes any physical object in a smart environment which is a feature of interest for an observation process."@en ;
+    rdfs:subClassOf sosa:FeatureOfInterest,
+        <https://w3id.org/smartenvironment/patterns/object.owl#Object> ;
+    skos:definition "Describes any physical object in a smart environment which is a feature of interest for an observation process."@en .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent> a owl:Class .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Event> a owl:Class .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#PhysicalObject> a owl:Class .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#PhysicalPlace> a owl:Class .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation> a owl:ObjectProperty .
+
+<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isParticipantIn> a owl:ObjectProperty .
+
+<https://w3id.org/smartenvironment/patterns/object.owl#Location> a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty ssn:isPropertyOf ;
+            owl:someValuesFrom <https://w3id.org/smartenvironment/patterns/object.owl#MobileObject> ],
+        sosa:ObservableProperty .
+
+<https://w3id.org/smartenvironment/patterns/object.owl#MobileObject> a owl:Class ;
+    rdfs:label "mobile object"@en ;
+    rdfs:comment "Describes any type of physical object that has the possibility to move in a smart environment."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty ssn:hasProperty ;
+            owl:someValuesFrom <https://w3id.org/smartenvironment/patterns/object.owl#Location> ],
+        <https://w3id.org/smartenvironment/patterns/object.owl#Object> ;
+    skos:definition "Describes any type of physical object that has the possibility to move in a smart environment."@en .
+
+<https://w3id.org/smartenvironment/patterns/object.owl#Object> a owl:Class ;
+    rdfs:label "object"@en ;
+    rdfs:comment "Describes any type of physical object in a smart environment."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation> ;
+            owl:someValuesFrom <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#PhysicalPlace> ],
+        <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#PhysicalObject>,
+        <https://w3id.org/smartenvironment/patterns/geometry.owl#SpatialObject> ;
+    skos:definition "Describes any type of physical object in a smart environment."@en .
+
+[] a <http://www.w3.org/2002/07/script> .
+
+[] a <http://www.w3.org/2002/07/script> .
+

@@ -1,0 +1,48 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/price.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.ontologydesignpatterns.org/cp/owl/price.owl> a owl:Ontology ;
+    rdfs:comment "The price content ontology design pattern. This CP represents the price of an entity in a certain currency." ;
+    owl:imports <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> ;
+    owl:versionInfo "Created by Valentina Presutti"^^xsd:string .
+
+:isPriceOf a owl:ObjectProperty ;
+    rdfs:label "is price of"@en ;
+    rdfs:domain :Price ;
+    rdfs:range owl:Thing ;
+    owl:inverseOf :hasPrice .
+
+:Currency a owl:Class ;
+    rdfs:label "Currency"@en ;
+    rdfs:comment "A system of money in general use in a particular country." ;
+    owl:disjointWith :Price .
+
+:hasCurrency a owl:ObjectProperty ;
+    rdfs:label "has currency"@en ;
+    rdfs:domain :Price ;
+    rdfs:range :Currency .
+
+:hasPrice a owl:ObjectProperty ;
+    rdfs:label "has price"@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range :Price .
+
+:hasValue a owl:DatatypeProperty ;
+    rdfs:label "has value"@en ;
+    rdfs:domain :Price ;
+    rdfs:range xsd:float .
+
+owl:Thing a owl:Class .
+
+:Price a owl:Class ;
+    rdfs:label "Price"@en ;
+    rdfs:comment "The amount of money expected, required, or given in payment for something." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:cardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onProperty :hasCurrency ],
+        [ a owl:Restriction ;
+            owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onProperty :hasValue ] .
+

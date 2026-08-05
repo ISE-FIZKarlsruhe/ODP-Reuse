@@ -1,0 +1,57 @@
+@prefix : <https://w3id.org/smartenvironment/patterns/sensing.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+
+<https://w3id.org/smartenvironment/patterns/sensing> a owl:Ontology ;
+    dcterms:created "2017-10-22"@en ;
+    dcterms:description "This ontology mainly relies on the SSN ontology (http://www.w3.org/ns/ssn/) and describes a sensing process in the context on smart environment. It provides information about the sensors, the observation process and the configuration of the sensors."@en ;
+    dcterms:title "Smart Environment Sensing Ontology Pattern"@en ;
+    vann:preferredNamespacePrefix "se-sensing"@en ;
+    vann:preferredNamespaceUri <https://w3id.org/smartenvironment/patterns/sensing.owl> ;
+    cpannotationschema:coversRequirements "What are the feature of interests considered within an observation proces?"@en,
+        "What is the output (result) of a sensing process?"@en,
+        "What sensors make a sensing (observation) process?"@en ;
+    cpannotationschema:isSpecializationOf ssn: ;
+    rdfs:seeAlso ssn: ;
+    owl:imports ssn: .
+
+:ConfigurationProcedure a owl:Class ;
+    rdfs:label "configuration procedure"@en ;
+    rdfs:comment "Descibes a procedure required to configure a sensor to be used for an observation process in a smart environment context. This configuration can include both hardware ans software setup related to sensors such as the sampling rate, etc."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty ssn:implementedBy ;
+            owl:someValuesFrom :Sensor ],
+        sosa:Procedure ;
+    skos:example "Descibes a procedure required to configure a sensor to be used for an observation process in a smart environment context. This configuration can include both hardware ans software setup related to sensors such as the sampling rate, etc."@en .
+
+:Observation a owl:Class ;
+    rdfs:label "observation"@en ;
+    rdfs:comment "Using a Sensor it describes the process of observing a property of a feature of interest."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty sosa:madeBySensor ;
+            owl:someValuesFrom :Sensor ],
+        sosa:Observation ;
+    skos:definition "Using a Sensor it describes the process of observing a property of a feature of interest."@en .
+
+:Sensor a owl:Class ;
+    rdfs:label "sensor"@en ;
+    rdfs:comment "Descibes a device that with a specific set of configuration is able to implements an observation process in order to monitor a property of a feature of interest in a smart environment."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty ssn:implements ;
+            owl:someValuesFrom :ConfigurationProcedure ],
+        [ a owl:Restriction ;
+            owl:onProperty sosa:madeObservation ;
+            owl:someValuesFrom :Observation ],
+        sosa:Sensor ;
+    skos:definition "Descibes a device that with a specific set of configuration is able to implements an observation process in order to monitor a property of a feature of interest in a smart environment."@en .
+
+[] a <https://w3id.org/smartenvironment/patterns/script> .
+
+[] a <https://w3id.org/smartenvironment/patterns/script> .
+

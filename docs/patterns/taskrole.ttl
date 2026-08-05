@@ -1,0 +1,78 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+cpannotationschema:coversRequirements a owl:AnnotationProperty .
+
+cpannotationschema:extractedFrom a owl:AnnotationProperty .
+
+cpannotationschema:hasConsequences a owl:AnnotationProperty .
+
+cpannotationschema:hasIntent a owl:AnnotationProperty .
+
+cpannotationschema:relatedCPs a owl:AnnotationProperty .
+
+cpannotationschema:scenarios a owl:AnnotationProperty .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+:isTaskOf a owl:ObjectProperty ;
+    rdfs:label "is a target for"@en,
+        "è un obiettivo per"@it ;
+    rdfs:comment "A relation between roles and tasks, e.g. 'students have the duty of giving exams' (i.e. the Role 'student' hasTask the Task 'giving exams')." ;
+    rdfs:domain :Task ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl> ;
+    rdfs:range :Role ;
+    owl:inverseOf :hasTask .
+
+:hasTask a owl:ObjectProperty ;
+    rdfs:label "has target"@en,
+        "ha come obiettivo"@it ;
+    rdfs:comment "A relation between roles and tasks, e.g. 'students have the duty of giving exams' (i.e. the Role 'student' hasTask the Task 'giving exams')."^^xsd:string ;
+    rdfs:domain :Role ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl> ;
+    rdfs:range :Task .
+
+:Role a owl:Class ;
+    rdfs:label "Role"@en,
+        "Ruolo"@it ;
+    rdfs:comment "A concept that classifies an object. For example, the role developer classifies a person, the role server classifies a computer machine.  A hasTask only Tasks."^^xsd:string ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :Task ;
+            owl:onProperty :hasTask ] ;
+    owl:disjointWith :Task .
+
+<http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl> a owl:Ontology ;
+    rdfs:label "role task"^^rdf:PlainLiteral,
+        "task role"^^rdf:PlainLiteral ;
+    cpannotationschema:coversRequirements "What roles are this task of?, What tasks do have this role?"^^rdf:PlainLiteral ;
+    cpannotationschema:extractedFrom "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl"^^rdf:PlainLiteral ;
+    cpannotationschema:hasConsequences "This pattern allows to put roles in the domain of discourse. It does not allow to model time indexed task assignement."^^rdf:PlainLiteral ;
+    cpannotationschema:hasIntent "To represent the assignment of tasks to roles"^^rdf:PlainLiteral ;
+    cpannotationschema:relatedCPs "This CP is typically composed with the http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl CP, or http://www.ontologydesignpatterns.org/cp/owl/timeindexedpersonrole.owl CP. It is a component of the http://www.ontologydesignpatterns.org/cp/owl/basicplandescription.owl CP"^^rdf:PlainLiteral ;
+    cpannotationschema:scenarios "students have the duty of giving exams"^^rdf:PlainLiteral ;
+    rdfs:comment """The task role pattern. 
+This pattern is extracted from DOLCE-UltraLite by partial clone of elements."""^^rdf:PlainLiteral ;
+    owl:imports <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> ;
+    owl:versionInfo "1.1 added rdfs:isDefinedBy for all named entities"^^xsd:string,
+        "Created by Valentina Presutti"^^xsd:string .
+
+:Task a owl:Class ;
+    rdfs:label "Task"@en,
+        "Task"@it ;
+    rdfs:comment "A piece of work to be done or undertaken. A Task is assigned to only Roles through the property isTaskOf."^^xsd:string ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/taskrole.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :Role ;
+            owl:onProperty :isTaskOf ] .
+

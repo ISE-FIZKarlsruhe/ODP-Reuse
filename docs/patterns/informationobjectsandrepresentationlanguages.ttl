@@ -1,0 +1,170 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl#> .
+@prefix agentrole: <http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl#> .
+@prefix communities: <http://www.ontologydesignpatterns.org/cp/owl/communities.owl#> .
+@prefix intensionextension: <http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix partof: <http://www.ontologydesignpatterns.org/cp/owl/partof.owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:formallyRepresents a owl:ObjectProperty ;
+    rdfs:label "formally represents"@en,
+        "rappresenta formalmente"@it ;
+    rdfs:comment """The relation between formal expressions, and anything that they are supposed to represent.
+E.g., 'the predicate 'MariachiInTijuana' formallyRepresents the dul:Collection of all mariachis in Tijuana'; 'the equivalence relation '<=>' formallyRepresents the concept of two entities having the same properties'.
+Notice that formal expressions are formally interpreted by instances of dul:FormalEntity""" ;
+    rdfs:domain :FormalExpression ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    owl:inverseOf :isFormallyRepresentedIn .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:Thing a owl:Class .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+:FormalLanguage a owl:Class ;
+    rdfs:label "Formal language"@en,
+        "Linguaggio formale"@it ;
+    rdfs:comment "A formal language, created by some human, with a fixed grammar, and usually with an explicit formal semantics (i.e. its elements have an interpretation wrt to formal entities such as sets, categories, etc.)." ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom [ a owl:Restriction ;
+                    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onProperty :isFormallyRepresentedIn ] ;
+            owl:onProperty partof:hasPart ],
+        :Language ;
+    owl:disjointWith :IconicLanguage,
+        :NaturalLanguage .
+
+:conceptualizes a owl:ObjectProperty ;
+    rdfs:label "conceptualizes"@en,
+        "concettualizza"@it ;
+    rdfs:comment "A relation stating that an Agent is internally representing a SocialObject . E.g., 'John believes in the conspiracy theory'; 'Niels Bohr created the solar-system metaphor for the atomic theory'; 'Jacques assumes all swans are white'; 'the task force members share the attack plan'." ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( agentrole:Agent communities:Community ) ] ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:range intensionextension:SocialObject .
+
+:isConceptualizedBy a owl:ObjectProperty ;
+    rdfs:label "is conceptualized by"@en,
+        "è concettualizzato da"@it ;
+    rdfs:comment "A relation stating that an Agent is internally representing a Description . E.g., 'John believes in the conspiracy theory'; 'Niels Bohr created a solar-system metaphor for his atomic theory'; 'Jacques assumes all swans are white'; 'the task force shares the attack plan'." ;
+    rdfs:domain intensionextension:SocialObject ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( agentrole:Agent communities:Community ) ] ;
+    owl:inverseOf :conceptualizes .
+
+:isRepresentationLanguageOf a owl:ObjectProperty ;
+    rdfs:label "is representation language of"@en,
+        "è il linguaggio di rappresentazione di"@it ;
+    rdfs:domain :Language ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:range intensionextension:InformationObject .
+
+partof:hasPart a owl:ObjectProperty .
+
+agentrole:Agent a owl:Class .
+
+:IconicLanguage a owl:Class ;
+    rdfs:label "Iconic language"@en,
+        "Linguaggio iconico"@it ;
+    rdfs:comment "A language made up of graphical elements. It can be natural, artificial, and even formal." ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:subClassOf :Language ;
+    owl:disjointWith :NaturalLanguage .
+
+:IconicObject a owl:Class ;
+    rdfs:label "Iconic object"@en,
+        "Oggetto iconico"@it ;
+    rdfs:comment "An information object represented in an IconicLanguage" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasRepresentationLanguage ;
+            owl:someValuesFrom :IconicLanguage ],
+        intensionextension:InformationObject ;
+    owl:disjointWith :Language,
+        :LinguisticObject .
+
+:isFormallyRepresentedIn a owl:ObjectProperty ;
+    rdfs:label "is formally represented in"@en,
+        "è rappresentato formalmente in"@it ;
+    rdfs:comment """The relation between formal expressions, and anything that they are supposed to represent.
+E.g., 'the predicate 'MariachiInTijuana' formallyRepresents the dul:Collection of all mariachis in Tijuana'; 'the equivalence relation '<=>' formallyRepresents the concept of two entities having the same properties'.
+Notice that formal expressions are formally interpreted by instances of dul:FormalEntity""" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:range :FormalExpression .
+
+intensionextension:SocialObject a owl:Class .
+
+communities:Community a owl:Class ;
+    owl:disjointWith :FormalExpression,
+        :IconicObject,
+        :Language,
+        :LinguisticObject .
+
+:FormalExpression a owl:Class ;
+    rdfs:label "Formal expression"@en,
+        "Espressione formale"@it ;
+    rdfs:comment "Any information object represented in a FormalLanguage, usually having a formal interpretation by a dul:FormalEntity, and used to formally represent any Entity" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasRepresentationLanguage ;
+            owl:someValuesFrom :FormalLanguage ],
+        intensionextension:InformationObject ;
+    owl:disjointWith :IconicObject,
+        :Language,
+        :LinguisticObject .
+
+:NaturalLanguage a owl:Class ;
+    rdfs:label "Natural language"@en,
+        "Linguaggio naturale"@it ;
+    rdfs:comment """A natural language, evolved and used in a community across time.
+Natural languages components are 'temporary' and 'reconstructed' out of actual usage. For example, a grammar for a (part of a) natural language has the status of a theory for that language, but alternative ones can exist (e.g. generative vs. construction grammars).""" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :isConceptualizedBy ;
+            owl:someValuesFrom communities:Community ],
+        :Language .
+
+:hasRepresentationLanguage a owl:ObjectProperty ;
+    rdfs:label "has representation language"@en,
+        "ha linguaggio di rappresentazione"@it ;
+    rdfs:domain intensionextension:InformationObject ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:range :Language ;
+    owl:inverseOf :isRepresentationLanguageOf .
+
+:LinguisticObject a owl:Class ;
+    rdfs:label "Linguistic object"@en,
+        "Oggetto linguistico"@it ;
+    rdfs:comment "An information object represented in a NaturalLanguage" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasRepresentationLanguage ;
+            owl:someValuesFrom :NaturalLanguage ],
+        intensionextension:InformationObject .
+
+intensionextension:InformationObject a owl:Class .
+
+:Language a owl:Class ;
+    rdfs:label "Language"@en,
+        "Linguaggio"@it ;
+    rdfs:comment """A natural or artificial language, provided with an alphabet (or vocabulary) and combinatorial rules. In the case of natural languages, their components are 'temporary' and 'reconstructed' out of actual usage. For example, a grammar for a natural language has the status of a theory for that language, and alternative ones can exist (e.g. generative vs. construction grammars).
+Another distinction, between the general (systemic) rules for a language, and the local (contextual) rules for e.g. a certain context, speaker, place, etc., can be made separately.
+The most comprehensive classification of languages ha probably been made by Umberto Eco, based on the production modes of the 'signs' that are represented in a certain language. It uses several semiotic dimensions, and will be modeled in a forthcoming ontology.""" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> ;
+    owl:disjointWith :LinguisticObject .
+
+<http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl> a owl:Ontology ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/communities.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/partof.owl> ;
+    owl:versionInfo "1.1 added rdfs:isDefinedBy for all named entities"^^xsd:string .
+

@@ -1,0 +1,800 @@
+@prefix : <http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl#> .
+@prefix DUL: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl> a owl:Ontology ;
+    rdfs:label "Information Objects ontology"^^xsd:string ;
+    rdfs:comment """An ontology of information objects, encodings and realizations, as a plugin to DOLCE-Ultralite (reusing mainly the dul:expresses and dul:realizes relations from it). 
+Several patterns are contained inside this ontology:
+- encodings of information entities
+- kinds of realizations (gestural motions, depictions, digital, multimedia, speech, etc.)
+- combinatorial relations between information objects
+- relations between formal expressions and generalized expressions (lexicalizations, formalizations)
+- relations between formal expressions and their assignments in formal semantics
+- relations between information objects and schemata (data structures, KOS, etc.)
+- authorship
+- kinds of linguistic objects
+- copies, reproductions, etc.
+- cultural combination of information objects (reuse, mixing, metaphorical blending)"""^^xsd:string ;
+    owl:imports <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl> ;
+    owl:versionInfo "1.8"^^xsd:string,
+        """In 1.8, all object properties have been aligned to associatedWith, and some comments have been added.
+In 1.7, the encodes object property has been modified in order to support any kind of information entity (purely social object or realization), and to give justice to computer science pragmatic equivalence between information objects that are fully encoded for computing, and the actual bits travelling in a machine or network, based on that encoding. The realizes property has been consequenctly declared as a subproperty of encodes.
+Also removed redundant owl:someValuesFrom axioms
+In 1.6, broadened range of hasRepresentationLanguage
+In 1.5, some fixes added wrt to new plugins (Roles.owl, CollectionsLite.owl).
+In 1.4, all elements have got English labels. Added the class LinguisticAct, useful to relate Agent(s) when use information objects to express meaning with some CommunicativeFunction (from the theory by Jakobson). Moreover, the relation between formal patterns and information patterns have been enriched. Some bugs fixed."""^^xsd:string .
+
+:Code a owl:Class ;
+    rdfs:label "Code"@en,
+        "Codice"@it ;
+    rdfs:comment "Any piece of information expressing computational operations, objects, markup, etc."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :DigitalResource ;
+            owl:onProperty DUL:isRealizedBy ],
+        DUL:InformationObject .
+
+:ContractText a owl:Class ;
+    rdfs:label "Contract text"@en,
+        "Testo di un contratto"@it ;
+    rdfs:comment "The text of a contract"^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:expresses ;
+            owl:someValuesFrom DUL:Contract ],
+        :Text .
+
+:DBSchema a owl:Class ;
+    rdfs:label "Database schema"@en,
+        "Schema di base di dati"@it ;
+    rdfs:comment "Any conceptual, logical or physical schema for a database."^^xsd:string ;
+    rdfs:subClassOf :DataStructure .
+
+:Datum a owl:Class ;
+    rdfs:label "Datum"@en,
+        "Dato"@it ;
+    rdfs:comment "From WordNet: 'an item of factual information derived from measurement or research'"^^xsd:string ;
+    rdfs:subClassOf DUL:InformationObject .
+
+:DigitalPhoto a owl:Class ;
+    rdfs:label "Digital photo"@en ;
+    rdfs:subClassOf :DigitalResource .
+
+:Drawing a owl:Class ;
+    rdfs:label "Drawing"@en,
+        "Disegno"@it ;
+    rdfs:comment "wn noun: A representation of forms or objects on a surface by means of lines; \"drawings of abstract forms\"; \"he did complicated pen-and-ink drawings like medieval miniatures\""^^xsd:string ;
+    rdfs:subClassOf :Depiction .
+
+:Gesture a owl:Class ;
+    rdfs:label "Gesture"@en,
+        "Gesto"@it ;
+    rdfs:subClassOf :BodilyMotion .
+
+:Grapheme a owl:Class ;
+    rdfs:label "Grapheme"@en,
+        "Grafema"@it ;
+    rdfs:comment """A part of a word as it can be realized by Writing
+A spoken information realization can be 'about' a grapheme (as in reading), but it does not 'realize' it. Only Phoneme(s) are realized by spoken information (Voicing).
+BTW, since spoken realizations are a 'primary' code of communication, the difference between direct and indirect spoken realizations (reading) should be considered relevant.
+A grapheme is not necessarily able to express a meaning (a dul:SocialObject), although it can in principle (e.g. 'a' in English)."""^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :Writing ;
+            owl:onProperty DUL:isRealizedBy ],
+        :LinguisticObject .
+
+:IconicObject a owl:Class ;
+    rdfs:label "Iconic object"@en,
+        "Oggetto iconico"@it ;
+    rdfs:comment "An information object represented in an IconicLanguage"^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasRepresentationLanguage ;
+            owl:someValuesFrom :IconicLanguage ],
+        DUL:InformationObject .
+
+:Lexeme a owl:Class ;
+    rdfs:label "Lexeme"@en,
+        "Lessema"@it ;
+    rdfs:comment "Lexical entries for dictionaries, lexica, etc. They are used to create reference forms of words."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasSchema ;
+            owl:someValuesFrom :Lexicon ],
+        [ a owl:Class ;
+            owl:unionOf ( :Multiword :Word ) ],
+        :Term .
+
+:LinguisticAct a owl:Class ;
+    rdfs:label "Linguistic act"@en,
+        "Atto linguistico"@it ;
+    rdfs:comment """A communicative situation including linguistic objects, agents, and a set of contexts: physical (informational realizations), conceptual (social objects), and referential (entities).
+A linguistic act has an associated CommunicativeFunction that it satisfies."""^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:includesObject ;
+            owl:someValuesFrom DUL:Agent ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:isSettingFor ;
+            owl:someValuesFrom DUL:InformationRealization ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:satisfies ;
+            owl:someValuesFrom :CommunicativeFunction ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:includesObject ;
+            owl:someValuesFrom DUL:SocialObject ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:includesObject ;
+            owl:someValuesFrom :LinguisticObject ],
+        [ a owl:Restriction ;
+            owl:minQualifiedCardinality "5"^^xsd:nonNegativeInteger ;
+            owl:onClass DUL:Entity ;
+            owl:onProperty DUL:isSettingFor ],
+        DUL:PlanExecution .
+
+:LinguisticFunction a owl:Class ;
+    rdfs:label "Linguistic function"@en,
+        "Funzione linguistica"@it ;
+    rdfs:comment """Any linguistic function that classifies words according to a LinguisticTheory. 
+This class includes parts of speech, thematic roles, phrase structure components, verbal aspects, etc. e.g. Subject, Object, Instrument, Stative, etc.
+Each linguistic function must be defined in a LinguisticTheory; e.g. a thematic role can be defined either in a generative grammar, or in construction-based theory."""^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:isDefinedIn ;
+            owl:someValuesFrom :LinguisticTheory ],
+        DUL:Role .
+
+:Morpheme a owl:Class ;
+    rdfs:label "Morpheme"@en,
+        "Morfema"@it ;
+    rdfs:comment "A part of a word that can express a meaning, which is part of the meaning of the entire word."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:isComponentOf ;
+            owl:someValuesFrom :Word ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:expresses ;
+            owl:someValuesFrom [ a owl:Restriction ;
+                    owl:cardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onProperty DUL:isComponentOf ] ],
+        :LinguisticObject .
+
+:Painting a owl:Class ;
+    rdfs:label "Painting"@en,
+        "Dipinto"@it ;
+    rdfs:comment "wn noun: Graphic art consisting of an artistic composition made by applying paints to a surface; \"a small painting by Picasso\"; \"he bought the painting as an investment\"; \"his pictures hang in the Louvre\""^^xsd:string ;
+    rdfs:subClassOf :GraphicArt .
+
+:Phoneme a owl:Class ;
+    rdfs:label "Phoneme"@en,
+        "Fonema"@it ;
+    rdfs:comment """A part of a word as it can be realized by Voicing
+A written information realization can be 'about' a phoneme (as in the case of transcription systems), but it does not 'realize' it: only Grapheme(s) are realized by written information (Writing).
+A phoneme is not necessarily able to express a meaning (any dul:SocialObject), although it can in principle (e.g. 'a' in English)."""^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :Voicing ;
+            owl:onProperty DUL:isRealizedBy ],
+        :LinguisticObject .
+
+:Speech a owl:Class ;
+    rdfs:label "Speech"@en,
+        "Discorso"@it ;
+    rdfs:comment "Conventional sounds realizing explicit communication. Speech is a primary code of communication (primary means that is an original body expression, especially if first learnt)."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:realizes ;
+            owl:someValuesFrom :LinguisticObject ],
+        DUL:InformationRealization,
+        :Voicing .
+
+:Statue a owl:Class ;
+    rdfs:label "Statue"@en,
+        "Statua"@it ;
+    rdfs:comment "wn noun: A sculpture representing a human or animal"^^xsd:string ;
+    rdfs:subClassOf :Sculpture .
+
+:Thesaurus a owl:Class ;
+    rdfs:label "Thesaurus"@en,
+        "Tesauro"@it ;
+    rdfs:comment "A collection of categories organized according to a specified syntax, typically used to create a controlled terminology in a domain. A useful rdfs encoding of a typical thesaurus syntax is the SKOS schema."^^xsd:string ;
+    rdfs:subClassOf :KOS .
+
+:WebPage a owl:Class ;
+    rdfs:label "Web page"@en ;
+    rdfs:subClassOf :DigitalResource,
+        :MultimediaObject .
+
+:hasAuthor a owl:ObjectProperty ;
+    rdfs:label "has author"@en,
+        "ha come autore"@it ;
+    rdfs:domain DUL:InformationEntity ;
+    rdfs:range DUL:Agent ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :isAuthorOf .
+
+:hasCulturalGrounding a owl:ObjectProperty ;
+    rdfs:label "has cultural grounding"@en,
+        "ha sorgente culturale"@it ;
+    rdfs:domain DUL:SocialObject ;
+    rdfs:range DUL:SocialObject ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :isCulturalGroundingFor .
+
+:hasFormalTerm a owl:ObjectProperty ;
+    rdfs:label "has formal term"@en,
+        "ha termine formale"@it ;
+    rdfs:comment """The relation between an InformationObject and a FormalExpression (constant, formula, term, sentence, proposition, axiom, etc.) that it is supposed to be given formal interpretation to formalize the InformationObject.
+Notice that FormalExpression(s) only are formal terms for InformationObject(s), not for Concept(s) or other for SocialObject(s). On their turn, information object can 'express' (see) SocialObject(s).
+E.g., the predicate (FormalExpression) 'TijuanaMariachi' isFormalTermFor the Term 'the mariachis in Tijuana' (that expresses the Collection of all mariachis in Tijuana); the Term 'equivalence relation' (that expresses the Concept of 'two entities having the same properties') hasFormalTerm the '<=>' symbol."""^^xsd:string ;
+    rdfs:domain DUL:InformationObject ;
+    rdfs:range :FormalExpression ;
+    rdfs:subPropertyOf DUL:isExpressedBy,
+        :isEncodedBy ;
+    owl:inverseOf :isFormalTermFor .
+
+:hasGrounding a owl:ObjectProperty ;
+    rdfs:label "has grounding"@en ;
+    rdfs:comment "A formal entity is grounded in some other entity when it is assumed as the (formal, extensional) interpretation of it, for example, the set Dog can be grounded in the collection of all actual dogs (or in some of them that the modeller intends)." ;
+    rdfs:domain DUL:FormalEntity ;
+    rdfs:range DUL:Entity ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :isGroundingFor .
+
+:isAssignmentOf a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "is formally interpreted as"@en,
+        "è assegnazione di"@it,
+        "è interpretata formalmente come"@it ;
+    rdfs:comment """The relation between a FormalExpression, and an Entity (a FormalEntity in case of classes, relations, etc.) that it is supposed to be the reference of the symbol (FormalExpression) that the Entity is an intepretation of. 
+In other words, this property expresses the 'formal interpretation' function, by which a logician 'assigns' an Entity to a FormalExpression. 
+For each type of formal expressions defined in a logical language, an assignment assumption should be indicated, for example, owl:Class should be restricted to: isAssignmentOf allValuesFrom Class. In addition, differently from the general relation formallyRepresents, isAssignmentOf is functional (and its inverse is inverse functional), in order to encode the Tarskian correspondence assumption.
+E.g., the Set of 'all mariachis in Tijuana' isAssignedTo the predicate (FormalExpression) 'TijuanaMariachi' (that isFormalTermFor a Term e.g. 'the mariachis in Tijuana')."""^^xsd:string ;
+    rdfs:domain :FormalExpression ;
+    rdfs:range DUL:Entity ;
+    rdfs:subPropertyOf :formallyRepresents ;
+    owl:inverseOf :isAssignedTo .
+
+:isDigitallyReproducedBy a owl:ObjectProperty ;
+    rdfs:label "is digitally reproduced by"@en,
+        "è digitalmente riprodotto da"@it ;
+    rdfs:domain DUL:InformationRealization ;
+    rdfs:range :DigitalResource ;
+    rdfs:subPropertyOf :isReproducedBy ;
+    owl:inverseOf :digitallyReproduces .
+
+:isLexicalizedBy a owl:ObjectProperty ;
+    rdfs:label "is lexicalized by"@en,
+        "è lessicalizzato da"@it ;
+    rdfs:comment """A relation between linguistic objects and other information objects (including other linguistic objects).
+For example, 'dog' can lexicalize a picture of a dog, a linguistic description of a dog, or the logical class: 'Dog'.
+This relation is a subPropertyOf encodes .
+In case of FormalExpression(s), it is not the inverse of isFormalTermFor: formal expressions can be said to 'be formal terms' for a LinguisticObject(s), while, independently, linguistic objects can be said to 'lexicalize' formal expressions. The difference is mainly pragmatic: one can take e.g. the word Dog, and decide to have a logical class 'Dog' for it. Someone else can see the logical class 'Dog', and decide to lexicalize it with the words dog, chien, cane, etc. While the relation seems similar, the pragmatic of using them is very different."""^^xsd:string ;
+    rdfs:domain DUL:InformationObject ;
+    rdfs:range :LinguisticObject ;
+    rdfs:subPropertyOf DUL:isExpressedBy,
+        :isEncodedBy ;
+    owl:inverseOf :lexicalizes .
+
+:isOriginalOf a owl:ObjectProperty ;
+    rdfs:label "is original of"@en,
+        "è l'originale di"@it ;
+    rdfs:domain DUL:InformationRealization ;
+    rdfs:range DUL:InformationRealization ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :isCopyOf .
+
+:isRepresentationLanguageOf a owl:ObjectProperty ;
+    rdfs:label "is representation language of"@en,
+        "è il linguaggio di rappresentazione di"@it ;
+    rdfs:domain :Language ;
+    rdfs:range DUL:InformationEntity ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :hasRepresentationLanguage .
+
+:reuses a owl:ObjectProperty ;
+    rdfs:comment "Any relation between information entities, where the first one reuses (includes, transforms, reengineers, etc.) the second one."^^xsd:string ;
+    rdfs:domain DUL:InformationEntity ;
+    rdfs:range DUL:InformationEntity ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :isReusedBy .
+
+owl:Thing a owl:Class .
+
+DUL:Action a owl:Class .
+
+DUL:Community a owl:Class .
+
+DUL:Contract a owl:Class .
+
+DUL:Description a owl:Class .
+
+DUL:PhysicalArtifact a owl:Class .
+
+DUL:Plan a owl:Class .
+
+DUL:PlanExecution a owl:Class .
+
+DUL:Process a owl:Class .
+
+DUL:Role a owl:Class .
+
+DUL:Situation a owl:Class .
+
+DUL:Theory a owl:Class .
+
+DUL:describes a owl:ObjectProperty .
+
+DUL:hasPart a owl:ObjectProperty .
+
+DUL:isAbout a owl:ObjectProperty .
+
+DUL:isConceptualizedBy a owl:ObjectProperty .
+
+DUL:isDefinedIn a owl:ObjectProperty .
+
+DUL:isReferenceOf a owl:ObjectProperty .
+
+DUL:satisfies a owl:ObjectProperty .
+
+:BodilyMotion a owl:Class ;
+    rdfs:label "Bodily motion"@en,
+        "Movimento corporeo"@it ;
+    rdfs:comment "An information realization consisting of bodily movements."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:hasParticipant ;
+            owl:someValuesFrom DUL:PhysicalAgent ],
+        DUL:Action,
+        DUL:InformationRealization .
+
+:CommunicativeFunction a owl:Class ;
+    rdfs:label "Communicative function"@en,
+        "Funzione comunicativa"@it ;
+    rdfs:comment "The functions, e.g. defined by Jakobson and by Buhler, which define types of linguistic acts. Jakobson's ones include referential, conative, expressive, phatic, metalinguistic, poetic. Each function has typical roles and tasks that must be played during a linguistic act that achieves the function."^^xsd:string ;
+    rdfs:subClassOf DUL:Plan .
+
+:FormalLanguage a owl:Class ;
+    rdfs:label "Formal language"@en,
+        "Linguaggio formale"@it ;
+    rdfs:comment "A formal language, created by some human, with a fixed grammar, and usually with an explicit formal semantics (i.e. any FormalExpression that is a wff or a valid element of a FormalLanguage has an interpretation wrt to formal entities such as sets, categories, etc.)."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :FormalExpression ;
+            owl:onProperty DUL:hasPart ],
+        :Language .
+
+:GraphicArt a owl:Class ;
+    rdfs:label "Graphic art"@en,
+        "Opera grafica"@it ;
+    rdfs:comment "wn noun: The arts of drawing or painting or printmaking"^^xsd:string ;
+    rdfs:subClassOf :Depiction .
+
+:IconicLanguage a owl:Class ;
+    rdfs:label "Iconic language"@en,
+        "Linguaggio iconico"@it ;
+    rdfs:comment "A language made up of graphical elements. It can be natural, artificial, and even formal."^^xsd:string ;
+    rdfs:subClassOf :Language .
+
+:Lexicon a owl:Class ;
+    rdfs:label "Lexicon"@en,
+        "Lessico"@it ;
+    rdfs:comment "A collection of lexical items (terms, entries, ...) that are witnessed to have a linguistic relevance."^^xsd:string ;
+    rdfs:subClassOf :KOS .
+
+:LinguisticTheory a owl:Class ;
+    rdfs:label "Linguistic theory"@en,
+        "Teoria linguistica"@it ;
+    rdfs:comment "Any theory describing the structure and/or production and understanding of a natural language or a set of natural languages, or a component of one or more natural languages."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:describes ;
+            owl:someValuesFrom [ a owl:Restriction ;
+                    owl:onProperty DUL:isComponentOf ;
+                    owl:someValuesFrom :NaturalLanguage ] ],
+        DUL:Theory .
+
+:MultimediaObject a owl:Class ;
+    rdfs:label "Multimedia object"@en,
+        "Oggetto multimediale"@it ;
+    rdfs:comment "An information realization that realizes heterogeneous information objects. Examples include audiovisual performances, web pages, etc."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:minCardinality "2"^^xsd:nonNegativeInteger ;
+            owl:onProperty DUL:realizes ],
+        DUL:InformationRealization .
+
+:Phrase a owl:Class ;
+    rdfs:label "Phrase"@en,
+        "Proposizione"@it ;
+    rdfs:comment "A composition of Word(s) that can be considered a higher syntactic unit than a Word, and dul:isComponentOf a Sentence"^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:hasComponent ;
+            owl:someValuesFrom :Word ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:isComponentOf ;
+            owl:someValuesFrom :Sentence ],
+        :LinguisticObject .
+
+:PlasticArt a owl:Class ;
+    rdfs:label "Plastic art"@en,
+        "Opera plastica"@it ;
+    rdfs:comment "wn noun: The arts of shaping or modeling; carving and sculpture"^^xsd:string ;
+    rdfs:subClassOf :Depiction .
+
+:Sculpture a owl:Class ;
+    rdfs:label "Sculpture"@en,
+        "Scultura"@it ;
+    rdfs:comment "wn noun: A three-dimensional work of plastic art"^^xsd:string ;
+    rdfs:subClassOf :PlasticArt .
+
+:Sound a owl:Class ;
+    rdfs:label "Sound"@en ;
+    rdfs:comment "An information realization consisting of sound waves."^^xsd:string ;
+    rdfs:subClassOf DUL:Process .
+
+:Term a owl:Class ;
+    rdfs:label "Term"@en,
+        "Termine"@it ;
+    rdfs:comment "A word or multiword that is established in some terminology from a domain of discourse."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Class ;
+            owl:unionOf ( :Multiword :Word ) ],
+        [ a owl:Restriction ;
+            owl:onProperty :hasSchema ;
+            owl:someValuesFrom :KOS ],
+        :LinguisticObject .
+
+:Text a owl:Class ;
+    rdfs:label "Text"@en,
+        "Testo"@it ;
+    rdfs:comment "A LinguisticObject composed of at least one Sentence, and assumed to be realized in written form."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:isRealizedBy ;
+            owl:someValuesFrom :Writing ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:hasComponent ;
+            owl:someValuesFrom :Sentence ],
+        :LinguisticObject .
+
+:combinatoriallyRelatedTo a owl:ObjectProperty,
+        owl:SymmetricProperty ;
+    rdfs:comment """Any relation holding between two FormalExpression(s), e.g. a function over formal grammars, boolean operators, syntactic relations defined for the logical vocabulary of a formal language, etc.
+Syntactic relations from logical languages have a correspondance to some formal relation."""^^xsd:string ;
+    rdfs:domain :FormalExpression ;
+    rdfs:range :FormalExpression ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :combinatoriallyRelatedTo .
+
+:digitallyReproduces a owl:ObjectProperty ;
+    rdfs:label "digitally reproduces"@en,
+        "riproduce digitalmente"@it ;
+    rdfs:domain :DigitalResource ;
+    rdfs:range DUL:InformationRealization ;
+    rdfs:subPropertyOf :reproduces .
+
+:hasCulturalMixingWith a owl:ObjectProperty,
+        owl:SymmetricProperty ;
+    rdfs:label "has cultural mixing with"@en,
+        "ha una fusione culturale con"@it ;
+    rdfs:domain DUL:SocialObject ;
+    rdfs:range DUL:SocialObject ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :hasCulturalMixingWith .
+
+:isAuthorOf a owl:ObjectProperty ;
+    rdfs:label "is author of"@en,
+        "è autore di"@it ;
+    rdfs:domain DUL:Agent ;
+    rdfs:range DUL:InformationEntity ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:isCopyOf a owl:ObjectProperty ;
+    rdfs:label "is copy of"@en,
+        "è copia di"@it ;
+    rdfs:comment "The original information realization of some copy. Differently from reproductions, copies are not planned to have notable differences from the original. Master copies, author-signed paintings, etc. are examples of originals."^^xsd:string ;
+    rdfs:domain DUL:InformationRealization ;
+    rdfs:range DUL:InformationRealization ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:isCulturalGroundingFor a owl:ObjectProperty ;
+    rdfs:label "is cultural grounding for"@en,
+        "è una sorgente culturale per"@it ;
+    rdfs:domain DUL:SocialObject ;
+    rdfs:range DUL:SocialObject ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:isFormallyRepresentedIn a owl:ObjectProperty ;
+    rdfs:label "is formally represented in"@en,
+        "è rappresentato formalmente in"@it ;
+    rdfs:comment """The relation between formal expressions, and anything that they are supposed to represent.
+E.g., 'the predicate 'MariachiInTijuana' formallyRepresents the dul:Collection of all mariachis in Tijuana'; 'the equivalence relation '<=>' formallyRepresents the concept of two entities having the same properties', 'the constant 'John' formallyRepresents the dul:NaturalPerson John.
+Notice that formal expressions are formally interpreted by instances of dul:FormalEntity"""^^xsd:string ;
+    rdfs:domain DUL:Entity ;
+    rdfs:range :FormalExpression ;
+    rdfs:subPropertyOf DUL:isReferenceOf ;
+    owl:inverseOf :formallyRepresents .
+
+:isGroundingFor a owl:ObjectProperty ;
+    rdfs:label "is grounding for"@en ;
+    rdfs:domain DUL:Entity ;
+    rdfs:range DUL:FormalEntity ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:isReproducedBy a owl:ObjectProperty ;
+    rdfs:label "is reproduced by"@en,
+        "è riprodotto da"@it ;
+    rdfs:domain DUL:InformationRealization ;
+    rdfs:range DUL:InformationRealization ;
+    rdfs:subPropertyOf :isEncodedBy ;
+    owl:inverseOf :reproduces .
+
+:isReusedBy a owl:ObjectProperty ;
+    rdfs:domain DUL:InformationEntity ;
+    rdfs:range DUL:InformationEntity ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:isSchemaOf a owl:ObjectProperty ;
+    rdfs:label "is schema of"@en,
+        "è schema di"@it ;
+    rdfs:comment "A relation between social objects and schemata that organize them. For example, a Tag hasSchema a Folksonomy, a Lexeme hasSchema a Lexicon, etc."^^xsd:string ;
+    rdfs:domain :DataStructure ;
+    rdfs:range DUL:SocialObject ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:lexicalizes a owl:ObjectProperty ;
+    rdfs:label "lexicalizes"@en,
+        "lessicalizza"@it ;
+    rdfs:comment """A relation between linguistic objects and other information objects (including other linguistic objects).
+For example, 'dog' can lexicalize a picture of a dog, a linguistic description of a dog, or the logical class: 'Dog'.
+This relation is a subPropertyOf encodes .
+In case of FormalExpression(s), it is not the inverse of isFormalTermFor: formal expressions can be said to 'be formal terms' for a LinguisticObject(s), while, independently, linguistic objects can be said to 'lexicalize' formal expressions. The difference is mainly pragmatic: one can take e.g. the word Dog, and decide to have a logical class 'Dog' for it. Someone else can see the logical class 'Dog', and decide to lexicalize it with the words dog, chien, cane, etc. While the relation seems similar, the pragmatic of using them is very different."""^^xsd:string ;
+    rdfs:domain :LinguisticObject ;
+    rdfs:range DUL:InformationObject ;
+    rdfs:subPropertyOf DUL:expresses,
+        :encodes .
+
+:metaphoricallyBlendsWith a owl:ObjectProperty,
+        owl:SymmetricProperty ;
+    rdfs:label "metaphorically blends with"@en,
+        "fusoMetaforicamenteCon"@it ;
+    rdfs:comment "This property can be used to relate two social objects that are associated by means of a metaphorical blending, e.g. Greek and Aegyptian sphinges." ;
+    rdfs:domain DUL:SocialObject ;
+    rdfs:range DUL:SocialObject ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :metaphoricallyBlendsWith .
+
+DUL:FormalEntity a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :FormalExpression ;
+            owl:onProperty :isAssignedTo ] .
+
+DUL:PhysicalAgent a owl:Class .
+
+DUL:hasParticipant a owl:ObjectProperty .
+
+DUL:isExpressedBy a owl:ObjectProperty .
+
+DUL:isSettingFor a owl:ObjectProperty .
+
+:Multiword a owl:Class ;
+    rdfs:label "Polyrhematic unit"@en,
+        "Lemma polirematico"@it ;
+    rdfs:comment "A LinguisticObject made up of more than one Word, but distinct from a Phrase, which is a higher syntactic unit."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:hasComponent ;
+            owl:someValuesFrom :Word ],
+        [ a owl:Restriction ;
+            owl:minCardinality "2"^^xsd:nonNegativeInteger ;
+            owl:onProperty DUL:hasComponent ],
+        :LinguisticObject .
+
+:NaturalLanguage a owl:Class ;
+    rdfs:label "Natural language"@en,
+        "Linguaggio naturale"@it ;
+    rdfs:comment """A natural language, evolved and used in a community across time.
+Natural languages components are 'temporary' and 'reconstructed' out of actual usage. For example, a grammar for a (part of a) natural language has the status of a theory for that language, but alternative ones can exist (e.g. generative vs. construction grammars)."""^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:isConceptualizedBy ;
+            owl:someValuesFrom DUL:Community ],
+        :Language .
+
+:Sentence a owl:Class ;
+    rdfs:label "Sentence"@en,
+        "Frase"@it ;
+    rdfs:comment "A composition of Phrase(s), assumed to express a state of affairs (here modelled as a dul:Situation). Graphically, a period is usually considered its boundary."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:hasComponent ;
+            owl:someValuesFrom :Phrase ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:expresses ;
+            owl:someValuesFrom DUL:Situation ],
+        :LinguisticObject .
+
+:Voicing a owl:Class ;
+    rdfs:label "Voicing"@en,
+        "Vocalizzazione"@it ;
+    rdfs:comment "An information realization consisting of uttered sounds. In natural agents, it always co-occurs with bodily movements."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:hasParticipant ;
+            owl:someValuesFrom DUL:PhysicalAgent ],
+        :Sound .
+
+:Writing a owl:Class ;
+    rdfs:label "Writing"@en,
+        "Realizzazione scritta"@it ;
+    rdfs:comment """An information realization based on conventional symbols.
+It is a secondary code of communication (secondary means that it is about an original bodily expression, i.e. a primary code). Therefore, we are not considering here early forms of iconic expression, which could be considered primary."""^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:realizes ;
+            owl:someValuesFrom :LinguisticObject ],
+        :Depiction .
+
+:formallyRepresents a owl:ObjectProperty ;
+    rdfs:label "formally represents"@en,
+        "rappresenta formalmente"@it ;
+    rdfs:comment """The relation between formal expressions, and anything that they are supposed to represent.
+E.g., 'the predicate 'MariachiInTijuana' formallyRepresents the dul:Collection of all mariachis in Tijuana'; 'the equivalence relation '<=>' formallyRepresents the Concept of two entities having the same properties', 'the constant 'John' formallyRepresents the dul:NaturalPerson 'John'.
+Notice that a FormalExpression isAssignmentOf (is formally interpreted by) instances of dul:FormalEntity.
+
+formallyRepresents is a particular case of 'dul:isAbout', holding only for formal expressions. 
+Anyway, a formal expression that  dul:expresses a dul:SocialObject is also possible, but treats formal expressions as any other kind of dul:InformationObject that express a 'social' or 'cognitive' semantics, not a formal one."""^^xsd:string ;
+    rdfs:domain :FormalExpression ;
+    rdfs:range DUL:Entity ;
+    rdfs:subPropertyOf DUL:isAbout .
+
+:hasSchema a owl:ObjectProperty ;
+    rdfs:label "has schema"@en,
+        "ha schema"@it ;
+    rdfs:comment "A relation between social objects and schemata that organize them. For example, a Tag hasSchema a Folksonomy, a Lexeme hasSchema a Lexicon, etc."^^xsd:string ;
+    rdfs:domain DUL:SocialObject ;
+    rdfs:range :DataStructure ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :isSchemaOf .
+
+:isAssignedTo a owl:InverseFunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "formally interprets {@en}"^^xsd:string,
+        "interpreta formalmente {@it}"^^xsd:string,
+        "è assegnata a"@it ;
+    rdfs:comment """The relation between a FormalExpression, and an Entity (a FormalEntity in case of classes, relations, etc.) that it is supposed to be the reference of the symbol (FormalExpression) that the Entity is an intepretation of. 
+In other words, this is the 'formal interpretation' function, by which a logician 'assigns' an Entity to a FormalExpression.
+For each type of formal expressions defined in a logical language, an assignment assumption should be indicated, for example, owl:Class should be restricted to: isAssignmentOf allValuesFrom Class. In addition, differently from the general relation formallyRepresents, isAssignmentOf is functional (and its inverse is inverse functional), in order to encode the Tarskian correspondence assumption.
+E.g., the Set of 'all mariachis in Tijuana' isAssignedTo the predicate (FormalExpression) 'TijuanaMariachi' (that isFormalTermFor a Term e.g. 'the mariachis in Tijuana')."""^^xsd:string ;
+    rdfs:domain DUL:Entity ;
+    rdfs:range :FormalExpression ;
+    rdfs:subPropertyOf :isFormallyRepresentedIn .
+
+:isFormalTermFor a owl:ObjectProperty ;
+    rdfs:label "is formal term for"@en,
+        "è termine formale per"@it ;
+    rdfs:comment """The relation between an InformationObject and a FormalExpression (constant, formula, term, sentence, proposition, axiom, etc.) that it is supposed to be given formal interpretation to formalize the InformationObject.
+Notice that FormalExpression(s) only are formal terms for InformationObject(s), not for Concept(s) or for other SocialObject(s). On their turn, information object can 'express' (see) SocialObject(s).
+E.g., the predicate (FormalExpression) 'TijuanaMariachi' isFormalTermFor the Term 'the mariachis in Tijuana' (that expresses the Collection of all mariachis in Tijuana); the Term 'equivalence relation' (that expresses the Concept of 'two entities having the same properties') hasFormalTerm the '<=>' symbol."""^^xsd:string ;
+    rdfs:domain :FormalExpression ;
+    rdfs:range DUL:InformationObject ;
+    rdfs:subPropertyOf DUL:expresses,
+        :encodes .
+
+:reproduces a owl:ObjectProperty ;
+    rdfs:label "reproduces"@en,
+        "riproduce"@it ;
+    rdfs:domain DUL:InformationRealization ;
+    rdfs:range DUL:InformationRealization ;
+    rdfs:subPropertyOf :encodes .
+
+DUL:Agent a owl:Class .
+
+DUL:includesObject a owl:ObjectProperty .
+
+DUL:realizes a owl:ObjectProperty ;
+    rdfs:subPropertyOf :encodes .
+
+DUL:isComponentOf a owl:ObjectProperty .
+
+:DataStructure a owl:Class ;
+    rdfs:label "Data structure"@en,
+        "Struttura di dati"@it ;
+    rdfs:comment "Any data structure, including databases, schemas, lexica, knowledge organizations systems, etc."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :DigitalResource ;
+            owl:onProperty DUL:isRealizedBy ],
+        DUL:InformationObject .
+
+:Depiction a owl:Class ;
+    rdfs:label "Depiction"@en,
+        "Realizzazione visiva"@it ;
+    rdfs:comment """An information realization consisting of depicted images/signs of any sort (e.g. graffiti, drawings, inscriptions, pictures, sculptures, etc.), which are inscripted on a medium that lasts longer than the depicting act.
+It also includes any early form of inscripted iconic expression, which can be considered as original bodily expressions."""^^xsd:string ;
+    rdfs:subClassOf DUL:InformationRealization,
+        DUL:PhysicalArtifact .
+
+:KOS a owl:Class ;
+    rdfs:label "Knowledge organization system"@en,
+        "Sistema di organizzazione della conoscenza"@it ;
+    rdfs:comment "Knowledge Organization Systems: thesauri, terminologies, classification schemes, subject hierarchies, etc."^^xsd:string ;
+    rdfs:subClassOf :DataStructure .
+
+:encodes a owl:ObjectProperty ;
+    rdfs:comment """Any relation between two information entities, with the first used as an alternative encoding of the second. This encoding can preserve all or part of the informational structure. For example, an XML encoding of a plain text file, a digital scanning of a physical paper document, a reproduction of a painting, etc.
+The encoding can be so precise and close to the medium of realization, that distinguishing the maximally encoded object from its realization is superfluous (as in many cases of computer science information entities). For this reason, the relation holds for either dul:InformationObject(s) or dul:InformationRealization(s).
+Since the relation holds for either dul:InformationObject(s) or dul:InformationRealization(s), dul:realizes is a subproperty of it."""^^xsd:string ;
+    rdfs:domain DUL:InformationEntity ;
+    rdfs:range DUL:InformationEntity ;
+    rdfs:subPropertyOf DUL:associatedWith ;
+    owl:inverseOf :isEncodedBy .
+
+:hasRepresentationLanguage a owl:ObjectProperty ;
+    rdfs:label "has representation language"@en,
+        "ha linguaggio di rappresentazione"@it ;
+    rdfs:domain DUL:InformationEntity ;
+    rdfs:range :Language ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+DUL:expresses a owl:ObjectProperty .
+
+DUL:isRealizedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf :isEncodedBy .
+
+:Language a owl:Class ;
+    rdfs:label "Language"@en,
+        "Linguaggio"@it ;
+    rdfs:comment """A natural or artificial language, provided with an alphabet (or vocabulary) and combinatorial rules. In the case of natural languages, their components are 'temporary' and 'reconstructed' out of actual usage. For example, a grammar for a natural language has the status of a theory for that language, and alternative ones can exist (e.g. generative vs. construction grammars).
+Another distinction, between the general (systemic) rules for a language, and the local (contextual) rules for e.g. a certain context, speaker, place, etc., can be made separately.
+The most comprehensive classification of languages ha probably been made by Umberto Eco, based on the production modes of the 'signs' that are represented in a certain language. It uses several semiotic dimensions, and will be modeled in a forthcoming ontology."""^^xsd:string ;
+    rdfs:subClassOf DUL:Description .
+
+:isEncodedBy a owl:ObjectProperty ;
+    rdfs:comment """Any relation between two information entities, with the first used as an alternative encoding of the second. This encoding can preserve all or part of the informational structure. For example, an XML encoding of a plain text file, a digital scanning of a physical paper document, a reproduction of a painting, etc.
+The encoding can be so precise and close to the medium of realization, that distinguishing the maximally encoded object from its realization is superfluous (as in many cases of computer science information entities). For this reason, the relation holds for either dul:InformationObject(s) or dul:InformationRealization(s).
+Since the relation holds for either dul:InformationObject(s) or dul:InformationRealization(s), dul:realizes is a subproperty of it."""^^xsd:string ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+DUL:hasComponent a owl:ObjectProperty .
+
+:DigitalResource a owl:Class ;
+    rdfs:label "Digital resource"@en,
+        "Risorsa digitale"@it ;
+    rdfs:comment "Any resource that can be computed, e.g. a file, a piece of (implemented) software. This assumes an encoding allowing the computation (e.g. html+http protocol)."^^xsd:string ;
+    rdfs:subClassOf DUL:InformationRealization .
+
+:Word a owl:Class ;
+    rdfs:label "Word"@en,
+        "Parola"@it ;
+    rdfs:comment """A linguistic object consisting of a string (independently of its physical realization).
+Its topological unity can change according to its physical realization: as a written realization, its boundaries are blank spaces, as a spoken realization, sometimes is silence, sometimes not, and higher order features intervene.
+Grammatical notions, such as noun, verb, adjective, etc., are roles defined by a grammar, and words (or larger linguistic objects) can play those roles in a given language. E.g., the word 'share' can play both 'verb' and 'noun' roles in contemporary English, while the word 'come' can only play the 'verb' role in English, and the 'adverb' or 'conjunction' roles in Italian (but if we consider a word as only realized by phonemes, i.e. if we consider the oral realizations of 'come', there is no common word 'come' in the two languages)."""^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom [ a owl:Class ;
+                    owl:complementOf :Word ] ;
+            owl:onProperty DUL:hasComponent ],
+        :LinguisticObject .
+
+DUL:Entity a owl:Class .
+
+DUL:InformationEntity a owl:Class .
+
+:FormalExpression a owl:Class ;
+    rdfs:label "Formal expression"@en,
+        "Espressione formale"@it ;
+    rdfs:comment "Any information object represented in a FormalLanguage, usually having a formal interpretation by a dul:FormalEntity, and used to formally represent any Entity"^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasRepresentationLanguage ;
+            owl:someValuesFrom :FormalLanguage ],
+        [ a owl:Restriction ;
+            owl:onProperty :isFormalTermFor ;
+            owl:someValuesFrom DUL:InformationObject ],
+        DUL:InformationObject ;
+    owl:disjointWith :KOS .
+
+DUL:InformationObject a owl:Class .
+
+DUL:SocialObject a owl:Class .
+
+:LinguisticObject a owl:Class ;
+    rdfs:label "Linguistic object"@en,
+        "Oggetto linguistico"@it ;
+    rdfs:comment "An information object represented in a NaturalLanguage"^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasRepresentationLanguage ;
+            owl:someValuesFrom :NaturalLanguage ],
+        DUL:InformationObject .
+
+DUL:InformationRealization a owl:Class .
+
+DUL:associatedWith a owl:ObjectProperty .
+
+[] a <http://www.ontologydesignpatterns.org/ont/dul/script> .
+
+[] a <http://www.ontologydesignpatterns.org/ont/dul/script> .
+

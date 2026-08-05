@@ -1,24 +1,37 @@
 # Patterns
 
 The **68 patterns reused** by the GitHub and Paper &amp; Repository
-portions, rendered as interactive graphs. Click a node for its IRI, type and
-connected axioms.
+portions.
 
 <div class="odp-note" markdown>
-The 68 patterns rendered here total 1.4 MB and ship with
+The 68 patterns rendered here total 0.7 MB and ship with
 this site. The 420 DOS-DP templates reused by the
 OBO portion are mechanically generated from YAML and far larger — they live on
 [Zenodo](download.md) with the corpus.
 </div>
 
-## Which ontology uses which pattern
+## Which ontology reuses which pattern
 
-Each arc links an ontology to a pattern it reuses. Drag to explore; the thicker
-the node, the more often that pattern appears.
+Every edge is one ontology–pattern pair, coloured by **how much of the pattern is
+present** — from under a tenth of it to the whole thing. Discs are patterns,
+sized by how many ontologies reuse them; the small dots are ontologies.
+
+**Click a pattern** for what it declares and how its reuse is distributed. Drag
+to pull nodes apart, scroll to zoom, and click empty space to clear a selection.
 
 <div id="odp-constellation" class="odp-viz odp-viz--tall" data-src="data/constellation.json"></div>
 
+<div class="odp-note" markdown>
+Coverage is measured against the entity set of the *local copy* of the pattern
+that each ontology ships, which is what the release divides by to get
+`coverage_pct`. Those copies are not always identical — for 20 of the
+68 patterns they disagree on how many entities the pattern has — so a
+pattern's panel reports the range where one exists rather than a single size.
+</div>
+
 ## Browse
+
+Click a chip to isolate that pattern in the graph above.
 
 <div class="odp-chips">
 <button class="odp-chip" data-pattern="DUL">DUL <span>208</span></button>
@@ -92,9 +105,14 @@ the node, the more often that pattern appears.
 </div>
 
 
-## DUL
+## Inside the most-reused pattern: `DUL`
+
+Reused by **208** ontologies. It declares 79 classes, 112 object properties and 5 data properties. Click any node for its
+IRI, type and connected axioms; the panel below the diagram renders the Turtle.
 
 ```ontoink
---8<-- "patterns/DUL.owl"
+source: patterns/DUL.ttl
+height: 560px
+editor: false
 ```
 

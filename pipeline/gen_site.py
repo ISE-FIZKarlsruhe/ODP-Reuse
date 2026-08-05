@@ -29,11 +29,22 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import shutil
 import subprocess
+import sys
 from collections import Counter, defaultdict
 from pathlib import Path
+
+# The entity-set definition has to be the one the release itself used, or the
+# per-pattern counts shown on the site would not reconcile with the coverage
+# denominators in pairs.csv. Import it rather than reimplementing it.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# Serialisation is not recoverable from the extension in this corpus: two of the
+# 68 vendored ``.owl`` files are actually Turtle. Try formats in turn.
+PARSE_FORMATS = ("xml", "turtle", "n3", "nt")
 
 RULE_LABEL = {
     "G1_parse": "Unparseable",
@@ -50,6 +61,32 @@ RULE_COLOR = {
 }
 VIEW_ORDER = ["github-reuse", "github-complete", "noOBO-reuse",
               "noOBO-complete", "OBO-reuse", "OBO-complete"]
+
+# Edge colouring for the reuse graph. Coverage is an ordered quantity, so the
+# four partial bands are a sequential ramp -- paler means less of the pattern is
+# present. Complete reuse gets a separate accent rather than a fifth ramp step
+# because the release treats it as its own kind of thing (the `*-complete` views
+# are built from exactly this predicate), not merely as the top of a continuum.
+# The 10% cut is the threshold the manuscript reports against.
+COVERAGE_BANDS = [
+    {"band": 0, "label": "<10% of the pattern", "color": "#b9c0d4"},
+    {"band": 1, "label": "10-30%", "color": "#8ecae6"},
+    {"band": 2, "label": "30-50%", "color": "#4cc9f0"},
+    {"band": 3, "label": "50-99%", "color": "#7c5cff"},
+    {"band": 4, "label": "complete (100%)", "color": "#00c9a7"},
+]
+
+
+def coverage_band(pct: float) -> int:
+    if pct >= 100:
+        return 4
+    if pct >= 50:
+        return 3
+    if pct >= 30:
+        return 2
+    if pct >= 10:
+        return 1
+    return 0
 PORTION_LABEL = {"github": "GitHub", "noOBO": "Paper &amp; Repository",
                  "OBO": "DOS-DP"}
 # Same labels without the HTML entity: PORTION_LABEL is written straight into
@@ -497,18 +534,36 @@ def page_patterns(ctx: dict) -> str:
     listing = "\n".join(
         f'<button class="odp-chip" data-pattern="{p}">{p} '
         f'<span>{top.get(p, 0)}</span></button>' for p in pats)
-    first = pats[0] if pats else None
-    viewer = (f"""
-## {first}
+    # The most-reused pattern is the one worth rendering in full. The fence takes
+    # ontoink's YAML form and points at the Turtle twin: ontoink parses with
+    # format="turtle" unconditionally, and passing the RDF/XML through a
+    # `--8<--` snippet include made yaml.safe_load return a string, so
+    # `config["source"]` raised TypeError on every build.
+    first = (max(pats, key=lambda p: top.get(p, 0)) if pats else None)
+    stats = ctx.get("pattern_stats", {})
+    viewer = ""
+    if first:
+        st = stats.get(first, {})
+        detail = (f"It declares {st['n_classes']} classes, "
+                  f"{st['n_object_properties']} object properties and "
+                  f"{st['n_datatype_properties']} data properties."
+                  if st else "")
+        viewer = f"""
+## Inside the most-reused pattern: `{first}`
+
+Reused by **{top.get(first, 0)}** ontologies. {detail} Click any node for its
+IRI, type and connected axioms; the panel below the diagram renders the Turtle.
 
 ```ontoink
---8<-- "patterns/{first}.owl"
+source: patterns/{first}.ttl
+height: 560px
+editor: false
 ```
-""" if first else "")
+"""
 
     n_reused = ctx.get("n_reused_patterns", len(pats))
     vendored_mb = sum(f.stat().st_size for f in
-                      (ctx["out"] / "patterns").glob("*.owl")) / 1e6
+                      (ctx["out"] / "patterns").glob("*.ttl")) / 1e6
     shortfall = ("" if n_reused == len(pats) else
                  f" {n_reused - len(pats)} of them have no retrievable source "
                  f"file and are listed without a rendering.")
@@ -516,8 +571,7 @@ def page_patterns(ctx: dict) -> str:
     return f"""# Patterns
 
 The **{n_reused} patterns reused** by the GitHub and Paper &amp; Repository
-portions, rendered as interactive graphs. Click a node for its IRI, type and
-connected axioms.{shortfall}
+portions.{shortfall}
 
 <div class="odp-note" markdown>
 The {len(pats)} patterns rendered here total {vendored_mb:.1f} MB and ship with
@@ -526,14 +580,28 @@ OBO portion are mechanically generated from YAML and far larger — they live on
 [Zenodo](download.md) with the corpus.
 </div>
 
-## Which ontology uses which pattern
+## Which ontology reuses which pattern
 
-Each arc links an ontology to a pattern it reuses. Drag to explore; the thicker
-the node, the more often that pattern appears.
+Every edge is one ontology–pattern pair, coloured by **how much of the pattern is
+present** — from under a tenth of it to the whole thing. Discs are patterns,
+sized by how many ontologies reuse them; the small dots are ontologies.
+
+**Click a pattern** for what it declares and how its reuse is distributed. Drag
+to pull nodes apart, scroll to zoom, and click empty space to clear a selection.
 
 <div id="odp-constellation" class="odp-viz odp-viz--tall" data-src="data/constellation.json"></div>
 
+<div class="odp-note" markdown>
+Coverage is measured against the entity set of the *local copy* of the pattern
+that each ontology ships, which is what the release divides by to get
+`coverage_pct`. Those copies are not always identical — for 20 of the
+{n_reused} patterns they disagree on how many entities the pattern has — so a
+pattern's panel reports the range where one exists rather than a single size.
+</div>
+
 ## Browse
+
+Click a chip to isolate that pattern in the graph above.
 
 <div class="odp-chips">
 {listing}
@@ -897,22 +965,53 @@ def build_payloads(ctx: dict, out: Path) -> None:
         for r in ctx["rq"].get("rq1_top_patterns", [])], indent=1),
         encoding="utf-8")
 
-    # constellation: ontology <-> pattern, GitHub + Paper/Repo only
+    # constellation: ontology <-> pattern, GitHub + Paper/Repo only.
+    #
+    # Every edge carries its coverage band so the figure can colour by how much
+    # of the pattern is present, and every pattern node carries the counts a
+    # reader needs to interpret its coverage: what the pattern declares, and the
+    # entity total the coverage denominators were taken from.
     nodes, links = {}, []
     usage = ctx["pattern_usage"]
-    for view in ("github-reuse", "noOBO-reuse"):
+    pstats = ctx.get("pattern_stats", {})
+    denom = ctx.get("pattern_denominators", {})
+    per_portion: dict[str, Counter] = defaultdict(Counter)
+    for view, portion in (("github-reuse", "GitHub"),
+                          ("noOBO-reuse", "Paper & Repository")):
+        for r in ctx["pairs"].get(view, []):
+            per_portion[r["pattern"]][portion] += 1
+    for view, portion in (("github-reuse", "GitHub"),
+                          ("noOBO-reuse", "Paper & Repository")):
         for r in ctx["pairs"].get(view, []):
             o, p = r["ontology_id"], r["pattern"]
-            nodes.setdefault(f"o:{o}", {"id": f"o:{o}", "label": o[:34],
-                                        "kind": "ontology", "v": 1})
-            nodes.setdefault(f"p:{p}", {"id": f"p:{p}", "label": p,
-                                        "kind": "pattern",
-                                        "v": usage.get(p, 1)})
+            nodes.setdefault(f"o:{o}", {
+                "id": f"o:{o}", "label": o[:34], "kind": "ontology", "v": 1,
+                "portion": portion})
+            if f"p:{p}" not in nodes:
+                st = pstats.get(p, {})
+                dn = denom.get(p) or Counter()
+                node = {"id": f"p:{p}", "label": p, "kind": "pattern",
+                        "v": usage.get(p, 1),
+                        "github": per_portion[p].get("GitHub", 0),
+                        "noOBO": per_portion[p].get("Paper & Repository", 0)}
+                node.update({k: st[k] for k in (
+                    "n_entities", "n_classes", "n_object_properties",
+                    "n_datatype_properties", "n_individuals", "n_triples")
+                    if k in st})
+                # The denominator varies across local copies for 20 of the 68
+                # stems; carrying the range keeps the panel from implying a
+                # single authoritative size where the release has several.
+                if dn:
+                    node["gt_entities"] = dn.most_common(1)[0][0]
+                    node["gt_min"], node["gt_max"] = min(dn), max(dn)
+                nodes[f"p:{p}"] = node
+            cov = fnum(r["coverage_pct"])
             links.append({"source": f"o:{o}", "target": f"p:{p}",
-                          "coverage": fnum(r["coverage_pct"]),
+                          "coverage": cov, "band": coverage_band(cov),
                           "complete": num(r["complete_reuse"])})
     (d / "constellation.json").write_text(json.dumps(
-        {"nodes": list(nodes.values()), "links": links}), encoding="utf-8")
+        {"nodes": list(nodes.values()), "links": links,
+         "bands": COVERAGE_BANDS}), encoding="utf-8")
 
     # uc1 = extraction, uc2 = recommendation, as in the manuscript.
     (d / "uc1.json").write_text(json.dumps([
@@ -929,6 +1028,53 @@ def build_payloads(ctx: dict, out: Path) -> None:
          "n": num(r["n_paired"]),
          "sig": r["significant_at_0.05"] == "yes"} for r in ctx["uc2"]],
         indent=1), encoding="utf-8")
+
+
+def parse_pattern(path: Path):
+    """Parse a pattern file, trying each serialisation. ``None`` if all fail."""
+    from rdflib import Graph
+    for fmt in PARSE_FORMATS:
+        g = Graph()
+        try:
+            g.parse(str(path), format=fmt)
+            return g, fmt
+        except Exception:  # noqa: BLE001 - malformed pattern files are the norm
+            continue
+    return None, None
+
+
+def pattern_stats(graph) -> dict:
+    """Per-pattern figures for the site, on the release's own entity definition.
+
+    ``n_entities`` is ``collect_entities(strip_annotations(g), wide=True)`` -- the
+    exact quantity ``build_release.py`` divides by to get ``coverage_pct``. It is
+    therefore directly comparable to ``n_pattern_entities`` in ``pairs.csv``, and
+    a figure that quotes both cannot contradict itself.
+
+    The class / object-property / data-property split is the *declared* one, which
+    is a subset of the wide entity set: wide additionally counts IRIs that only
+    ever appear in a class or property position (restriction fillers, domains,
+    ranges, subClassOf objects). So C + OP + DP <= n_entities, and the difference
+    is referenced-but-undeclared vocabulary. That gap is worth showing rather than
+    hiding, so both numbers are carried.
+    """
+    from rdflib import OWL, RDF, RDFS, URIRef
+    from odpqual.entities import collect_entities, strip_annotations
+
+    g, _ = strip_annotations(graph)
+
+    def typed(t):
+        return {s for s in g.subjects(RDF.type, t) if isinstance(s, URIRef)}
+
+    n_c = len(typed(OWL.Class) | typed(RDFS.Class))
+    return {
+        "n_entities": len(collect_entities(g, wide=True)),
+        "n_classes": n_c,
+        "n_object_properties": len(typed(OWL.ObjectProperty)),
+        "n_datatype_properties": len(typed(OWL.DatatypeProperty)),
+        "n_individuals": len(typed(OWL.NamedIndividual)),
+        "n_triples": len(g),
+    }
 
 
 def ship_patterns(ctx: dict, out: Path, libs: Path | None) -> list[str]:
@@ -960,18 +1106,73 @@ def ship_patterns(ctx: dict, out: Path, libs: Path | None) -> list[str]:
         roots += [libs / n for n in
                   ("patterns-repository", "manchester",
                    "Industrial-Standard-Ontology-Design-Patterns")]
-    idx: dict[str, Path] = {}
+    # ALL candidates per stem, not the first one found. Each reusing ontology
+    # keeps its own local copy of the pattern under its patterns/ directory, and
+    # those copies are not identical: `collectionentity` appears with 3 entities
+    # and with 8, DUL with 196 and 197. Taking whichever copy rglob happened to
+    # yield first shipped the wrong file for at least four patterns -- the
+    # vendored `agentrole.owl` was ODPA's *example ABox*
+    # (cp/examples/agentrole/ex1.owl), which declares no pattern entity at all,
+    # while the ground truth for that stem counts 3. The site then rendered an
+    # example as if it were the pattern.
+    cands: dict[str, list[Path]] = defaultdict(list)
     for root in roots:
         if not root.is_dir():
             continue
         for f in root.rglob("*"):
             if (f.is_file() and f.suffix.lower() in (".owl", ".ttl", ".rdf")
                     and 0 < f.stat().st_size < 4_000_000):
-                idx.setdefault(f.stem.lower(), f)
+                cands[f.stem.lower()].append(f)
+
+    # The denominator the release actually used, per stem. The modal value is the
+    # representative: it is what coverage_pct was computed against for the
+    # plurality of that pattern's pairs.
+    denom: dict[str, Counter] = defaultdict(Counter)
+    for view in ("github-reuse", "noOBO-reuse"):
+        for r in ctx["pairs"].get(view, []):
+            denom[r["pattern"]][num(r["n_pattern_entities"])] += 1
+
+    def pick(stem: str, files: list[Path]) -> tuple[Path | None, dict]:
+        """Choose the local copy whose entity set matches the ground truth.
+
+        Parsing every candidate would mean parsing 4,410 files, so identical
+        bytes are collapsed first -- DUL's 208 copies reduce to a handful of
+        distinct hashes. Among the distinct variants, prefer the one whose entity
+        count equals the modal ``n_pattern_entities``; that is the file the
+        measurement used. Fall back to the most-copied variant, then the largest,
+        so a stem with no usable match still ships something.
+        """
+        target = (denom[stem].most_common(1)[0][0] if denom.get(stem) else None)
+        by_hash: dict[str, list[Path]] = defaultdict(list)
+        for f in files:
+            try:
+                by_hash[hashlib.sha256(f.read_bytes()).hexdigest()].append(f)
+            except OSError:
+                continue
+        scored = []
+        for _h, group in by_hash.items():
+            g, _fmt = parse_pattern(group[0])
+            if g is None:
+                continue
+            st = pattern_stats(g)
+            scored.append((st["n_entities"] == target, len(group),
+                           st["n_entities"], group[0], st))
+        if not scored:
+            return None, {}
+        scored.sort(key=lambda t: (t[0], t[1], t[2]), reverse=True)
+        best = scored[0]
+        if target is not None and not best[0]:
+            print(f"[!!] {stem}: no local copy has the ground truth's "
+                  f"{target} entities (variants: "
+                  f"{sorted({s[2] for s in scored})}); shipping the "
+                  f"most-copied one with {best[2]}")
+        return best[3], best[4]
 
     shipped, missing = [], []
+    stats: dict[str, dict] = {}
     for p in sorted(want):
-        src = idx.get(p.lower())
+        src, st = (pick(p.lower(), cands[p.lower()]) if cands.get(p.lower())
+                   else (None, {}))
         if src is None:
             # Fall back to a copy already vendored here. This is the normal case
             # in CI: the corpus is a Zenodo artefact and is gitignored, so a
@@ -981,25 +1182,51 @@ def ship_patterns(ctx: dict, out: Path, libs: Path | None) -> list[str]:
             # delete the whole vendored set.
             if (dest / f"{p}.owl").is_file():
                 shipped.append(p)
+                g, _fmt = parse_pattern(dest / f"{p}.owl")
+                if g is not None:
+                    stats[p] = pattern_stats(g)
+                    write_pattern_turtle(g, dest / f"{p}.ttl")
             else:
                 missing.append(p)
             continue
         shutil.copyfile(src, dest / f"{p}.owl")
         shipped.append(p)
+        stats[p] = st
+        g, _fmt = parse_pattern(src)
+        if g is not None:
+            write_pattern_turtle(g, dest / f"{p}.ttl")
 
-    for stale in sorted(set(p.stem for p in dest.glob("*.owl")) - set(shipped)):
+    for stale in sorted(set(f.stem for f in dest.glob("*.owl")) - set(shipped)):
         (dest / f"{stale}.owl").unlink()
         print(f"[..] removed stale vendored pattern {stale}.owl")
+    for stale in sorted(set(f.stem for f in dest.glob("*.ttl")) - set(shipped)):
+        (dest / f"{stale}.ttl").unlink()
 
     if missing:
         print(f"[!!] {len(missing)} reused patterns have neither a source file nor "
               f"a vendored copy and are not rendered: {', '.join(missing[:8])}"
               + (" ..." if len(missing) > 8 else ""))
-    if not idx:
+    if not cands:
         print("[..] no pattern source tree found (corpus is a Zenodo artefact); "
               f"reusing the {len(shipped)} committed copies under docs/patterns/")
     ctx["n_reused_patterns"] = len(want)
+    ctx["pattern_stats"] = stats
+    ctx["pattern_denominators"] = denom
     return shipped
+
+
+def write_pattern_turtle(graph, path: Path) -> None:
+    """Write a Turtle twin of a vendored pattern, for the in-page ontoink viewer.
+
+    ontoink parses with ``format="turtle"`` unconditionally, but 66 of the 68
+    vendored patterns are RDF/XML, so pointing a fence at the ``.owl`` raises. The
+    Turtle is also smaller (1.39 MB of RDF/XML becomes 0.69 MB), so shipping both
+    still costs less than the RDF/XML alone did.
+    """
+    try:
+        path.write_text(graph.serialize(format="turtle"), encoding="utf-8")
+    except Exception as exc:  # noqa: BLE001 - a bad literal must not fail the build
+        print(f"[!!] could not serialise {path.name} as Turtle: {exc}")
 
 
 def main() -> None:

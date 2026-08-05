@@ -1,0 +1,126 @@
+@prefix : <http://www.ontologydesignpatterns.org/ont/dul/Roles.owl#> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.ontologydesignpatterns.org/ont/dul/Roles.owl> a owl:Ontology ;
+    rdfs:comment "An ontology of role types."^^xsd:string ;
+    owl:imports <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl>,
+        <http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl> ;
+    owl:versionInfo """0.1
+Very preliminary as of now. 
+As of version 0.1, only some kinds of roles have been input, for use in OntoWordNet alignment.
+Author: Aldo Gangemi"""^^xsd:string .
+
+:AgentRole a owl:Class ;
+    rdfs:label "Agent role"@en,
+        "Ruolo agentivo"@it ;
+    rdfs:comment "A role played only by agents."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom dul:Agent ;
+            owl:onProperty dul:classifies ],
+        dul:Role .
+
+:CausalRole a owl:Class ;
+    rdfs:label "Causal role"@en ;
+    rdfs:subClassOf dul:Role .
+
+:CollectionRole a owl:Class ;
+    rdfs:label "Collection role"@en ;
+    rdfs:subClassOf dul:Role .
+
+:CommercialRole a owl:Class ;
+    rdfs:label "Commercial role"@en ;
+    rdfs:subClassOf :SocialFunction .
+
+:ConceptualRole a owl:Class ;
+    rdfs:label "Conceptual role"@en ;
+    rdfs:subClassOf dul:Role .
+
+:Department a owl:Class ;
+    rdfs:label "Department"@en,
+        "Dipartimento"@it ;
+    rdfs:comment "A main functional area within an Organization"^^xsd:string ;
+    rdfs:subClassOf :FunctionalArea .
+
+:ElementaryRole a owl:Class ;
+    rdfs:label "Elementary role"@en,
+        "Ruolo individuale"@it ;
+    rdfs:comment "A role that has no other roles as parts."^^xsd:string ;
+    rdfs:subClassOf dul:Role .
+
+:GeographicalRole a owl:Class ;
+    rdfs:subClassOf dul:Role .
+
+:InterpersonalRole a owl:Class ;
+    rdfs:label "Interpersonal role"@en,
+        "Ruolo interpersonale"@it ;
+    rdfs:comment "Un ruolo che caratterizza un agente nell'interazione con altri agenti."^^xsd:string ;
+    rdfs:subClassOf dul:Role .
+
+:LegalPossessionRole a owl:Class ;
+    rdfs:label "Legal possession role"@en ;
+    rdfs:subClassOf :SocialFunction .
+
+:LocativeRole a owl:Class ;
+    rdfs:label "Locative role"@en ;
+    rdfs:subClassOf dul:Role .
+
+:QualitativeRole a owl:Class ;
+    rdfs:label "Qualitative role"@en ;
+    rdfs:subClassOf dul:Role .
+
+:SemioticRole a owl:Class ;
+    rdfs:label "Semiotic role"@en ;
+    rdfs:subClassOf dul:Role .
+
+:Status a owl:Class ;
+    rdfs:label "Status"@en ;
+    rdfs:subClassOf :SocialFunction .
+
+:SubstanceRole a owl:Class ;
+    rdfs:label "Substance role"@en ;
+    rdfs:subClassOf dul:Role .
+
+:SymmetricRole a owl:Class ;
+    rdfs:label "Symmetric role"@en ;
+    rdfs:subClassOf dul:Role .
+
+dul:Agent a owl:Class .
+
+dul:Organization a owl:Class .
+
+dul:classifies a owl:ObjectProperty .
+
+dul:isPartOf a owl:ObjectProperty .
+
+:FunctionalArea a owl:Class ;
+    rdfs:label "Functional area"@en,
+        "Area funzionale"@it ;
+    rdfs:comment "A system of roles (e.g. a department) declared by an Organization, which needs Agent s in order to act."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty dul:isPartOf ;
+            owl:someValuesFrom dul:Organization ],
+        dul:Role .
+
+:hasRoleRelatedTo a owl:ObjectProperty,
+        owl:SymmetricProperty ;
+    rdfs:label "has role related to"@en ;
+    rdfs:comment "A relation between entities that are in a same Situation, with different but related Role(s). For example, a dul:Person hasRoleRelatedTo iol:Document when there is a Situation in which both a person and a document have roles with some dependency, e.g. when the person is interested in a topic of that document, when the person acts in order to produce that document, etc."^^xsd:string ;
+    rdfs:domain dul:Entity ;
+    rdfs:range dul:Entity ;
+    owl:inverseOf :hasRoleRelatedTo .
+
+dul:Entity a owl:Class .
+
+:SocialFunction a owl:Class ;
+    rdfs:label "Social function"@en ;
+    rdfs:subClassOf dul:Role .
+
+dul:Role a owl:Class .
+
+[] a <http://www.ontologydesignpatterns.org/ont/dul/script> .
+
+[] a <http://www.ontologydesignpatterns.org/ont/dul/script> .
+

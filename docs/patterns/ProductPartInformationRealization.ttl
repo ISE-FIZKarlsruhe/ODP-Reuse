@@ -1,0 +1,55 @@
+@prefix : <https://raw.githubusercontent.com/FSCHOEN/CO-PLM/master/Ontology_Patterns/ProductPartInformationRealization.owl#> .
+@prefix DUL: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://raw.githubusercontent.com/FSCHOEN/CO-PLM/master/Ontology_Patterns/ProductPartInformationRealization.owl> a owl:Ontology ;
+    owl:imports <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl>,
+        <http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl>,
+        <https://raw.githubusercontent.com/FSCHOEN/CO-PLM/master/Ontology_Patterns/ProductPartInformationEntity.owl>,
+        <https://raw.githubusercontent.com/FSCHOEN/CO-PLM/master/Ontology_Patterns/ProductPartInformationObject.owl> .
+
+:DataBase a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :DataTable ;
+            owl:onProperty DUL:hasPart ],
+        :DataBaseObject .
+
+:DigitalFile a owl:Class ;
+    rdfs:subClassOf :DigitalDocument .
+
+:PhysicalProductPart a owl:Class ;
+    rdfs:subClassOf DUL:PhysicalObject,
+        <https://raw.githubusercontent.com/FSCHOEN/CO-PLM/master/Ontology_Patterns/ProductPartInformationEntity.owl#ProductPartInformationRealization> .
+
+:PrintedDocument a owl:Class ;
+    rdfs:subClassOf :Document .
+
+:eMail a owl:Class ;
+    rdfs:subClassOf :DigitalDocument .
+
+:DataField a owl:Class ;
+    rdfs:subClassOf :DataBaseObject .
+
+:DataSet a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :DataField ;
+            owl:onProperty DUL:hasPart ],
+        :DataBaseObject .
+
+:DataTable a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :DataSet ;
+            owl:onProperty DUL:hasPart ],
+        :DataBaseObject .
+
+:DigitalDocument a owl:Class ;
+    rdfs:subClassOf <http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl#DigitalResource>,
+        :Document .
+
+:Document a owl:Class ;
+    rdfs:subClassOf DUL:InformationRealization .
+
+:DataBaseObject a owl:Class ;
+    rdfs:subClassOf <http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl#DigitalResource> .
+

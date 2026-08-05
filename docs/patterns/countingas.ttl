@@ -1,0 +1,51 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/countingas.owl#> .
+@prefix classification: <http://www.ontologydesignpatterns.org/cp/owl/classification.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix situation: <http://www.ontologydesignpatterns.org/cp/owl/situation.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:CountingAs a owl:Class ;
+    rdfs:label "Counting as"@en ;
+    rdfs:comment """A Situation that represents the classification of an entity 'as' something (a Concept).
+Inspired by Searle's 'counts as' relation.""" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/countingas.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty situation:isSettingFor ;
+            owl:someValuesFrom classification:Concept ],
+        [ a owl:Restriction ;
+            owl:minCardinality "2"^^xsd:nonNegativeInteger ;
+            owl:onProperty situation:isSettingFor ],
+        situation:Situation ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( situation:Situation [ a owl:Restriction ;
+                        owl:onProperty situation:isSettingFor ;
+                        owl:someValuesFrom [ a owl:Restriction ;
+                                owl:onProperty classification:isClassifiedBy ;
+                                owl:someValuesFrom classification:Concept ] ] ) ] .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:Thing a owl:Class .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+classification:isClassifiedBy a owl:ObjectProperty .
+
+<http://www.ontologydesignpatterns.org/cp/owl/countingas.owl> a owl:Ontology ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/classification.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/situation.owl> ;
+    owl:versionInfo "1.1 added rdfs:isDefinedBy for all named entities"^^xsd:string .
+
+classification:Concept a owl:Class ;
+    owl:disjointWith situation:Situation .
+
+situation:Situation a owl:Class .
+
+situation:isSettingFor a owl:ObjectProperty .
+

@@ -1,0 +1,200 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/fsdas/catchrecord.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix observation: <http://www.ontologydesignpatterns.org/cp/owl/observation.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix place: <http://www.ontologydesignpatterns.org/cp/owl/place.owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix species_taxonomic: <http://www.fao.org/aims/aos/fi/species_taxonomic.owl#> .
+@prefix speciesfactsheets: <http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesfactsheets.owl#> .
+@prefix water_FAO_areas: <http://www.fao.org/aims/aos/fi/water_FAO_areas.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.ontologydesignpatterns.org/cp/owl/fsdas/catchrecord.owl> a owl:Ontology ;
+    rdfs:label "Catch record pattern." ;
+    cpannotationschema:coversRequirements "What species, and what amount of organisms, have been caught from what areas, countries, at what date and fishing year?" ;
+    cpannotationschema:hasAuthor "Aldo Gangemi (CNR), based on specifications by Claudio Baldassarre (UN-FAO), Caterina Caracciolo (UN-FAO), and Michael Erdmann (Ontoprise), for the NeOn project." ;
+    cpannotationschema:hasComponent "SpeciesFactsheets,WaterAreaFactsheets" ;
+    cpannotationschema:hasConsequences "We are able to query time-series data for catches of species in a certain fishing area, by vessels of some country, with anounts and measurement units." ;
+    cpannotationschema:hasIntent "To represent the catch records from time series FIGIS application, which contain temporally-indexed aggregated information about aquatic species cacthing." ;
+    cpannotationschema:isSpecializationOf "Observation" ;
+    rdfs:comment "A design pattern for populating an ontology of aquatic species catching records." ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesfactsheets.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/fsdas/waterareasfactsheets.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/observation.owl> ;
+    owl:versionInfo """1.3
+- added annotations for uploading on ODP. (Aldo Gangemi, 15 February 2010).
+1.2
+- updated year datatype properties. Added comments. (Aldo Gangemi, 28 January 2010).
+1.1
+- updated ontology import axioms and added place.owl pattern. Changed names for catch record properties. (Aldo Gangemi, 6 January 2010)."""^^xsd:string .
+
+:hasCatchRecord a owl:ObjectProperty ;
+    rdfs:label "has catch record"^^xsd:string ;
+    rdfs:comment "The catch record of a species, i.e. its statistical observation over a reference year."^^xsd:string ;
+    rdfs:domain species_taxonomic:Species ;
+    rdfs:range :CatchRecord ;
+    rdfs:subPropertyOf observation:hasObservation ;
+    owl:inverseOf :isCatchRecordFor .
+
+speciesfactsheets:foundIn a owl:ObjectProperty ;
+    rdfs:subPropertyOf place:hasLocation ;
+    owl:inverseOf speciesfactsheets:areaOfSpecies .
+
+cpannotationschema:coversRequirements a owl:AnnotationProperty .
+
+cpannotationschema:hasAuthor a owl:AnnotationProperty .
+
+cpannotationschema:hasComponent a owl:AnnotationProperty .
+
+cpannotationschema:hasConsequences a owl:AnnotationProperty .
+
+cpannotationschema:hasIntent a owl:AnnotationProperty .
+
+cpannotationschema:isSpecializationOf a owl:AnnotationProperty .
+
+species_taxonomic:Taxon a owl:Class .
+
+water_FAO_areas:Area a owl:Class .
+
+water_FAO_areas:TypeOfWater a owl:Class .
+
+:amount a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "amount" ;
+    rdfs:domain :CatchRecord ;
+    rdfs:range xsd:float .
+
+:countryOfRecord a owl:ObjectProperty ;
+    rdfs:label "isCountryFor" ;
+    rdfs:comment "The country parameter for a species catch record."^^xsd:string ;
+    rdfs:domain :Country ;
+    rdfs:range :CatchRecord ;
+    rdfs:subPropertyOf observation:isParameterOf .
+
+:fishingAreaOfRecord a owl:ObjectProperty ;
+    rdfs:label "isFishingAreaFor" ;
+    rdfs:comment "The area parameter for a species catch record."^^xsd:string ;
+    rdfs:domain water_FAO_areas:FAO_fishing_area ;
+    rdfs:range :CatchRecord ;
+    rdfs:subPropertyOf observation:isParameterOf .
+
+:forCountry a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "fromCountry" ;
+    rdfs:comment "The country parameter for a species catch record."^^xsd:string ;
+    rdfs:domain :CatchRecord ;
+    rdfs:range :Country ;
+    rdfs:subPropertyOf observation:hasParameter ;
+    owl:inverseOf :countryOfRecord .
+
+:fromFishingArea a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "fromFishingArea" ;
+    rdfs:comment "The area parameter for a species catch record."^^xsd:string ;
+    rdfs:domain :CatchRecord ;
+    rdfs:range water_FAO_areas:FAO_fishing_area ;
+    rdfs:subPropertyOf observation:hasParameter ;
+    owl:inverseOf :fishingAreaOfRecord .
+
+:referenceYear a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "reference year" ;
+    rdfs:comment "The year for which the status of the target object (e.g. Marine Resource, Fishery...) has been evaluated."^^xsd:string ;
+    rdfs:domain :CatchRecord ;
+    rdfs:range xsd:gYear ;
+    rdfs:subPropertyOf observation:inDate .
+
+:reportingYear a owl:DatatypeProperty ;
+    rdfs:label "reporting year" ;
+    rdfs:comment "The year in which a catch record has been officially reported (different from its reference year, i.e. the year of the actual observation)."^^xsd:string ;
+    rdfs:domain :CatchRecord ;
+    rdfs:range xsd:gYear ;
+    rdfs:subPropertyOf observation:inDate .
+
+:unitUsedInRecord a owl:ObjectProperty ;
+    rdfs:label "isUnitFor" ;
+    rdfs:comment "The unit of measure parameter for a species catch record."^^xsd:string ;
+    rdfs:domain :UnitOfMeasure ;
+    rdfs:range :CatchRecord ;
+    rdfs:subPropertyOf observation:isParameterOf .
+
+:withUnit a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "unit" ;
+    rdfs:comment "The unit of measure parameter for a species catch record."^^xsd:string ;
+    rdfs:domain :CatchRecord ;
+    rdfs:range :UnitOfMeasure ;
+    rdfs:subPropertyOf observation:hasParameter ;
+    owl:inverseOf :unitUsedInRecord .
+
+speciesfactsheets:areaOfSpecies a owl:ObjectProperty ;
+    rdfs:subPropertyOf place:isLocationOf .
+
+observation:Observation a owl:Class .
+
+observation:hasObservation a owl:ObjectProperty .
+
+observation:isObservationOf a owl:ObjectProperty .
+
+place:hasLocation a owl:ObjectProperty .
+
+place:isLocationOf a owl:ObjectProperty .
+
+:isCatchRecordFor a owl:ObjectProperty ;
+    rdfs:label "is catch record for" ;
+    rdfs:comment "The catch record of a species, i.e. its statistical observation over a reference year."^^xsd:string ;
+    rdfs:domain :CatchRecord ;
+    rdfs:range species_taxonomic:Species ;
+    rdfs:subPropertyOf observation:isObservationOf .
+
+observation:inDate a owl:DatatypeProperty .
+
+place:Place a owl:Class .
+
+species_taxonomic:Species a owl:Class .
+
+water_FAO_areas:FAO_fishing_area a owl:Class ;
+    rdfs:subClassOf place:Place .
+
+observation:hasParameter a owl:ObjectProperty .
+
+observation:isParameterOf a owl:ObjectProperty .
+
+:Country a owl:Class ;
+    rdfs:label "Country" ;
+    rdfs:subClassOf place:Place .
+
+:UnitOfMeasure a owl:Class ;
+    rdfs:label "UnitOfMeasure" .
+
+:CatchRecord a owl:Class ;
+    rdfs:label "Catch record" ;
+    rdfs:comment "A design pattern representing the semantics of the data contained in a database view (record) about catches of species in certain fishing areas for a certain reference year."^^xsd:string ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :forCountry ;
+            owl:someValuesFrom :Country ],
+        [ a owl:Restriction ;
+            owl:onProperty :fromFishingArea ;
+            owl:someValuesFrom water_FAO_areas:Area ],
+        [ a owl:Restriction ;
+            owl:onProperty :referenceYear ;
+            owl:someValuesFrom xsd:gYear ],
+        [ a owl:Restriction ;
+            owl:onProperty :amount ;
+            owl:someValuesFrom xsd:float ],
+        [ a owl:Restriction ;
+            owl:onProperty :withUnit ;
+            owl:someValuesFrom :UnitOfMeasure ],
+        [ a owl:Restriction ;
+            owl:onDataRange xsd:gYear ;
+            owl:onProperty :reportingYear ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        [ a owl:Restriction ;
+            owl:onProperty :isCatchRecordFor ;
+            owl:someValuesFrom species_taxonomic:Species ],
+        observation:Observation .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( species_taxonomic:Taxon water_FAO_areas:FAO_fishing_area water_FAO_areas:TypeOfWater :CatchRecord :Country :UnitOfMeasure ) .
+

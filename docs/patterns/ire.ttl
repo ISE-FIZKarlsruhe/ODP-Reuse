@@ -1,0 +1,172 @@
+@prefix : <http://www.ontologydesignpatterns.org/cpont/ire.owl#> .
+@prefix cmp: <http://www.ontologydesignpatterns.org/cp/owl/componency.owl#> .
+@prefix ir: <http://www.ontologydesignpatterns.org/cp/owl/informationrealization.owl#> .
+@prefix irrl: <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sit: <http://www.ontologydesignpatterns.org/cp/owl/situation.owl#> .
+@prefix ti: <http://www.ontologydesignpatterns.org/cp/owl/timeinterval.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.ontologydesignpatterns.org/cpont/ire.owl> a owl:Ontology ;
+    rdfs:comment "The Identity of Resources and Entity (IRE) ontology. This ontology represents the relation between the web resources and their content by means of the ProxyFor relation. Furthermore, it includes the concepts of Fragment of a web resource, SemanticWebResource, anchor, and Identifier. IRE is a semantic web contribution to the management of the identification of entities on the web. It distinguishes between a resource which is available on the web, its content, and the entity which is about. Moreover, IRE is built by composing and specializing reusable content ontology design patterns." ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/componency.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/informationobjectsandrepresentationlanguages.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/informationrealization.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/situation.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/timeinterval.owl>,
+        <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> ;
+    owl:versionInfo "Created by Valentina Presutti"^^xsd:string .
+
+:ApproximateProxyFor a owl:Class ;
+    rdfs:comment "A proxy for relation involving a web resource which is about more than one entity at a certain time." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:minCardinality "2"^^xsd:int ;
+            owl:onProperty :isSettingForEntity ],
+        :ProxyFor .
+
+:ExactProxyFor a owl:Class ;
+    rdfs:comment "A proxy for relation involving a web resource that is about one and only one entity at a certain time. Such a web resource can only be a semantic web resource." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:cardinality "1"^^xsd:int ;
+            owl:onProperty :isSettingForEntity ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :SemanticWebResource ;
+            owl:onProperty :isSettingForWebResource ],
+        :ProxyFor .
+
+:entityHasSetting a owl:ObjectProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range sit:Situation ;
+    rdfs:subPropertyOf sit:hasSetting .
+
+:hasAnchor a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:comment "A property of a fragment that associate it with a URI e.g., In a HTML web page, the fragment is an <a> tag, and the value is the URL of the link that can be navigated by that fragment." ;
+    rdfs:domain :Fragment ;
+    rdfs:range xsd:anyURI .
+
+:SemanticWebResource a owl:Class ;
+    rdfs:comment "A web resource that relizes an information encoded with a formal language e.g., the foaf file of a person." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom irrl:FormalExpression ;
+            owl:onProperty ir:realizes ],
+        :WebResource .
+
+:WebPage a owl:Class ;
+    rdfs:comment "A web page e.g., a personal home page, a Wikipedia article." ;
+    rdfs:subClassOf :WebResource ;
+    owl:disjointWith :Fragment .
+
+:hasURL a owl:DatatypeProperty ;
+    rdfs:comment "A unique resource locator associated to an abstract web location in terms of the URL standard." ;
+    rdfs:domain :AbstractWebLocation ;
+    rdfs:range xsd:anyURI .
+
+:locationHasSetting a owl:ObjectProperty ;
+    rdfs:domain :AbstractWebLocation ;
+    rdfs:range :WebLocationOf ;
+    rdfs:subPropertyOf sit:hasSetting ;
+    owl:inverseOf :isSettingForLocation .
+
+:timeHasSetting a owl:ObjectProperty ;
+    rdfs:domain ti:TimeInterval ;
+    rdfs:range sit:Situation ;
+    rdfs:subPropertyOf sit:hasSetting ;
+    owl:inverseOf :atTime .
+
+:webResourceHasSetting a owl:ObjectProperty ;
+    rdfs:domain :WebResource ;
+    rdfs:range sit:Situation ;
+    rdfs:subPropertyOf sit:hasSetting ;
+    owl:inverseOf :isSettingForWebResource .
+
+:Fragment a owl:Class ;
+    rdfs:comment "A piece of a web resource e.g., a piece of text in a web page, a picture, etc. A fragment is not a web page." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :WebResource ;
+            owl:onProperty cmp:isComponentOf ],
+        :WebResource ;
+    owl:disjointWith :WebPage .
+
+:ProxyFor a owl:Class ;
+    rdfs:comment "A relation between a web resource and the entity/ies it is about at a certain time." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :isSettingForEntity ;
+            owl:someValuesFrom owl:Thing ],
+        [ a owl:Restriction ;
+            owl:cardinality "1"^^xsd:int ;
+            owl:onProperty :isSettingForWebResource ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom ti:TimeInterval ;
+            owl:onProperty :atTime ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :WebResource ;
+            owl:onProperty :isSettingForWebResource ],
+        sit:Situation .
+
+:WebLocationOf a owl:Class ;
+    rdfs:comment "A relation between a web resource and the abstract web location/s is is assigned to at a certain time." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom ti:TimeInterval ;
+            owl:onProperty :atTime ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :WebResource ;
+            owl:onProperty :isSettingForWebResource ],
+        [ a owl:Restriction ;
+            owl:cardinality "1"^^xsd:int ;
+            owl:onProperty :isSettingForLocation ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :AbstractWebLocation ;
+            owl:onProperty :isSettingForLocation ],
+        [ a owl:Restriction ;
+            owl:cardinality "1"^^xsd:int ;
+            owl:onProperty :isSettingForWebResource ],
+        sit:Situation .
+
+:atTime a owl:ObjectProperty ;
+    rdfs:comment "The time at which a situation take place." ;
+    rdfs:domain sit:Situation ;
+    rdfs:range ti:TimeInterval ;
+    rdfs:subPropertyOf sit:isSettingFor ;
+    owl:inverseOf :timeHasSetting .
+
+:isSettingForEntity a owl:ObjectProperty ;
+    rdfs:comment "The entity involved in a situation." ;
+    rdfs:domain sit:Situation ;
+    rdfs:range owl:Thing ;
+    rdfs:subPropertyOf sit:isSettingFor .
+
+:isSettingForLocation a owl:ObjectProperty ;
+    rdfs:comment "The abstract web location assigned at a web resource in a web location of situation." ;
+    rdfs:domain :WebLocationOf ;
+    rdfs:range :AbstractWebLocation ;
+    rdfs:subPropertyOf sit:isSettingFor ;
+    owl:inverseOf :locationHasSetting .
+
+:AbstractWebLocation a owl:Class ;
+    rdfs:label "abstract web location"@en ;
+    rdfs:comment "All possible locations of the combinatorial space identified by the world wide web." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:cardinality "1"^^xsd:int ;
+            owl:onProperty :hasURL ] .
+
+:isSettingForWebResource a owl:ObjectProperty ;
+    rdfs:comment "A web resource invlved in a situation." ;
+    rdfs:domain sit:Situation ;
+    rdfs:range :WebResource ;
+    rdfs:subPropertyOf sit:isSettingFor ;
+    owl:inverseOf :webResourceHasSetting .
+
+:WebResource a owl:Class ;
+    rdfs:comment "A resource that is published and available on the web." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom <http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl#InformationObject> ;
+            owl:onProperty ir:realizes ],
+        ir:InformationRealization .
+
+[] a <http://www.ontologydesignpatterns.org/cpont/script> .
+
+[] a <http://www.ontologydesignpatterns.org/cpont/script> .
+

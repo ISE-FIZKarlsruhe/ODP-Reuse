@@ -1,0 +1,73 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/region.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:hasRegionDataValue a owl:DatatypeProperty ;
+    rdfs:label "regione ha valore {it}",
+        "has region data value"@en ;
+    rdfs:comment "A datatype property that encodes values for a Region, e.g. a float for the Region Height." ;
+    rdfs:domain :Region ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/region.owl> .
+
+cpannotationschema:coversRequirements a owl:AnnotationProperty .
+
+cpannotationschema:extractedFrom a owl:AnnotationProperty .
+
+cpannotationschema:hasConsequences a owl:AnnotationProperty .
+
+cpannotationschema:hasIntent a owl:AnnotationProperty .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+:hasRegion a owl:ObjectProperty ;
+    rdfs:label "has region"@en,
+        "ha regione"@it ;
+    rdfs:comment "A relation between entities and regions, e.g. 'the number of wheels of that truck is 12'." ;
+    rdfs:domain owl:Thing ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/region.owl> ;
+    rdfs:range :Region .
+
+:isRegionFor a owl:ObjectProperty ;
+    rdfs:label "is region for"@en,
+        "è un ragione di"@it ;
+    rdfs:comment "A relation between entities and regions, e.g. 'the color of my car is red'." ;
+    rdfs:domain :Region ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/region.owl> ;
+    rdfs:range owl:Thing ;
+    owl:inverseOf :hasRegion .
+
+:Region a owl:Class ;
+    rdfs:label "Region"@en,
+        "Regione"@it ;
+    rdfs:comment """Any region in a dimensional space (a dimensional space is a maximal Region), which can be used as a value for a quality of an Entity . For example, TimeInterval, SpaceRegion, PhysicalAttribute, Amount, SocialAttribute are all subclasses of Region. 
+Regions are not data values in the ordinary knowledge representation sense; in order to get patterns for modelling data, see the properties: representsDataValue and hasDataValue"""^^xsd:string ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/region.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom owl:Thing ;
+            owl:onProperty :isRegionFor ] .
+
+owl:Thing a owl:Class .
+
+<http://www.ontologydesignpatterns.org/cp/owl/region.owl> a owl:Ontology ;
+    cpannotationschema:coversRequirements "What is the value for the attribute of that entity?,Which entities have a certain value on that parameter/attribute/feature?"^^rdf:PlainLiteral ;
+    cpannotationschema:extractedFrom "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl"^^rdf:PlainLiteral ;
+    cpannotationschema:hasConsequences """We can represent and reason on *any* kind of attributes, parameters, features, etc., which have a given set of values.
+With the new OWL2 support for custom and complex datatypes, this pattern should be confronted with possible enrichments, or may be restricted to OWL1. Anyway, since datatypes cannot overlap with classes even in OWL2, it remains useful for the cases where the domain must be kept homogeneous."""^^rdf:PlainLiteral ;
+    cpannotationschema:hasIntent "To represent and reason on values of attributes of things, by explicitly talking about the dimensions (\"regions\") of the attributes, which include those values."^^rdf:PlainLiteral ;
+    rdfs:comment "The region content ontology design pattern. This CP represents regions that are portions of a dimensional space which can be used as a value for a quality of an Entity. The CP is extracted from DOLCE + DnS Ultra Lite ontology."^^rdf:PlainLiteral ;
+    owl:imports <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> ;
+    owl:versionInfo """1.1
+- Annotated for ODP submission by Aldo Gangemi
+1.0
+- Created by Valentina Presutti"""^^xsd:string,
+        "1.1 added rdfs:isDefinedBy for all named entities"^^xsd:string .
+

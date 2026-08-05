@@ -1,0 +1,103 @@
+@prefix : <https://raw.githubusercontent.com/FSCHOEN/CO-PLM/master/Ontology_Patterns/ProductPartInformationEntity.owl#> .
+@prefix DUL: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://raw.githubusercontent.com/FSCHOEN/CO-PLM/master/Ontology_Patterns/ProductPartInformationEntity.owl> a owl:Ontology ;
+    owl:imports <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl> .
+
+:ApprovalStatus a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :ApprovalStatusRegion ;
+            owl:onProperty DUL:hasRegion ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:hasRegion ;
+            owl:someValuesFrom :ApprovalStatusRegion ],
+        DUL:Quality .
+
+:LevelOfConfidentiality a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:hasRegion ;
+            owl:someValuesFrom :LevelOfConfidentialityRegion ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :LevelOfConfidentialityRegion ;
+            owl:onProperty DUL:hasRegion ],
+        DUL:Quality .
+
+:Version a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :VersionRegion ;
+            owl:onProperty DUL:hasRegion ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:hasRegion ;
+            owl:someValuesFrom :VersionRegion ],
+        DUL:Quality .
+
+:hasApprovalStatus a owl:ObjectProperty ;
+    rdfs:domain :ProductPartInformationEntity ;
+    rdfs:range :ApprovalStatusRegion ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:hasLevelOfConfidentiality a owl:ObjectProperty ;
+    rdfs:domain :ProductPartInformationEntity ;
+    rdfs:range :LevelOfConfidentialityRegion ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:hasProductPartInformationVersion a owl:ObjectProperty ;
+    rdfs:domain :ProductPartInformationEntity ;
+    rdfs:range :VersionRegion ;
+    rdfs:subPropertyOf DUL:associatedWith .
+
+:ProductPartInformationObject a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty DUL:isRealizedBy ;
+            owl:someValuesFrom :ProductPartInformationRealization ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :ProductPartInformationRealization ;
+            owl:onProperty DUL:isRealizedBy ],
+        DUL:InformationObject,
+        :ProductPartInformationEntity .
+
+:ProductPartInformationRealization a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :ProductPartInformationObject ;
+            owl:onProperty DUL:realizes ],
+        [ a owl:Restriction ;
+            owl:onProperty DUL:realizes ;
+            owl:someValuesFrom :ProductPartInformationObject ],
+        DUL:InformationRealization,
+        :ProductPartInformationEntity .
+
+:ApprovalStatusRegion a owl:Class ;
+    rdfs:subClassOf DUL:Region .
+
+:LevelOfConfidentialityRegion a owl:Class ;
+    rdfs:subClassOf DUL:Region .
+
+:ProductPartInformationEntity a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasProductPartInformationVersion ;
+            owl:someValuesFrom :VersionRegion ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :VersionRegion ;
+            owl:onProperty :hasProductPartInformationVersion ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :ApprovalStatusRegion ;
+            owl:onProperty :hasApprovalStatus ],
+        [ a owl:Restriction ;
+            owl:onProperty :hasApprovalStatus ;
+            owl:someValuesFrom :ApprovalStatusRegion ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :LevelOfConfidentialityRegion ;
+            owl:onProperty :hasLevelOfConfidentiality ],
+        [ a owl:Restriction ;
+            owl:onProperty :hasLevelOfConfidentiality ;
+            owl:someValuesFrom :LevelOfConfidentialityRegion ],
+        DUL:InformationEntity ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:unionOf ( :ProductPartInformationObject :ProductPartInformationRealization ) ] .
+
+:VersionRegion a owl:Class ;
+    rdfs:subClassOf DUL:Region .
+

@@ -300,87 +300,194 @@
             'would flatten every other bar; see the table above.');
   }
 
-  /* ---- ontology <-> pattern constellation ------------------------------ */
-  async function constellation(el) {
+  /* ---- ontology <-> pattern reuse graph -------------------------------- */
+  /* Bipartite: 68 pattern discs, ~493 ontology dots, ~759 reuse edges.
+     Three things make it readable at that size:
+       - edges coloured by coverage band, so "how much of the pattern is
+         present" is the figure's primary signal rather than a tooltip detail;
+       - a bounded-repulsion force layout (see FORCES below) instead of a
+         global one, which is what stops the hairball collapsing onto the frame;
+       - click-to-focus with a stats panel, so the dense view is an overview and
+         the detail is one click away.                                        */
+  async function reuseGraph(el) {
     const g = await load(el);
     if (!g.nodes || !g.nodes.length) return;
-    const W = el.clientWidth || 900, H = 460, pad = 14;
-    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`)
-      .attr('role', 'img').attr('aria-label', 'Ontology-to-pattern reuse graph');
 
-    // A visible frame: with the simulation now clamped to stay inside it
-    // (see the tick handler below), the frame is a true bound on the graph
-    // rather than a border the graph used to spill past.
-    svg.append('rect').attr('x', .5).attr('y', .5)
-      .attr('width', W - 1).attr('height', H - 1).attr('rx', 10)
+    const BANDS = g.bands || [];
+    const bandColor = b => (BANDS[b] && BANDS[b].color) || css('--odp-line');
+    const bandLabel = b => (BANDS[b] && BANDS[b].label) || '';
+
+    const patterns = g.nodes.filter(d => d.kind === 'pattern');
+    const box = el.clientWidth || 900;
+    // The detail panel sits beside the graph, so the drawing width is what is
+    // left after it. Measuring the whole container instead would set a viewBox
+    // wider than the box the SVG actually gets, and the layout radii would be
+    // computed for a canvas that never exists. Below ~640px the flex wrapper
+    // stacks the panel underneath and the graph gets the full width back.
+    const stacked = box < 640;
+    const panelW = stacked ? box : Math.min(250, Math.max(190, box * 0.26));
+    const W = Math.max(340, stacked ? box : box - panelW - 12);
+
+    // Lay the coverage legend out before sizing the SVG, wrapping it to as many
+    // lines as W needs, so it can never run past the frame's right edge.
+    const lineH = 15;
+    let lx = 0, ly = 0;
+    const legendItems = BANDS.map(b => {
+      const w = 21 + b.label.length * 5.3;
+      if (lx > 0 && lx + w > W) { lx = 0; ly += lineH; }
+      const it = { b, x: lx, y: ly };
+      lx += w + 20;
+      return it;
+    });
+    const legendH = ly + lineH + 12;
+    const plotH = 520, H = plotH + legendH;
+
+    const wrap = d3.select(el).append('div')
+      .style('position', 'relative').style('display', 'flex')
+      .style('gap', '.6rem').style('align-items', 'flex-start')
+      .style('flex-wrap', 'wrap');
+    const svgBox = wrap.append('div').style('flex', '1 1 340px')
+      .style('min-width', '0');
+    const svg = svgBox.append('svg').attr('viewBox', `0 0 ${W} ${H}`)
+      .attr('role', 'img')
+      .attr('aria-label', 'Ontology-to-pattern reuse graph, edges coloured by '
+        + 'how much of each pattern is reused');
+
+    const lg = svg.append('g').attr('transform', 'translate(0,11)');
+    legendItems.forEach(it => {
+      const gg = lg.append('g').attr('transform', `translate(${it.x},${it.y})`);
+      gg.append('line').attr('x1', 0).attr('x2', 16).attr('y1', 0).attr('y2', 0)
+        .attr('stroke', it.b.color)
+        .attr('stroke-width', it.b.band === 4 ? 2.4 : 1.6);
+      gg.append('text').attr('x', 21).attr('dy', '.32em').attr('font-size', 9.5)
+        .attr('opacity', .8).text(it.b.label);
+    });
+
+    const frame = svg.append('g').attr('transform', `translate(0,${legendH})`);
+    frame.append('rect').attr('x', .5).attr('y', .5)
+      .attr('width', W - 1).attr('height', plotH - 1).attr('rx', 10)
       .attr('fill', 'none').attr('stroke', css('--odp-line'));
+    // Clip so a dragged node cannot be painted outside the frame. The layout
+    // keeps nodes inside on its own; this only bounds the drag interaction,
+    // which is user-driven and has no force acting against it.
+    const clipId = 'odp-rg-clip-' + Math.abs(W | 0) + '-' + patterns.length;
+    frame.append('clipPath').attr('id', clipId).append('rect')
+      .attr('x', 0).attr('y', 0).attr('width', W).attr('height', plotH).attr('rx', 10);
+    const root = frame.append('g').attr('clip-path', `url(#${clipId})`)
+      .append('g');
+    frame.append('rect').attr('width', W).attr('height', plotH)
+      .attr('fill', 'transparent').style('cursor', 'default')
+      .on('click', () => focus(null))
+      .lower();
 
-    const root = svg.append('g');
-    svg.call(d3.zoom().scaleExtent([.4, 6])
+    svg.call(d3.zoom().scaleExtent([.5, 8])
+      .filter(ev => !ev.target.closest('.odp-node'))
       .on('zoom', ev => root.attr('transform', ev.transform)));
 
     const rr = d3.scaleSqrt()
-      .domain([1, d3.max(g.nodes, d => d.v) || 1]).range([3.5, 24]);
+      .domain([1, d3.max(patterns, d => d.v) || 1]).range([4, 26]);
+    const radiusOf = d => d.kind === 'pattern' ? rr(d.v) : 3.2;
 
-    // Adjacency, keyed by the raw string ids -- computed before
-    // d3.forceLink mutates link.source/target into node references, and
-    // used by the chip filter below to highlight a pattern's neighbourhood.
+    /* ---- adjacency, on the raw ids -------------------------------------
+       Built before d3.forceLink rewrites link.source/target into node object
+       references, so these stay plain strings.                            */
     const neighbors = new Map();
+    const covByPattern = new Map();
     g.links.forEach(l => {
-      if (!neighbors.has(l.source)) neighbors.set(l.source, new Set());
-      if (!neighbors.has(l.target)) neighbors.set(l.target, new Set());
-      neighbors.get(l.source).add(l.target);
-      neighbors.get(l.target).add(l.source);
+      const s = typeof l.source === 'object' ? l.source.id : l.source;
+      const t = typeof l.target === 'object' ? l.target.id : l.target;
+      if (!neighbors.has(s)) neighbors.set(s, new Set());
+      if (!neighbors.has(t)) neighbors.set(t, new Set());
+      neighbors.get(s).add(t); neighbors.get(t).add(s);
+      if (!covByPattern.has(t)) covByPattern.set(t, []);
+      covByPattern.get(t).push(l);
     });
 
-    const sim = d3.forceSimulation(g.nodes)
-      .force('link', d3.forceLink(g.links).id(d => d.id).distance(44).strength(.3))
-      .force('charge', d3.forceManyBody().strength(-52))
-      .force('center', d3.forceCenter(W / 2, H / 2))
-      .force('collide', d3.forceCollide(d => rr(d.v) + 3))
-      .force('x', d3.forceX(W / 2).strength(.02))
-      .force('y', d3.forceY(H / 2).strength(.02));
+    /* ---- FORCES ---------------------------------------------------------
+       The previous version used a global forceManyBody at strength -52 with
+       no distanceMax. On 561 nodes that is ~157k repelling pairs, all acting
+       at unbounded range, so the graph inflated until every node sat against
+       the frame and the clamp pinned it there -- the "everything gathered on
+       the boundary" symptom. Bounding repulsion with distanceMax makes it a
+       local force: nodes push their neighbours apart without the whole graph
+       expanding. The radial force then does the global arranging, which is
+       what a bipartite graph wants: patterns pulled toward the centre by
+       their degree, ontologies pushed to a ring outside them.             */
+    const cx = W / 2, cy = plotH / 2;
+    const maxV = d3.max(patterns, d => d.v) || 1;
+    const ringR = Math.min(W, plotH) * 0.46;
+    const targetR = d => d.kind === 'ontology'
+      ? ringR
+      // A pattern's radius falls with how many ontologies reuse it, so DUL and
+      // situation land near the middle and singletons sit out by the ring.
+      : ringR * (0.62 - 0.52 * Math.sqrt(d.v / maxV));
 
-    // Edges were previously drawn in the page's near-invisible grid-line
-    // colour (12% alpha) whenever a reuse was partial, which is most of
-    // them -- the graph read as unconnected dots. Partial links now carry
-    // enough opacity to read as edges; complete reuse still stands out.
-    const link = root.append('g')
+    const sim = d3.forceSimulation(g.nodes)
+      .force('link', d3.forceLink(g.links).id(d => d.id)
+        .distance(d => d.target.kind === 'pattern' ? 26 + rr(d.target.v) : 30)
+        .strength(0.22))
+      .force('charge', d3.forceManyBody().strength(-26).distanceMax(110))
+      .force('r', d3.forceRadial(targetR, cx, cy)
+        .strength(d => d.kind === 'pattern' ? 0.34 : 0.12))
+      .force('collide', d3.forceCollide(d => radiusOf(d) + 2.2).iterations(2))
+      .velocityDecay(0.36)
+      .alpha(1).alphaDecay(0.0135);
+
+    const link = root.append('g').attr('fill', 'none')
       .selectAll('line').data(g.links).join('line')
-      .attr('stroke-width', d => d.complete ? 2 : .9)
-      .attr('stroke', d => d.complete ? css('--odp-mint') : css('--odp-violet'))
-      .attr('stroke-opacity', d => d.complete ? .75 : .3);
+      .attr('stroke', d => bandColor(d.band))
+      .attr('stroke-width', d => d.band === 4 ? 1.9 : 1.1)
+      .attr('stroke-opacity', d => d.band === 4 ? .85 : .5);
 
     const node = root.append('g').selectAll('circle').data(g.nodes).join('circle')
-      .attr('r', d => d.kind === 'pattern' ? rr(d.v) : 3.5)
-      .attr('fill', d => d.kind === 'pattern' ? css('--odp-violet') : css('--odp-coral'))
-      .attr('fill-opacity', d => d.kind === 'pattern' ? .95 : .6)
+      .attr('class', 'odp-node')
+      .attr('r', radiusOf)
+      .attr('fill', d => d.kind === 'pattern' ? css('--odp-violet')
+        : d.portion === 'GitHub' ? css('--odp-coral') : css('--odp-amber'))
+      .attr('fill-opacity', d => d.kind === 'pattern' ? .95 : .62)
       .attr('stroke', d => d.kind === 'pattern' ? css('--odp-panel') : 'none')
-      .attr('stroke-width', 1.2)
-      .style('cursor', 'grab')
-      .on('mousemove', (ev, d) => tip.show(
-        d.kind === 'pattern'
-          ? `<b>${d.label}</b><br>reused by ${d.v} ontolog${d.v === 1 ? 'y' : 'ies'}`
-          : `<b>${d.label}</b><br>ontology`, ev))
+      .attr('stroke-width', 1.3)
+      .style('cursor', d => d.kind === 'pattern' ? 'pointer' : 'grab')
+      .on('mousemove', (ev, d) => tip.show(hover(d), ev))
       .on('mouseleave', tip.hide)
+      .on('click', (ev, d) => {
+        ev.stopPropagation();
+        focus(d.kind === 'pattern' ? d.label : null);
+      })
       .call(d3.drag()
-        .on('start', (ev, d) => { if (!ev.active) sim.alphaTarget(.2).restart();
-                                  d.fx = d.x; d.fy = d.y; })
+        .on('start', (ev, d) => {
+          if (!ev.active) sim.alphaTarget(.12).restart();
+          d.fx = d.x; d.fy = d.y;
+        })
         .on('drag', (ev, d) => { d.fx = ev.x; d.fy = ev.y; })
-        .on('end', (ev, d) => { if (!ev.active) sim.alphaTarget(0);
-                                d.fx = null; d.fy = null; }));
+        .on('end', (ev, d) => {
+          if (!ev.active) sim.alphaTarget(0);
+          d.fx = null; d.fy = null;
+        }));
 
-    // Labels get a background pill so they read against the tangle of
-    // edges/dots instead of floating loose text; shown for enough patterns
-    // (v >= 3, not just v >= 4) that the chip list below has something to
-    // point at.
-    const label = root.append('g')
-      .selectAll('g').data(g.nodes.filter(d => d.kind === 'pattern' && d.v >= 3))
+    function hover(d) {
+      if (d.kind !== 'pattern') {
+        return `<b>${d.label}</b><br>${d.portion} ontology`;
+      }
+      const parts = [];
+      if (d.n_classes != null) parts.push(`${d.n_classes} C`);
+      if (d.n_object_properties != null) parts.push(`${d.n_object_properties} OP`);
+      if (d.n_datatype_properties != null) parts.push(`${d.n_datatype_properties} DP`);
+      return `<b>${d.label}</b><br>reused by ${fmt(d.v)} ontolog`
+        + (d.v === 1 ? 'y' : 'ies')
+        + (parts.length ? `<br>${parts.join(' · ')}` : '')
+        + '<br><i>click for detail</i>';
+    }
+
+    /* ---- labels: only the patterns big enough to name ------------------- */
+    const named = patterns.filter(d => d.v >= 8);
+    const label = root.append('g').selectAll('g').data(named)
       .join('g').attr('pointer-events', 'none');
-    label.append('rect').attr('fill', css('--odp-panel')).attr('opacity', .85)
+    label.append('rect').attr('fill', css('--odp-panel')).attr('opacity', .82)
       .attr('rx', 3);
     label.append('text').attr('font-size', 10).attr('font-weight', 600)
-      .attr('text-anchor', 'middle').attr('fill', 'currentColor').text(d => d.label)
+      .attr('text-anchor', 'middle').attr('fill', 'currentColor')
+      .text(d => d.label)
       .each(function () {
         const b = this.getBBox();
         d3.select(this.previousSibling)
@@ -390,33 +497,135 @@
 
     const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
     sim.on('tick', () => {
-      // Nothing bounded node positions before: a hairball of 561 nodes and
-      // weak forces let outliers drift far outside the frame, and the
-      // container's overflow was left visible so they rendered over the
-      // rest of the page instead of just clipping.
       g.nodes.forEach(d => {
-        const r = (d.kind === 'pattern' ? rr(d.v) : 3.5) + pad;
+        const r = radiusOf(d) + 3;
         d.x = clamp(d.x, r, W - r);
-        d.y = clamp(d.y, r, H - r);
+        d.y = clamp(d.y, r, plotH - r);
       });
       link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
-          .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
       node.attr('cx', d => d.x).attr('cy', d => d.y);
-      label.attr('transform', d => `translate(${d.x},${d.y - rr(d.v) - 10})`);
+      label.attr('transform', d => `translate(${d.x},${d.y - rr(d.v) - 9})`);
     });
-    setTimeout(() => sim.stop(), 9000);   // settle, then stop burning CPU
+    setTimeout(() => sim.stop(), 12000);   // settle, then stop burning CPU
 
-    // Driven by the pattern chips on the page: highlight one pattern and
-    // its ontologies, dim the rest. Previously the chips only toggled their
-    // own pressed state and touched nothing in the graph.
-    el.__focus = function (patternName) {
-      const target = patternName ? `p:${patternName}` : null;
+    /* ---- detail panel --------------------------------------------------- */
+    const panel = wrap.append('div')
+      .style('flex', `0 1 ${panelW}px`).style('min-width', '180px')
+      .style('font-size', '.8rem').style('line-height', '1.45');
+
+    function bar(rows, total) {
+      // Coverage mix for one pattern, as a single stacked rule.
+      const segs = rows.map(r =>
+        `<span style="display:inline-block;width:${(100 * r.n / total).toFixed(2)}%;`
+        + `height:8px;background:${bandColor(r.band)}" title="${bandLabel(r.band)}: `
+        + `${r.n}"></span>`).join('');
+      return `<div style="display:flex;border-radius:4px;overflow:hidden;`
+        + `margin:.3rem 0 .45rem">${segs}</div>`;
+    }
+
+    function idle() {
+      const complete = g.links.filter(l => l.band === 4).length;
+      panel.html(
+        `<div style="opacity:.75"><b>${fmt(patterns.length)} patterns</b> · `
+        + `<b>${fmt(g.nodes.length - patterns.length)} ontologies</b> · `
+        + `<b>${fmt(g.links.length)} reuse pairs</b>, of which `
+        + `<b>${fmt(complete)}</b> are complete.<br><br>`
+        + `Dots are ontologies: <span style="color:${css('--odp-coral')}">●</span> `
+        + `GitHub, <span style="color:${css('--odp-amber')}">●</span> Paper &amp; `
+        + `Repository. Discs are patterns, sized by how many ontologies reuse `
+        + `them and pulled toward the centre as that count rises.<br><br>`
+        + `<i>Click a pattern disc, or a chip below, for its detail.</i></div>`);
+    }
+
+    function detail(d) {
+      const links = covByPattern.get(d.id) || [];
+      const byBand = d3.rollups(links, v => v.length, l => l.band)
+        .map(([band, n]) => ({ band, n })).sort((a, b) => a.band - b.band);
+      const covs = links.map(l => l.coverage);
+      const med = covs.length ? d3.median(covs) : null;
+      const decl = [];
+      if (d.n_classes != null) decl.push(['classes', d.n_classes]);
+      if (d.n_object_properties != null) decl.push(['object properties', d.n_object_properties]);
+      if (d.n_datatype_properties != null) decl.push(['data properties', d.n_datatype_properties]);
+      if (d.n_individuals) decl.push(['named individuals', d.n_individuals]);
+
+      // n_entities is the release's WIDE entity set and is what coverage is
+      // measured against; C+OP+DP is the declared subset. Showing both, and
+      // the gap between them, is more honest than showing one and implying it
+      // is the whole story.
+      const wide = d.n_entities != null ? d.n_entities : null;
+      const declSum = decl.reduce((a, r) => a + r[1], 0);
+      const rangeNote = (d.gt_min != null && d.gt_max != null && d.gt_min !== d.gt_max)
+        ? `<div style="opacity:.6;font-size:.72rem;margin-top:.2rem">`
+        + `Local copies disagree: ${d.gt_min}&ndash;${d.gt_max} entities across `
+        + `the ${fmt(links.length)} pairs. Coverage uses each ontology's own copy.</div>`
+        : '';
+
+      panel.html(
+        `<div style="font-weight:700;font-size:.92rem;word-break:break-word">`
+        + `${d.label}</div>`
+        + `<div style="opacity:.7;margin:.15rem 0 .5rem">reused by `
+        + `<b>${fmt(d.v)}</b> ontolog${d.v === 1 ? 'y' : 'ies'}`
+        + (d.github != null && d.noOBO != null
+          ? ` — ${fmt(d.github)} GitHub, ${fmt(d.noOBO)} Paper &amp; Repository` : '')
+        + `</div>`
+        + (byBand.length
+          ? `<div style="font-size:.72rem;opacity:.7">coverage mix</div>`
+          + bar(byBand, links.length)
+          + byBand.map(r => `<div style="display:flex;gap:.4rem;align-items:center">`
+            + `<span style="width:9px;height:9px;border-radius:2px;background:`
+            + `${bandColor(r.band)};display:inline-block"></span>`
+            + `<span style="opacity:.8">${bandLabel(r.band)}</span>`
+            + `<b style="margin-left:auto">${r.n}</b></div>`).join('')
+          : '')
+        + (med != null
+          ? `<div style="margin-top:.45rem;opacity:.8">median coverage `
+          + `<b>${med.toFixed(1)}%</b></div>` : '')
+        + (decl.length
+          ? `<div style="margin-top:.6rem;font-size:.72rem;opacity:.7">declares</div>`
+          + decl.map(([k, v]) => `<div style="display:flex"><span style="opacity:.8">`
+            + `${k}</span><b style="margin-left:auto">${fmt(v)}</b></div>`).join('')
+          : '')
+        + (wide != null
+          ? `<div style="display:flex;margin-top:.3rem"><span style="opacity:.8">`
+          + `entities (coverage denominator)</span>`
+          + `<b style="margin-left:auto">${fmt(wide)}</b></div>`
+          + (wide > declSum
+            ? `<div style="opacity:.6;font-size:.72rem;margin-top:.2rem">`
+            + `${fmt(wide - declSum)} of those are referenced but never declared `
+            + `— restriction fillers, domains and ranges.</div>`
+            : '')
+          : '')
+        + (d.n_triples != null
+          ? `<div style="display:flex;margin-top:.3rem"><span style="opacity:.8">`
+          + `triples (annotations stripped)</span>`
+          + `<b style="margin-left:auto">${fmt(d.n_triples)}</b></div>` : '')
+        + rangeNote);
+    }
+
+    let current = null;
+    function focus(patternName) {
+      current = patternName || null;
+      const target = current ? `p:${current}` : null;
       const active = target ? (neighbors.get(target) || new Set()) : null;
-      node.attr('opacity', d => !target || d.id === target || active.has(d.id) ? 1 : .1);
-      link.attr('opacity', d => !target
-        || d.source.id === target || d.target.id === target ? 1 : .04);
-      label.attr('opacity', d => !target || d.id === target ? 1 : .1);
-    };
+      node.attr('opacity', d => !target || d.id === target || active.has(d.id) ? 1 : .08);
+      link.attr('stroke-opacity', d => {
+        if (!target) return d.band === 4 ? .85 : .5;
+        return (d.source.id === target || d.target.id === target)
+          ? .95 : .03;
+      });
+      label.attr('opacity', d => !target ? 1 : (d.id === target ? 1 : .08));
+      d3.selectAll('.odp-chip').each(function () {
+        this.setAttribute('aria-pressed',
+          this.dataset.pattern === current ? 'true' : 'false');
+      });
+      const n = target && g.nodes.find(x => x.id === target);
+      if (n) detail(n); else idle();
+    }
+
+    idle();
+    el.__focus = focus;
   }
 
   /* ---- forest plot: paired improvements with CIs ------------------------ */
@@ -488,7 +697,7 @@
   const CHARTS = {
     'odp-funnel': funnel, 'odp-rules': rules, 'odp-thresholds': thresholds,
     'odp-forms': forms, 'odp-toppat': topPatterns, 'odp-views': views,
-    'odp-constellation': constellation,
+    'odp-constellation': reuseGraph,
     'odp-uc1': oracleGap, 'odp-uc2': forest,
   };
 

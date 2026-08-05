@@ -1,0 +1,333 @@
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix san: <http://www.irit.fr/recherches/MELODI/ontologies/SAN#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix voaf: <http://purl.org/vocommons/voaf#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.irit.fr/recherches/MELODI/ontologies/SAN> a voaf:Vocabulary,
+        owl:NamedIndividual,
+        owl:Ontology ;
+    cc:license <http://creativecommons.org/licenses/by/4.0/> ;
+    dc:creator <http://www.irit.fr/recherches/MELODI/ontologies/contributors#ben_alaya>,
+        <http://www.irit.fr/recherches/MELODI/ontologies/contributors#drira>,
+        <http://www.irit.fr/recherches/MELODI/ontologies/contributors#hernandez>,
+        <http://www.irit.fr/recherches/MELODI/ontologies/contributors#monteil>,
+        <http://www.irit.fr/recherches/MELODI/ontologies/contributors#seydoux>,
+        "Nicolas Seydoux, Mahdi Ben Alaya, Khalil Drira, Nathalie Hernandez, Thierry Monteil" ;
+    dc:description """SAN stands for Semantic Actuator Network. It is intended to describe Semantic Actuator Networks, as a counterpoint to SSN definition of Semantic Sensor Networks. An actuator is a physical device having an effect on the world (see Actuator for more information).
+
+It is worth noticing that some concepts are imported from SSN, but not SSN as a whole. This is a design choice intended to separate as much as possible the definition on actuator from the definition of sensor, which are completely different concept that can be used independantly from each other.
+
+This ontology is used as a ontological module in IoT-O ontology.""" ;
+    dc:publisher "IRIT (https://www.irit.fr/)",
+        "LAAS-CNRS (https://www.laas.fr)" ;
+    dc:title "SAN" ;
+    dcterms:issued "2015-02-20" ;
+    dcterms:modified "2016-02-26" ;
+    vann:preferredNamespacePrefix "san" ;
+    vann:preferredNamespaceURI "http://www.irit.fr/recherches/MELODI/ontologies/SAN" ;
+    voaf:reliesOn <http://purl.oclc.org/NET/ssnx/ssn> ;
+    rdfs:seeAlso "http://www.irit.fr/recherches/MELODI/ontologies/IoT-O" ;
+    owl:versionInfo "2.0.0"^^xsd:decimal ;
+    foaf:primaryTopic "Actuators and actuation" .
+
+san:ActuatingDevice a owl:Class ;
+    rdfs:label "Actuating device" ;
+    rdfs:comment "A device that implements actuating" ;
+    rdfs:subClassOf <http://purl.oclc.org/NET/ssnx/ssn#Device>,
+        san:Actuator .
+
+san:ActuatingRange a owl:Class ;
+    rdfs:label "Actuating Range" ;
+    rdfs:comment "Range of commands that the actuator can receive and transduce into the physical world without damage to itself or security issues to its surrounding environment." ;
+    rdfs:subClassOf san:ActuatingProperty .
+
+san:ActuatingTime a owl:Class ;
+    rdfs:label "Actuating Time" ;
+    rdfs:comment "Time between the moment when the actuator receives an actuation command and the actual actuation." ;
+    rdfs:subClassOf san:ActuatingProperty .
+
+san:ActuatorOutput a owl:Class ;
+    rdfs:label "Actuator Output" ;
+    rdfs:comment "Behaviour of an actuator after it has been given an input. To stick to its definition, an actuator output must have an effect on the physical world." ;
+    rdfs:subClassOf dul:Event ;
+    owl:equivalentClass san:Effect .
+
+san:actuationResults a owl:ObjectProperty ;
+    rdfs:label "actuation results" ;
+    rdfs:comment "Relation between an actuation and an actuator input, its result. Implements the ODP Effect-Actuator-Observation" ;
+    rdfs:domain san:Actuation ;
+    rdfs:range san:ActuatorInput ;
+    rdfs:subPropertyOf dul:isSettingFor .
+
+san:consumes a owl:ObjectProperty ;
+    rdfs:label "consumes" ;
+    rdfs:comment "Relation between an consumer entity and a consumee entity. Consumption can be destructive, transformative or neutral for the consumed entity." ;
+    rdfs:domain dul:Entity ;
+    rdfs:range dul:Entity ;
+    owl:inverseOf san:isConsumedBy .
+
+san:controlledBy a owl:ObjectProperty ;
+    rdfs:label "controlled by" ;
+    rdfs:comment "Describes the relationship between a controlledentity and a controller  one. The controlled entity can be a situation (state of a system, property of an environment), a device, a piece of software..." ;
+    rdfs:domain dul:Entity ;
+    rdfs:range dul:Entity ;
+    owl:inverseOf san:isController .
+
+san:impactedProperty a owl:ObjectProperty ;
+    rdfs:label "impacted property" ;
+    rdfs:comment "Property on which an Actuation has an impact" ;
+    rdfs:domain san:Actuation ;
+    rdfs:range <http://purl.oclc.org/NET/ssnx/ssn#Property> ;
+    rdfs:subPropertyOf dul:isSettingFor .
+
+san:receivedActuation a owl:ObjectProperty ;
+    rdfs:label "receives actuation" ;
+    rdfs:comment "Relationship between an actuator and an Actuation it received in order to modify its action." ;
+    rdfs:domain san:Actuator ;
+    rdfs:range san:Actuation ;
+    owl:inverseOf san:wasActuationSent .
+
+<xsd:integer> a rdfs:Datatype .
+
+<http://delicias.dia.fi.upm.es/ontologies/ObjectWithStates.owl#Object> rdfs:subClassOf dul:Object .
+
+<http://purl.oclc.org/NET/ssnx/ssn#Device> a owl:Class ;
+    rdfs:subClassOf <http://delicias.dia.fi.upm.es/ontologies/ObjectWithStates.owl#Object>,
+        dul:PhysicalObject .
+
+<http://purl.oclc.org/NET/ssnx/ssn#FeatureOfInterest> a owl:Class ;
+    rdfs:isDefinedBy "http://purl.oclc.org/NET/ssnx/ssn" .
+
+<http://purl.oclc.org/NET/ssnx/ssn#Input> a owl:Class .
+
+<http://purl.oclc.org/NET/ssnx/ssn#Process> a owl:Class ;
+    rdfs:subClassOf dul:Method .
+
+<http://purl.oclc.org/NET/ssnx/ssn#forProperty> a owl:ObjectProperty .
+
+<http://purl.oclc.org/NET/ssnx/ssn#implements> a owl:ObjectProperty .
+
+<http://purl.oclc.org/NET/ssnx/ssn#isPropertyOf> a owl:ObjectProperty ;
+    rdfs:isDefinedBy "http://purl.oclc.org/NET/ssnx/ssn" .
+
+voaf:Vocabulary a owl:Class .
+
+<http://qudt.org/schema/qudt#Unit> a owl:Class ;
+    rdfs:subClassOf dul:UnitOfMeasure .
+
+san:ActuationValue a owl:Class ;
+    rdfs:label "Actuation Value" ;
+    rdfs:comment "Value of the command sent to an actuator" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty dul:isParametrizedBy ;
+            owl:someValuesFrom <http://qudt.org/schema/qudt#Unit> ],
+        [ a owl:Restriction ;
+            owl:onClass time:Instant ;
+            owl:onProperty san:hasDateTime ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        dul:Region .
+
+san:ActuatorInput a owl:Class ;
+    rdfs:label "Actuator Input" ;
+    rdfs:comment "An actuator input is a piece of information provided to an actuator describing its expected behaviour, and it is described by an Actuation Value" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <http://purl.oclc.org/NET/ssnx/ssn#hasValue> ;
+            owl:someValuesFrom san:ActuationValue ],
+        [ a owl:Restriction ;
+            owl:onProperty san:isConsumedBy ;
+            owl:someValuesFrom san:Actuator ],
+        <http://purl.oclc.org/NET/ssnx/ssn#Input>,
+        dul:InformationObject .
+
+san:actsOn a owl:ObjectProperty ;
+    rdfs:label "acts on" ;
+    rdfs:comment "Relationship between an entity that acts upon a quantity or another entity" ;
+    rdfs:domain dul:Entity ;
+    rdfs:range dul:Entity ;
+    owl:inverseOf san:isActedUponBy .
+
+san:actuationMethodUsed a owl:ObjectProperty ;
+    rdfs:label "actuation method used" ;
+    rdfs:comment "Process involved in the Actuation" ;
+    rdfs:domain san:Actuation ;
+    rdfs:range dul:Process .
+
+san:hasActuatingCapability a owl:ObjectProperty ;
+    rdfs:label "has actuation capability" ;
+    rdfs:comment "Relation between an Actuator and an ActuatingCapability, describing the actuating properties of an actuator." ;
+    rdfs:domain san:Actuator ;
+    rdfs:range san:ActuatingCapability ;
+    rdfs:subPropertyOf <http://purl.oclc.org/NET/ssnx/ssn#hasProperty> .
+
+san:hasActuatingProperty a owl:ObjectProperty ;
+    rdfs:label "has actuation property" ;
+    rdfs:comment "Relation from an actuation capability to an actuation property." ;
+    rdfs:domain san:ActuatingCapability ;
+    rdfs:range san:ActuatingProperty ;
+    rdfs:subPropertyOf <http://purl.oclc.org/NET/ssnx/ssn#hasProperty> .
+
+san:hasDateTime a owl:ObjectProperty ;
+    rdfs:label "has date time" ;
+    rdfs:comment "Relationship between an event (DUL:Region) and a point in time." ;
+    rdfs:domain dul:Region ;
+    rdfs:range time:Instant ;
+    rdfs:subPropertyOf <http://www.linkedmodel.org/schema/vaem#date> .
+
+san:hasEffect a owl:ObjectProperty ;
+    rdfs:label "has effect" ;
+    rdfs:comment "Relationship between an Actuator and the effect that it induces. The Effect will be linked to a physical property that the actuator impacts" ;
+    rdfs:domain san:Actuator ;
+    rdfs:range san:Effect .
+
+san:impacts a owl:ObjectProperty ;
+    rdfs:label "impacts" ;
+    rdfs:comment "Relationship between an effect and the property it impacts. Used in the Effect-Actuator-Actuation design pattern to describe the link between an actuator and the physical property it acts upon." ;
+    rdfs:domain san:Effect ;
+    rdfs:range <http://purl.oclc.org/NET/ssnx/ssn#Property> .
+
+san:isActedUponBy a owl:ObjectProperty ;
+    rdfs:label "is acted upon by" ;
+    rdfs:comment "Relation between an entity that is acted upen by another acting entity" ;
+    rdfs:domain dul:Entity ;
+    rdfs:range dul:Entity .
+
+san:isController a owl:ObjectProperty ;
+    rdfs:label "is controller" ;
+    rdfs:comment "An entity is controller of another one when it has influence on its decision process or evolution in time." ;
+    rdfs:domain dul:Entity ;
+    rdfs:range dul:Entity .
+
+<http://www.linkedmodel.org/schema/vaem#date> a owl:ObjectProperty .
+
+dul:Agent a owl:Class .
+
+dul:Amount a owl:Class .
+
+dul:InformationObject a owl:Class .
+
+dul:Method a owl:Class .
+
+dul:Object a owl:Class .
+
+dul:Process a owl:Class .
+
+dul:Quality a owl:Class .
+
+dul:UnitOfMeasure a owl:Class .
+
+dul:includesEvent a owl:ObjectProperty .
+
+dul:isParametrizedBy a owl:ObjectProperty .
+
+<http://purl.oclc.org/NET/ssnx/ssn#hasProperty> a owl:ObjectProperty .
+
+<http://purl.oclc.org/NET/ssnx/ssn#hasValue> a owl:ObjectProperty .
+
+<http://qudt.org/schema/qudt#QuantityKind> a owl:Class ;
+    rdfs:subClassOf dul:Quality .
+
+san:Acting a owl:Class ;
+    rdfs:label "Acting" ;
+    rdfs:comment "Acting is the process that results in an action on the physical world, might it be a motion, a display, the emission of a sound..." ;
+    rdfs:subClassOf <http://purl.oclc.org/NET/ssnx/ssn#Process> .
+
+san:Situation a owl:Class ;
+    rdfs:subClassOf san:Situation,
+        <http://www.ontologydesignpatterns.org/cp/owl/situation.owl#Situation> .
+
+san:isConsumedBy a owl:ObjectProperty ;
+    rdfs:label "is consumed by" ;
+    rdfs:comment "Describes a relation between a consumer and a consumee" ;
+    rdfs:domain dul:Entity ;
+    rdfs:range dul:Entity .
+
+san:wasActuationSent a owl:ObjectProperty ;
+    rdfs:label "is actuation sent" ;
+    rdfs:comment "Relationship between an actuation that was sent and the actuator that received it" ;
+    rdfs:domain san:Actuation ;
+    rdfs:range san:Actuator .
+
+dul:Event a owl:Class .
+
+dul:PhysicalObject a owl:Class .
+
+dul:Region a owl:Class .
+
+dul:isSettingFor a owl:ObjectProperty .
+
+san:ActuatingCapability a owl:Class ;
+    rdfs:label "Actuating Capability" ;
+    rdfs:comment "Represents actuation properties such as precision, latency, power consumption, and the environmental conditions in which these actuation can take place normally." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <http://purl.oclc.org/NET/ssnx/ssn#forProperty> ;
+            owl:someValuesFrom <http://qudt.org/schema/qudt#QuantityKind> ],
+        [ a owl:Restriction ;
+            owl:onProperty san:hasActuatingProperty ;
+            owl:someValuesFrom san:ActuatingProperty ],
+        <http://purl.oclc.org/NET/ssnx/ssn#Property> .
+
+san:ActuatingProperty a owl:Class ;
+    rdfs:label "Actuating Property" ;
+    rdfs:comment "A characteristic of an Actuator that gives information about the Actuations it is able to perform." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <http://purl.oclc.org/NET/ssnx/ssn#hasValue> ;
+            owl:someValuesFrom dul:Amount ],
+        <http://purl.oclc.org/NET/ssnx/ssn#Property> .
+
+san:Actuation a owl:Class ;
+    rdfs:label "Actuation" ;
+    rdfs:comment "An Actuation is the abstract representation of the command that will be translated into Effect by the Actuator (cf http://ontologydesignpatterns.org/wiki/Submissions:Actuation-Actuator-Effect for more information)." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom san:Acting ;
+            owl:onProperty san:actuationMethodUsed ],
+        [ a owl:Restriction ;
+            owl:onProperty san:wasActuationSent ;
+            owl:someValuesFrom san:Actuator ],
+        [ a owl:Restriction ;
+            owl:onProperty dul:includesEvent ;
+            owl:someValuesFrom san:Effect ],
+        san:Situation .
+
+san:Effect a owl:Class ;
+    rdfs:label "Effect" ;
+    rdfs:comment "Concept bound to the definition of an actuator as an agent havong an effect on the physical world. Therefore, an effect is any kind of physical modification induced by an actuator." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty san:impacts ;
+            owl:someValuesFrom <http://purl.oclc.org/NET/ssnx/ssn#Property> ],
+        dul:Event .
+
+<http://purl.oclc.org/NET/ssnx/ssn#Property> a owl:Class ;
+    rdfs:isDefinedBy "http://purl.oclc.org/NET/ssnx/ssn" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <http://purl.oclc.org/NET/ssnx/ssn#isPropertyOf> ;
+            owl:someValuesFrom <http://purl.oclc.org/NET/ssnx/ssn#FeatureOfInterest> ],
+        <http://qudt.org/schema/qudt#QuantityKind> .
+
+san:Actuator a owl:Class ;
+    rdfs:label "Actuator" ;
+    rdfs:comment "An actuator is an entity which is able to act upon the physical world. Whether it is a light bulb or a servomotor, an actuator receives inputs represented by Actuations and produces an effect on the world." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty san:hasEffect ;
+            owl:someValuesFrom san:Effect ],
+        [ a owl:Restriction ;
+            owl:onProperty san:hasActuatingCapability ;
+            owl:someValuesFrom san:ActuatingCapability ],
+        [ a owl:Restriction ;
+            owl:onProperty <http://purl.oclc.org/NET/ssnx/ssn#implements> ;
+            owl:someValuesFrom san:Acting ],
+        [ a owl:Restriction ;
+            owl:onProperty san:actsOn ;
+            owl:someValuesFrom <http://purl.oclc.org/NET/ssnx/ssn#Property> ],
+        dul:Agent,
+        dul:PhysicalObject .
+
+dul:Entity a owl:Class .
+

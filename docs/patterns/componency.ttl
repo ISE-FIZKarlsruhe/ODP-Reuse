@@ -1,0 +1,74 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/componency.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix partof: <http://www.ontologydesignpatterns.org/cp/owl/partof.owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+cpannotationschema:coversRequirements a owl:AnnotationProperty .
+
+cpannotationschema:extractedFrom a owl:AnnotationProperty .
+
+cpannotationschema:hasConsequences a owl:AnnotationProperty .
+
+cpannotationschema:hasIntent a owl:AnnotationProperty .
+
+cpannotationschema:isSpecializationOf a owl:AnnotationProperty .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+:hasComponent a owl:ObjectProperty ;
+    rdfs:label "has component"@en ;
+    rdfs:comment """The hasPart relation without transitivity, holding between an entity (the system) and another (the component), and assuming a design that structures the system. For an explicit pattern encoding design, see the 'designobject' pattern.
+The componency pattern uses the transitive reduction logical pattern to preserve transitive on the superproperty from the partof pattern. In practice, the partof pattern acts here as the transitive reduction of the componency pattern.""" ;
+    rdfs:domain owl:Thing ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/componency.owl> ;
+    rdfs:range owl:Thing ;
+    rdfs:subPropertyOf partof:hasPart ;
+    owl:inverseOf :isComponentOf .
+
+partof:hasPart a owl:ObjectProperty .
+
+partof:isPartOf a owl:ObjectProperty .
+
+:Object a owl:Class ;
+    rdfs:label "Object"@en ;
+    rdfs:comment "Any physical, social, or mental object, or a substance" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/componency.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :Object ;
+            owl:onProperty :hasComponent ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom :Object ;
+            owl:onProperty :isComponentOf ] .
+
+:isComponentOf a owl:ObjectProperty ;
+    rdfs:label "is component of"@en ;
+    rdfs:comment """The hasPart relation without transitivity, holding between an entity (the system) and another (the component), and assuming a design that structures the system. For an explicit pattern encoding design, see the 'designobject' pattern.
+The componency pattern uses the transitive reduction logical pattern to preserve transitive on the superproperty from the partof pattern. In practice, the partof pattern acts here as the transitive reduction of the componency pattern.""" ;
+    rdfs:domain owl:Thing ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/componency.owl> ;
+    rdfs:range owl:Thing ;
+    rdfs:subPropertyOf partof:isPartOf .
+
+<http://www.ontologydesignpatterns.org/cp/owl/componency.owl> a owl:Ontology ;
+    cpannotationschema:coversRequirements "What is this entity component of? What are the components of this entity?"^^rdf:PlainLiteral ;
+    cpannotationschema:extractedFrom "http://ontologydesignpatterns.org/ont/dul/DUL.owl"^^rdf:PlainLiteral ;
+    cpannotationschema:hasConsequences "This Content OP allows designers to represent part-whole relations. It allows to distinguish between parts and proper parts. Relation of proper part is not transitive, and implies a simple  part of relation, which is transitive. Temporal indexing is not expressible. To solve this issue see the  time indexed part of Content OP. "^^rdf:PlainLiteral ;
+    cpannotationschema:hasIntent "To represent (non-transitively) that entities either are proper parts of other entities, or have proper parts."^^rdf:PlainLiteral ;
+    cpannotationschema:isSpecializationOf "PartOf"^^rdf:PlainLiteral ;
+    rdfs:comment """The componency pattern, without temporal indexing. 
+This pattern re-uses the part of pattern and is extracted from DOLCE-UltraLite by partial clone."""^^rdf:PlainLiteral ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/partof.owl> ;
+    owl:versionInfo "1.1 added rdfs:isDefinedBy for all named entities"^^xsd:string,
+        "Created by Adlo Gangemi"^^xsd:string .
+
+owl:Thing a owl:Class .
+

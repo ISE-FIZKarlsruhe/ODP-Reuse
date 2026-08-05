@@ -1,0 +1,35 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/set.owl#> .
+@prefix collectionentity: <http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+collectionentity:hasMember rdfs:comment "The link to the members of a Set"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/cp/owl/set.owl> a owl:Ontology ;
+    cpannotationschema:coversRequirements "What are the elements in this set?"^^xsd:string,
+        "What is the cardinality (size) of this set?"^^xsd:string ;
+    cpannotationschema:extractedFrom "http://swan.mindinformatics.org/ontologies/1.2/collections.owl"^^xsd:string ;
+    cpannotationschema:hasAuthor "PaoloCiccarese"^^xsd:string ;
+    cpannotationschema:hasComponent "http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl"^^xsd:string ;
+    cpannotationschema:hasIntent "To model sets of things (elements). A Set is a collection that cannot contain duplicate elements. "^^xsd:string ;
+    cpannotationschema:reengineeredFrom "http://swan.mindinformatics.org/ontologies/1.2/collections.owl"^^xsd:string ;
+    cpannotationschema:relatedCPs "http://www.ontologydesignpatterns.org/cp/owl/bag.owl"^^xsd:string,
+        "http://www.ontologydesignpatterns.org/cp/owl/list.owl"^^xsd:string ;
+    rdfs:comment "A Set is a collection that cannot contain duplicate elements. A Set is expressed by linking to it directly all the members (elements), multiple identical values of members (elements) will be eliminated because by default they are treated as a set."^^xsd:string ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl>,
+        <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> ;
+    owl:versionInfo "Created with TopBraid Composer"^^xsd:string .
+
+:Set a owl:Class ;
+    rdfs:label "set"^^xsd:string ;
+    rdfs:comment "Set - A collection that cannot contain duplicate elements."^^xsd:string ;
+    rdfs:subClassOf collectionentity:Collection .
+
+:size a owl:DatatypeProperty ;
+    rdfs:label "size"^^xsd:string ;
+    rdfs:comment "size - The number of items belonging to a collection"^^xsd:string ;
+    rdfs:domain collectionentity:Collection ;
+    rdfs:range xsd:integer .
+

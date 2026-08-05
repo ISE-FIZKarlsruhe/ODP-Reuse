@@ -1,0 +1,219 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl#> .
+@prefix agentrole: <http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl#> .
+@prefix classification: <http://www.ontologydesignpatterns.org/cp/owl/classification.owl#> .
+@prefix collectionentity: <http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix intensionextension: <http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix situation: <http://www.ontologydesignpatterns.org/cp/owl/situation.owl#> .
+@prefix tagging: <http://www.ontologydesignpatterns.org/ont/dul/tagging.owl#> .
+@prefix timeindexedsituation: <http://www.ontologydesignpatterns.org/cp/owl/timeindexedsituation.owl#> .
+@prefix timeinterval: <http://www.ontologydesignpatterns.org/cp/owl/timeinterval.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+classification:Concept a owl:Class ;
+    rdfs:subClassOf intensionextension:SocialObject .
+
+:isTaggingAgentIn a owl:ObjectProperty ;
+    rdfs:domain agentrole:Agent ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:range tagging:Tagging ;
+    rdfs:subPropertyOf situation:hasSetting ;
+    owl:inverseOf :byAgent .
+
+tagging:isTagCloudOf a owl:ObjectProperty ;
+    rdfs:label "is tag cloud of" ;
+    rdfs:domain tagging:Folksonomy ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:range tagging:Tagging ;
+    rdfs:subPropertyOf situation:hasSetting ;
+    owl:inverseOf tagging:fromCloud .
+
+cpannotationschema:coversRequirements a owl:AnnotationProperty .
+
+cpannotationschema:hasAuthor a owl:AnnotationProperty .
+
+cpannotationschema:hasComponent a owl:AnnotationProperty .
+
+cpannotationschema:hasConsequences a owl:AnnotationProperty .
+
+cpannotationschema:hasIntent a owl:AnnotationProperty .
+
+cpannotationschema:hasUnitTest a owl:AnnotationProperty .
+
+cpannotationschema:isSpecializationOf a owl:AnnotationProperty .
+
+cpannotationschema:relatedCPs a owl:AnnotationProperty .
+
+cpannotationschema:scenarios a owl:AnnotationProperty .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+collectionentity:Collection a owl:Class .
+
+collectionentity:hasMember a owl:ObjectProperty .
+
+collectionentity:isMemberOf a owl:ObjectProperty .
+
+intensionextension:SocialObject a owl:Class .
+
+:isTagUsedIn a owl:ObjectProperty ;
+    rdfs:label "isTagUsedIn" ;
+    rdfs:domain tagging:Tag ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:range tagging:Tagging ;
+    rdfs:subPropertyOf situation:hasSetting .
+
+:usingTag a owl:ObjectProperty ;
+    rdfs:label "usingTag" ;
+    rdfs:domain tagging:Tagging ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:range tagging:Tag ;
+    rdfs:subPropertyOf situation:isSettingFor ;
+    owl:inverseOf :isTagUsedIn .
+
+timeindexedsituation:TimeIndexedSituation a owl:Class .
+
+timeindexedsituation:atTime a owl:ObjectProperty .
+
+timeindexedsituation:forEntity a owl:ObjectProperty .
+
+timeindexedsituation:hasTimeIndexedSetting a owl:ObjectProperty .
+
+timeinterval:TimeInterval a owl:Class .
+
+tagging:hasPolarity a owl:DatatypeProperty ;
+    rdfs:label "has polarity"@en ;
+    rdfs:domain tagging:Tagging ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:range xsd:boolean .
+
+owl:Thing a owl:Class .
+
+intensionextension:InformationObject a owl:Class .
+
+:byAgent a owl:ObjectProperty ;
+    rdfs:domain tagging:Tagging ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:range agentrole:Agent ;
+    rdfs:subPropertyOf situation:isSettingFor .
+
+tagging:fromCloud a owl:ObjectProperty ;
+    rdfs:label "from cloud" ;
+    rdfs:domain tagging:Tagging ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:range tagging:Folksonomy ;
+    rdfs:subPropertyOf situation:isSettingFor .
+
+agentrole:Agent a owl:Class .
+
+situation:hasSetting a owl:ObjectProperty .
+
+situation:isSettingFor a owl:ObjectProperty .
+
+tagging:Folksonomy a owl:Class ;
+    rdfs:label "Tag cloud"^^xsd:string,
+        "Folksonomy"@en ;
+    rdfs:comment "A collection of tags or metadata that have no formal semantics, and are typically used sparsely to annotate texts, images, bookmarks, etc. Folksonomies are typically maintained by communities through web-based services or systems, and do not have any systematic intent, such as that shared by KOS(es)."^^xsd:string ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty collectionentity:hasMember ;
+            owl:someValuesFrom tagging:Tag ],
+        collectionentity:Collection,
+        intensionextension:InformationObject .
+
+tagging:Tag a owl:Class ;
+    rdfs:label "Tag"@en,
+        "Tag"@it ;
+    rdfs:comment """The typical elements of folksonomies, used to add a hint for the interpretation of web resources in so-called situations of 'Tagging'.
+Tags are considered here as InformationObject(s) that have a folksonomy as their schema.
+A Tag is typically used to add an element of interpretation to some document, i.e. 'forcing' the reader to see that document from the viewpoint that can be built by pairing the Tag interpretation with the document interpretation. For example, an image of St. Peter's dome can be tagged as 'Michelangelo', 'Big ovoid', 'trip to Rome', etc., thus forcing the interpretation of the dome image towards artistic design, geometry, or private memories.""" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty collectionentity:isMemberOf ;
+            owl:someValuesFrom tagging:Folksonomy ],
+        [ a owl:Restriction ;
+            owl:onProperty timeindexedsituation:hasTimeIndexedSetting ;
+            owl:someValuesFrom tagging:Tagging ],
+        intensionextension:InformationObject .
+
+tagging:Tagging a owl:Class ;
+    rdfs:label "Tagging"@en ;
+    rdfs:comment """The tagging relation, represented as a class following the situation design pattern.
+It includes, as suggested by Gruber's proposal, a Tag, a (tagged) Thing, a (source) Folksonomy, a (tagger) Agent, and a polarity. Moreover, this axiomatization also includes a TimeInterval at which the tagging happens. The tagged thing can actually have a content that is the actual target of tagging.
+
+For example, let's see the semantics of the following cases of Tagging:
+(1) a Flickr picture showing a leopard, tagged with the Tag 'leopard'
+(2) a Flickr picture showing Tim Berners-Lee, tagged with the Tag 'Tim'
+(3) a Flickr picture showing Tim Berners-Lee, tagged with the Tag 'the founder of the semantic web'
+(4) a Flickr picture showing a girl having breakfast, tagged with the Tag 'me'
+(5) a Flickr picture showing a boy surfing with a sombrero hat, tagged with the Tag 'cool'
+(6) a Flickr picture that is tagged as 'taken in Sicily'
+In cases (1)-(5), the pictures are about certain entities (a certain leopard, Tim Berners-Lee, a certain girl, a surfing boy), and the tag addresses tham, rather than the pictures (case 6).
+
+Therefore, an act of tagging is not different from a generic linguistic act, except that it necessarily references something that is also referenced by a web resource: a condition that of course does not apply to generalized linguistic acts.""" ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :usingTag ;
+            owl:someValuesFrom tagging:Tag ],
+        [ a owl:Restriction ;
+            owl:onProperty timeindexedsituation:forEntity ;
+            owl:someValuesFrom owl:Thing ],
+        [ a owl:Restriction ;
+            owl:onProperty tagging:fromCloud ;
+            owl:someValuesFrom tagging:Folksonomy ],
+        [ a owl:Restriction ;
+            owl:onProperty timeindexedsituation:atTime ;
+            owl:someValuesFrom timeinterval:TimeInterval ],
+        [ a owl:Restriction ;
+            owl:cardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onProperty tagging:hasPolarity ],
+        [ a owl:Restriction ;
+            owl:onProperty :byAgent ;
+            owl:someValuesFrom agentrole:Agent ],
+        timeindexedsituation:TimeIndexedSituation .
+
+<http://www.ontologydesignpatterns.org/cp/owl/tagging.owl> a owl:Ontology ;
+    rdfs:label "Tagging ontology"^^rdf:PlainLiteral ;
+    cpannotationschema:coversRequirements "Who is tagging (the content of) what, by using what term from what folksonomy?, Which polarity has the tagging?"^^rdf:PlainLiteral ;
+    cpannotationschema:hasAuthor "Aldo Gangemi"^^rdf:PlainLiteral ;
+    cpannotationschema:hasComponent "AgentRole"^^rdf:PlainLiteral,
+        "CollectionEntity"^^rdf:PlainLiteral,
+        "IntensionExtension"^^rdf:PlainLiteral ;
+    cpannotationschema:hasConsequences """We are able to represent data about tagging activities from web 2.0 applications, from document annotation projects, or from RDFa documents.
+"""^^rdf:PlainLiteral ;
+    cpannotationschema:hasIntent "To represent a tagging situation, in which someone uses a term, from a list of a folksonomy, to tag something (or the content of something). We might also want to represent the time and the polarity of the tagging."^^rdf:PlainLiteral ;
+    cpannotationschema:hasUnitTest """SELECT ?a ?tag ?time ?thing ?folk ?pol
+WHERE { 
+?x :byAgent ?a .
+?x :usingTag ?tag .
+?x atTime ?time .
+?x :forEntity ?thing .
+?x :fromCloud ?folk .
+?x :hasPolarity ?pol }"""^^rdf:PlainLiteral ;
+    cpannotationschema:isSpecializationOf "TimeIndexedSituation"^^rdf:PlainLiteral ;
+    cpannotationschema:relatedCPs "Topic"^^rdf:PlainLiteral ;
+    cpannotationschema:scenarios """A Flickr picture showing a leopard, tagged with the Tag 'leopard',A Flickr picture showing a boy surfing with a sombrero hat, tagged with the Tag 'cool', A Flickr picture tagged as 'taken in Sicily'
+"""^^rdf:PlainLiteral ;
+    rdfs:comment """The tagging ontology drafted by Tom Gruber in FOL, and formalized here in OWL by Aldo Gangemi with pattern-based design.
+A Tag is here classified as a linguistic object that is used in the context of a Tagging Situation, which also involves a (tagged) Entity, an Agent, and a Folksonomy."""^^xsd:string ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/intensionextension.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/timeindexedsituation.owl> ;
+    owl:versionInfo """1.2
+- Added annotations for ODP publication
+1.1
+- Revised some axioms involving restrictions on the Tagging situation class
+1.0
+- Created by Aldo Gangemi, March 2007"""^^rdf:PlainLiteral,
+        "1.1 added rdfs:isDefinedBy for all named entities"^^xsd:string .
+

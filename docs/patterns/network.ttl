@@ -1,0 +1,117 @@
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/smartenvironment/patterns/network.owl> a owl:Ontology ;
+    dcterms:created "2017-10-22"@en ;
+    dcterms:description """This pattern relies on the SSN ontology  and represents sensors and the other modules needed  to deploy a network in a smart environment.
+
+The concept of Network is modeled in this pattern as a System  with number of sub systems in the form of Networkmodules (i.e., NodeStations and Nodes). The class Node represents the details about the content of each node station. Depending on their roles, nodes of a network are devided into types of node senders (whcih observe a phenomenon) and receivers (which receive the observation data)."""@en ;
+    dcterms:title "Smart Environment Network Ontology Pattern"@en ;
+    vann:preferredNamespacePrefix "se-network"@en ;
+    cpannotationschema:coversRequirements "Which types of nodes are available in a network?"^^xsd:string,
+        "What is the confuguration (e.g.,, sampling rate) set for a given sensor?"@en,
+        "What is the node receiving the data from a giveb sensor?"@en ;
+    cpannotationschema:hasIntent """This pattern relies on the SSN ontology  and represents sensors and the other modules needed  to deploy a network in a smart environment.
+
+The concept of Network is modeled in this pattern as a System  with number of sub systems in the form of Networkmodules (i.e., NodeStations and Nodes). The class Node represents the details about the content of each node station. Depending on their roles, nodes of a network are devided into types of node senders (whcih observe a phenomenon) and receivers (which receive the observation data)."""@en ;
+    cpannotationschema:isSpecializationOf ssn: ;
+    rdfs:comment "This pattern relies on the SSN ontology  and represents sensors and the other modules needed  to deploy a network in a smart environment."@en ;
+    owl:imports ssn: .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#ReceiverNodeStation> a owl:Class ;
+    rdfs:comment "Describes a node station which holds a data receiver node as its part (sub-system)"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom <https://w3id.org/smartenvironment/patterns/network.owl#DataReceiverNode> ;
+            owl:onProperty ssn:hasSubSystem ],
+        <https://w3id.org/smartenvironment/patterns/network.owl#NodeStation> ;
+    skos:definition "Describes a node station which holds a data receiver node as its part (sub-system)"@en .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#SenderNodeStation> a owl:Class ;
+    rdfs:comment "Describes a node station which is assumed to contain both a data sender node and also sensing devices (sensors)"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty ssn:hasSubSystem ;
+            owl:someValuesFrom sosa:Sensor ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom <https://w3id.org/smartenvironment/patterns/network.owl#DataSenderNode> ;
+            owl:onProperty ssn:hasSubSystem ],
+        <https://w3id.org/smartenvironment/patterns/network.owl#NodeStation> ;
+    skos:definition "Describes a node station which is assumed to contain both a data sender node and also sensing devices (sensors)"@en .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#Deployment> a owl:Class ;
+    rdfs:label "deployment"@en ;
+    rdfs:comment "Describes the deployment of a network in a smart environment."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty ssn:deployedSystem ;
+            owl:someValuesFrom <https://w3id.org/smartenvironment/patterns/network.owl#Network> ],
+        ssn:Deployment ;
+    skos:definition "Describes the deployment of a network in a smart environment."@en .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#Network> a owl:Class ;
+    rdfs:label "network"@en ;
+    rdfs:comment "A network which is a collection of Nodes"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty ssn:hasSubSystem ;
+            owl:someValuesFrom <https://w3id.org/smartenvironment/patterns/network.owl#NodeStation> ],
+        [ a owl:Restriction ;
+            owl:onProperty ssn:hasDeployment ;
+            owl:someValuesFrom <https://w3id.org/smartenvironment/patterns/network.owl#Deployment> ],
+        ssn:System ;
+    skos:definition "A network which is a collection of Nodes"@en .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#receivesDataFrom> a owl:ObjectProperty ;
+    rdfs:domain <https://w3id.org/smartenvironment/patterns/network.owl#DataReceiverNode> ;
+    rdfs:range <https://w3id.org/smartenvironment/patterns/network.owl#DataSenderNode> ;
+    owl:inverseOf <https://w3id.org/smartenvironment/patterns/network.owl#sendsDataTo> .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#NetworkModule> a owl:Class ;
+    rdfs:label "network module"@en ;
+    rdfs:comment "Describes the network modules in the form of node stations and nodes contributing in sending and receiving data within a sensor network in the context of a smart environment."@en ;
+    rdfs:subClassOf ssn:System ;
+    skos:definition "Describes the network modules in the form of node stations and nodes contributing in sending and receiving data within a sensor network in the context of a smart environment."@en .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#sendsDataTo> a owl:ObjectProperty ;
+    rdfs:domain <https://w3id.org/smartenvironment/patterns/network.owl#DataSenderNode> ;
+    rdfs:range <https://w3id.org/smartenvironment/patterns/network.owl#DataReceiverNode> .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#Node> a owl:Class ;
+    rdfs:label "node"@en ;
+    rdfs:comment "Decsribes a node in a network that either sends or receives the data read by a sensor."@en ;
+    rdfs:subClassOf <https://w3id.org/smartenvironment/patterns/network.owl#NetworkModule> ;
+    skos:definition "Decsribes a node in a network that either sends or receives the data read by a sensor."@en .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#NodeStation> a owl:Class ;
+    rdfs:label "node station"@en ;
+    rdfs:comment "Decsribes a module in a network that contains nodes, batteries, etc."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom <https://w3id.org/smartenvironment/patterns/network.owl#Node> ;
+            owl:onProperty ssn:hasSubSystem ],
+        <https://w3id.org/smartenvironment/patterns/network.owl#NetworkModule> ;
+    skos:definition "Decsribes a module in a network that contains nodes, batteries, etc."@en .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#DataReceiverNode> a owl:Class ;
+    rdfs:comment "Decsribes a node in a network that receives data from sensors,"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <https://w3id.org/smartenvironment/patterns/network.owl#receivesDataFrom> ;
+            owl:someValuesFrom <https://w3id.org/smartenvironment/patterns/network.owl#DataSenderNode> ],
+        <https://w3id.org/smartenvironment/patterns/network.owl#Node> ;
+    skos:definition "Decsribes a node in a network that receives data from sensors,"@en .
+
+<https://w3id.org/smartenvironment/patterns/network.owl#DataSenderNode> a owl:Class ;
+    rdfs:comment "Decsribes a node as part of a nore station that contributes sending the data read by sensors."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <https://w3id.org/smartenvironment/patterns/network.owl#sendsDataTo> ;
+            owl:someValuesFrom <https://w3id.org/smartenvironment/patterns/network.owl#DataReceiverNode> ],
+        <https://w3id.org/smartenvironment/patterns/network.owl#Node> ;
+    skos:definition "Decsribes a node as part of a nore station that contributes sending the data read by sensors."@en .
+
+[] a <http://www.w3.org/2002/07/script> .
+
+[] a <http://www.w3.org/2002/07/script> .
+

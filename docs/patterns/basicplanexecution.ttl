@@ -1,0 +1,176 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl#> .
+@prefix agentrole: <http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl#> .
+@prefix objectrole: <http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix participation: <http://www.ontologydesignpatterns.org/cp/owl/participation.owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix region: <http://www.ontologydesignpatterns.org/cp/owl/region.owl#> .
+@prefix situation: <http://www.ontologydesignpatterns.org/cp/owl/situation.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:actionHasParticipant a owl:ObjectProperty ;
+    rdfs:label "action has participant"@en,
+        "ha come partecipante"@it ;
+    rdfs:comment "A relation between a Process and an Object, e.g. 'the avalanche hasParticipant a mass of snow', or 'the cooking of a cake hasParticipant an agent, some sugar, flour, etc.'."^^xsd:string ;
+    rdfs:domain :Action ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range objectrole:Object ;
+    rdfs:subPropertyOf participation:hasParticipant ;
+    owl:inverseOf :isParticipantInAction .
+
+:includesAgent a owl:ObjectProperty ;
+    rdfs:label "includes agent"@en,
+        "include l'agente"@it ;
+    rdfs:comment "A relation between situations and persons, e.g. 'this morning I've prepared my coffee and had my fingers burnt' (i.e.: the preparation of my coffee this morning included me)."^^xsd:string ;
+    rdfs:domain situation:Situation ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range agentrole:Agent ;
+    rdfs:subPropertyOf situation:isSettingFor ;
+    owl:inverseOf :isAgentIncludedIn .
+
+:includesObject a owl:ObjectProperty ;
+    rdfs:label "includes object"@en,
+        "include l'oggetto"@it ;
+    rdfs:comment "A relation between situations and persons, e.g. 'this morning I've prepared my coffee and had my fingers burnt' (i.e.: the preparation of my coffee this morning included me)."^^xsd:string ;
+    rdfs:domain situation:Situation ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range objectrole:Object ;
+    rdfs:subPropertyOf situation:isSettingFor ;
+    owl:inverseOf :isObjectIncludedIn .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+:PlanExecution a owl:Class ;
+    rdfs:label "Plan execution"@en,
+        "Esecuzione di piano"@it ;
+    rdfs:comment "Plan executions are situations that proactively satisfy a plan. Subplan executions are proper parts of the whole plan execution." ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :Action ;
+            owl:onProperty :includesAction ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom region:Region ;
+            owl:onProperty :includesRegion ],
+        [ a owl:Restriction ;
+            owl:onProperty :includesAction ;
+            owl:someValuesFrom :Action ],
+        situation:Situation .
+
+:includesRegion a owl:ObjectProperty ;
+    rdfs:label "includes region"@en ;
+    rdfs:domain situation:Situation ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range region:Region ;
+    rdfs:subPropertyOf situation:isSettingFor ;
+    owl:inverseOf :isRegionIncludedIn .
+
+:isObjectIncludedIn a owl:ObjectProperty ;
+    rdfs:label "is an object included in"@en,
+        "è un oggetto nel contesto di"@it ;
+    rdfs:domain objectrole:Object ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range situation:Situation ;
+    rdfs:subPropertyOf situation:hasSetting .
+
+:isRegionIncludedIn a owl:ObjectProperty ;
+    rdfs:label "is region included in"@en,
+        "è una regione inclusa in"@it ;
+    rdfs:domain region:Region ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range situation:Situation ;
+    rdfs:subPropertyOf situation:hasSetting .
+
+participation:Event a owl:Class .
+
+participation:Object a owl:Class .
+
+participation:hasParticipant a owl:ObjectProperty .
+
+participation:isParticipantIn a owl:ObjectProperty .
+
+agentrole:Agent a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom situation:Situation ;
+            owl:onProperty :isAgentIncludedIn ] .
+
+:includesAction a owl:ObjectProperty ;
+    rdfs:label "includes action"@en,
+        "include azione"@it ;
+    rdfs:comment "A relation between situations and persons, e.g. 'this morning I've prepared my coffee and had my fingers burnt' (i.e.: the preparation of my coffee this morning included a burning of my fingers)."^^xsd:string ;
+    rdfs:domain situation:Situation ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range :Action ;
+    rdfs:subPropertyOf situation:isSettingFor ;
+    owl:inverseOf :isActionIncludedIn .
+
+:isActionIncludedIn a owl:ObjectProperty ;
+    rdfs:label "is action included in"@en,
+        "è un'azione inclusa in"@it ;
+    rdfs:domain :Action ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range situation:Situation ;
+    rdfs:subPropertyOf situation:hasSetting .
+
+:isAgentIncludedIn a owl:ObjectProperty ;
+    rdfs:label "is agent included in"@en,
+        "è un agente nel contesto di"@it ;
+    rdfs:domain agentrole:Agent ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range situation:Situation ;
+    rdfs:subPropertyOf situation:hasSetting .
+
+:isParticipantInAction a owl:ObjectProperty ;
+    rdfs:label "is participant in action"@en,
+        "è un partecipante a"@it ;
+    rdfs:comment "A relation between an object and a process, e.g. 'a mass of snow is partipant in the avalanche', or 'an agent, some sugar, flour, etc. are participant in the cooking of a cake'."^^xsd:string ;
+    rdfs:domain objectrole:Object ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:range :Action ;
+    rdfs:subPropertyOf participation:isParticipantIn .
+
+region:Region a owl:Class .
+
+objectrole:Object a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :Action ;
+            owl:onProperty :isParticipantInAction ],
+        [ a owl:Restriction ;
+            owl:onProperty :isParticipantInAction ;
+            owl:someValuesFrom :Action ] ;
+    owl:equivalentClass participation:Object .
+
+situation:hasSetting a owl:ObjectProperty .
+
+situation:isSettingFor a owl:ObjectProperty .
+
+:Action a owl:Class ;
+    rdfs:label "Action"@en,
+        "Azione"@it ;
+    rdfs:comment "An Event with at least one Agent that isParticipantIn, and that executes a Task that typically isDefinedIn a Plan, Workflow, Project, etc."^^xsd:string ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom :PlanExecution ;
+            owl:onProperty :isActionIncludedIn ],
+        participation:Event .
+
+situation:Situation a owl:Class .
+
+<http://www.ontologydesignpatterns.org/cp/owl/basicplanexecution.owl> a owl:Ontology ;
+    rdfs:comment "The basic plans execution content ontology design pattern represents the execution of a plan and the entity that participate in such an execution. This CP is the composition of other CPs: situation and region. Furthermore, it expands such CPs with ontology elements that are partial clones of elements from the DOCLE Ultra Lite and the Plans Lite ontologies."^^rdf:PlainLiteral ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/classification.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/participation.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/region.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/situation.owl>,
+        <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> ;
+    owl:versionInfo "1.1 added rdfs:isDefinedBy for all named entities"^^xsd:string,
+        "Created by Valentina Presutti"^^xsd:string .
+

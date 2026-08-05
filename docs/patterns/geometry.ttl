@@ -1,0 +1,134 @@
+@prefix : <https://w3id.org/smartenvironment/patterns/geometry.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+
+<http://observedchange.com/tisc/ns#here> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#insideOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#leftOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#locatedAt> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#near> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#nearest> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#next> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#nextTo> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#northEastOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#northOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#northWestOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#outsideOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#partialOverlapArea> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#rightOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#sharesPathWith> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#southEastOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#southOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#southWestOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+<http://observedchange.com/tisc/ns#westOf> a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasDescriptiveSpatialRelation .
+
+geo:sfContains a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+geo:sfCrosses a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+geo:sfDisjoint a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+geo:sfEquals a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+geo:sfIntersects a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+geo:sfOverlaps a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+geo:sfTouches a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+geo:sfWithin a owl:ObjectProperty ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+geo:Feature a owl:Class .
+
+geo:Geometry a owl:Class .
+
+geo:hasGeometry a owl:ObjectProperty .
+
+<https://w3id.org/smartenvironment/patterns/geometry.owl> a owl:Ontology ;
+    dcterms:created "2017-10-22"@en ;
+    dcterms:description "This ontology describes the spatial features of things used in a smart environment. Thease feartures include the geometerical representation of objects along with the spatial and directional relations between them. This ontology relies on the two other spatial related ontologies http://www.opengis.net/ont/geosparql and http://www.observedchange.com/tisc/ns/"@en ;
+    dcterms:title "Smart Environment Geometry Ontology Pattern"@en ;
+    vann:preferredNamespacePrefix "se-geometry"@en ;
+    vann:preferredNamespaceUri <https://w3id.org/smartenvironment/patterns/geometry.owl> ;
+    cpannotationschema:coversRequirements "What are the spatial relations among objects or sections in a smart environment?"@en ;
+    cpannotationschema:isSpecializationOf <http://www.observedchange.com/tisc/ns>,
+        <http://www.opengis.net/ont/geosparql> ;
+    rdfs:seeAlso <http://www.observedchange.com/tisc/ns/>,
+        <http://www.opengis.net/ont/geosparql> ;
+    owl:imports <http://www.opengis.net/ont/geosparql> .
+
+:SpatialObject a owl:Class ;
+    rdfs:label "spatial object"@en ;
+    rdfs:comment "Describes any physcical object in a smart environment that has a geometry."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasSpatialRelation ;
+            owl:someValuesFrom :SpatialObject ],
+        [ a owl:Restriction ;
+            owl:onProperty geo:hasGeometry ;
+            owl:someValuesFrom geo:Geometry ],
+        geo:Feature .
+
+:hasSpatialRelation a owl:ObjectProperty ;
+    rdfs:label "has spatial relation"@en ;
+    rdfs:comment "Describes any possible spatial relations between any two given spatial objects. This object properties is used to generalize all the spatial relations defined in GeoSPARQL ontology."@en ;
+    rdfs:domain :SpatialObject ;
+    rdfs:range :SpatialObject .
+
+:hasDescriptiveSpatialRelation a owl:ObjectProperty ;
+    rdfs:label "has descriptive spatial relation"@en ;
+    rdfs:comment "This object property, as an spacialization of the object property hasSpatialRelation, generalizes spatial relations defined in the Open Time and Space Core Vocabulary, which are more declarative than those defined in GeoSPARQL."@en ;
+    rdfs:subPropertyOf :hasSpatialRelation .
+
+[] a <https://w3id.org/smartenvironment/patterns/script> .
+
+[] a <https://w3id.org/smartenvironment/patterns/script> .
+

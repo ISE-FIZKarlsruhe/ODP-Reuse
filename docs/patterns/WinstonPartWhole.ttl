@@ -1,0 +1,56 @@
+@prefix : <http://daselab.org/WinstonPartWhole#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://daselab.org/WinstonPartWhole> a owl:Ontology .
+
+:po-component a owl:AsymmetricProperty,
+        owl:ObjectProperty ;
+    rdfs:subPropertyOf :part-of ;
+    owl:propertyChainAxiom ( :po-component :po-component ) .
+
+:po-feature a owl:AsymmetricProperty,
+        owl:ObjectProperty ;
+    rdfs:subPropertyOf :part-of ;
+    owl:propertyChainAxiom ( :po-feature :po-feature ) .
+
+:po-member a owl:AsymmetricProperty,
+        owl:ObjectProperty ;
+    rdfs:subPropertyOf :part-of ;
+    owl:propertyChainAxiom ( :po-member :po-member ) .
+
+:po-place a owl:AsymmetricProperty,
+        owl:ObjectProperty ;
+    rdfs:subPropertyOf :part-of ;
+    owl:propertyChainAxiom ( :po-place :po-place ) .
+
+:po-portion a owl:AsymmetricProperty,
+        owl:ObjectProperty ;
+    rdfs:subPropertyOf :part-of ;
+    owl:propertyChainAxiom ( :po-portion :po-portion ) .
+
+:po-stuff a owl:AsymmetricProperty,
+        owl:ObjectProperty ;
+    rdfs:subPropertyOf :part-of ;
+    owl:propertyChainAxiom ( :po-stuff :po-stuff ) .
+
+:part-of a owl:ObjectProperty .
+
+:spatially-located-in a owl:ObjectProperty,
+        owl:ReflexiveProperty ;
+    rdfs:subPropertyOf owl:topObjectProperty ;
+    owl:propertyChainAxiom ( :po-component :spatially-located-in ),
+        ( :po-feature :spatially-located-in ),
+        ( :po-member :spatially-located-in ),
+        ( :po-place :spatially-located-in ),
+        ( :po-portion :spatially-located-in ),
+        ( :po-stuff :spatially-located-in ),
+        ( :spatially-located-in :po-component ),
+        ( :spatially-located-in :po-feature ),
+        ( :spatially-located-in :po-member ),
+        ( :spatially-located-in :po-place ),
+        ( :spatially-located-in :po-portion ),
+        ( :spatially-located-in :po-stuff ),
+        ( :spatially-located-in :spatially-located-in ) .
+

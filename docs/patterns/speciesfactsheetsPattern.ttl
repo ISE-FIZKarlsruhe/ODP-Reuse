@@ -1,0 +1,50 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesfactsheets.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix place: <http://www.ontologydesignpatterns.org/cp/owl/place.owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix species_taxonomic: <http://www.fao.org/aims/aos/fi/species_taxonomic.owl#> .
+@prefix speciesfactsheet: <http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesfactsheet.owl#> .
+@prefix speciesspeciesfactsheets: <http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesspeciesfactsheets.owl#> .
+@prefix water_FAO_areas: <http://www.fao.org/aims/aos/fi/water_FAO_areas.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+speciesfactsheet:foundIn a owl:ObjectProperty ;
+    rdfs:label "hasFishingArea" ;
+    rdfs:domain species_taxonomic:Species ;
+    rdfs:range water_FAO_areas:FAO_fishing_area .
+
+<http://www.ontologydesignpatterns.org/cp/owl/fsdas/speciesfactsheets.owl> a owl:Ontology ;
+    rdfs:comment "A design pattern that extends the RTMS taxonomic ontology, in order to give room for some factsheet-specific concepts." ;
+    owl:imports <http://www.fao.org/aims/aos/fi/species_taxonomic.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/place.owl> ;
+    owl:versionInfo """1.1
+-  changed bathymetry datatype properties to xsd:int range for compatibility with data export""" .
+
+:areaOfSpecies a owl:ObjectProperty ;
+    rdfs:label "isFishingAreaOf" ;
+    rdfs:domain water_FAO_areas:FAO_fishing_area ;
+    rdfs:range species_taxonomic:Species .
+
+:hasMaxBathymetryValue a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "hasMaxBathymetryValue" ;
+    rdfs:domain species_taxonomic:Species ;
+    rdfs:range xsd:int .
+
+speciesspeciesfactsheets:hasMinBathymetryValue a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "hasMinBathymetryValue" ;
+    rdfs:domain species_taxonomic:Species ;
+    rdfs:range xsd:int .
+
+place:Place a owl:Class .
+
+water_FAO_areas:FAO_fishing_area a owl:Class ;
+    rdfs:subClassOf place:Place .
+
+species_taxonomic:Species a owl:Class .
+
+[] a <http://www.ontologydesignpatterns.org/cp/owl/fsdas/script> .
+
+[] a <http://www.ontologydesignpatterns.org/cp/owl/fsdas/script> .
+

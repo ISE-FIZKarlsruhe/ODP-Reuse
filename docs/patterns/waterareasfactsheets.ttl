@@ -1,0 +1,30 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix water_FAO_areas: <http://www.fao.org/aims/aos/fi/water_FAO_areas.owl#> .
+@prefix waterareas: <http://www.ontologydesignpatterns.org/cp/owl/fsdas/waterareas.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+waterareas:hasCountryCode a owl:DatatypeProperty ;
+    rdfs:label "hasCountryCode" ;
+    rdfs:domain water_FAO_areas:FAO_fishing_area ;
+    rdfs:range xsd:string .
+
+waterareas:hasLMECode a owl:DatatypeProperty ;
+    rdfs:label "hasLMECode" ;
+    rdfs:domain water_FAO_areas:FAO_fishing_area ;
+    rdfs:range xsd:string .
+
+waterareas:hasRFBCompetenceCode a owl:DatatypeProperty ;
+    rdfs:label "hasRFBCompetenceCode" ;
+    rdfs:domain water_FAO_areas:FAO_fishing_area ;
+    rdfs:range xsd:string .
+
+<http://www.ontologydesignpatterns.org/cp/owl/fsdas/waterareasfactsheets.owl> a owl:Ontology ;
+    owl:imports <http://www.fao.org/aims/aos/fi/water_FAO_areas.owl> .
+
+water_FAO_areas:FAO_fishing_area a owl:Class .
+
+[] a <http://www.ontologydesignpatterns.org/cp/owl/fsdas/script> .
+
+[] a <http://www.ontologydesignpatterns.org/cp/owl/fsdas/script> .
+

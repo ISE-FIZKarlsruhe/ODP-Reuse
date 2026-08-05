@@ -1,0 +1,60 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix objectrole: <http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:Agent a owl:Class ;
+    rdfs:label "Agent"@en,
+        "Agente"@it ;
+    cpannotationschema:isCloneOf "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent" ;
+    rdfs:comment "Any agentive Object , either physical, or social." ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl> ;
+    rdfs:subClassOf objectrole:Object ;
+    owl:disjointWith objectrole:Role .
+
+cpannotationschema:coversRequirements a owl:AnnotationProperty .
+
+cpannotationschema:extractedFrom a owl:AnnotationProperty .
+
+cpannotationschema:hasConsequences a owl:AnnotationProperty .
+
+cpannotationschema:hasIntent a owl:AnnotationProperty .
+
+cpannotationschema:isCloneOf a owl:AnnotationProperty .
+
+cpannotationschema:isSpecializationOf a owl:AnnotationProperty .
+
+cpannotationschema:relatedCPs a owl:AnnotationProperty .
+
+cpannotationschema:scenarios a owl:AnnotationProperty .
+
+rdfs:comment a owl:AnnotationProperty .
+
+rdfs:isDefinedBy a owl:AnnotationProperty .
+
+rdfs:label a owl:AnnotationProperty .
+
+owl:versionInfo a owl:AnnotationProperty .
+
+<http://www.ontologydesignpatterns.org/cp/owl/agentrole.owl> a owl:Ontology ;
+    rdfs:label "agent role"^^rdf:PlainLiteral ;
+    cpannotationschema:coversRequirements """which agent does play this role? 
+what is the role that played by that agent?"""^^rdf:PlainLiteral ;
+    cpannotationschema:extractedFrom "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl"^^rdf:PlainLiteral ;
+    cpannotationschema:hasConsequences "This CP allows designers to make assertions on roles played by agents without involving the agents that play that roles, and vice versa. It does not allow to express temporariness of roles."^^rdf:PlainLiteral ;
+    cpannotationschema:hasIntent "To represent agents and the roles they play."^^rdf:PlainLiteral ;
+    cpannotationschema:isSpecializationOf "http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl"^^rdf:PlainLiteral ;
+    cpannotationschema:relatedCPs "The time indexed person role CP available at http://www.ontologydesignpatterns.org/cp/owl/timeiindexedpersonrole.owl allows to represent temporariness of roles played by persons. It can be generalized for including objects or, alternatively the n-ary classification CP avaliable at http://www.ontologydesignpatterns.org/cp/owl/naryclassification.owl can be specialized in order to obtain the same expressivity."^^rdf:PlainLiteral ;
+    cpannotationschema:scenarios "She greeted us all in her various roles of mother, friend, and daughter."^^rdf:PlainLiteral ;
+    owl:imports <http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl>,
+        <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> ;
+    owl:versionInfo "1.1 added rdfs:isDefinedBy for all named entities"^^xsd:string,
+        "Created by Aldo Gangemi and Valentina Presutti"^^xsd:string .
+
+objectrole:Object a owl:Class .
+
+objectrole:Role a owl:Class .
+

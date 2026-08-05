@@ -1,0 +1,225 @@
+@prefix : <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl#> .
+@prefix cpannotationschema: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix d0: <http://www.ontologydesignpatterns.org/ont/d0.owl#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix opla: <http://ontologydesignpatterns.org/opla/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+opla:isNativeTo a owl:AnnotationProperty .
+
+opla:reusesPatternAsTemplate a owl:AnnotationProperty .
+
+dc:creator a owl:AnnotationProperty .
+
+:eventNumber a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "event number"@en ;
+    rdfs:comment "This property represents the number of the event in the recurrent event series (the first event, the second event, etc.)"@en ;
+    rdfs:domain :Event ;
+    rdfs:range xsd:integer .
+
+:hasImmediateNextEvent a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "has immediate next event"@en ;
+    rdfs:comment "This property relates an event member of a recurrent event series to the immediate next event member of the same recurrent event series."@en ;
+    rdfs:domain :Event ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :Event ;
+    rdfs:subPropertyOf :hasNextEvent ;
+    owl:inverseOf :hasImmediatePreviousEvent .
+
+:isLocallyInconsistentWith a owl:ObjectProperty ;
+    rdfs:label "is locally inconsistent with"@en ;
+    rdfs:comment "This property relates two entities that are considered locally inconsistent."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range owl:Thing .
+
+:isTheLastEvent a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "is the last event"@en ;
+    rdfs:comment "This property defines if an event that is member of a recurrent event series is the last one or not."@en ;
+    rdfs:domain :Event ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range xsd:boolean .
+
+:hasImmediatePreviousEvent a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "has immediate previous event"@en ;
+    rdfs:comment "This property relates an event member of a recurrent event series to the immediate previous event member of the same recurrent event series."@en ;
+    rdfs:domain :Event ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :Event ;
+    rdfs:subPropertyOf :hasPreviousEvent .
+
+:hasTimePeriodBeforeNextEvent a owl:ObjectProperty ;
+    rdfs:label "has time period before next event"@en ;
+    rdfs:comment "This property relates an event member of a recurrent event series to the time period elapsing before its next event."@en ;
+    rdfs:domain :Event ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :TimePeriod ;
+    rdfs:subPropertyOf :hasTimePeriod ;
+    owl:inverseOf :isTimePeriodBeforeNextEventOf .
+
+:hasUnifyingFactor a owl:ObjectProperty ;
+    rdfs:label "has unifying factor"@en ;
+    rdfs:comment "This property relates a recurrent event series to a unifying factor."@en ;
+    rdfs:domain :RecurrentEventSeries ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :UnifyingFactor ;
+    owl:inverseOf :isUnifyingFactorOf .
+
+:isEventMemberOf a owl:ObjectProperty ;
+    rdfs:label "is event member of"@en ;
+    rdfs:comment "This property relates an event that is member of a recurrent event series to the recurrent event series."@en ;
+    rdfs:domain :Event ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :RecurrentEventSeries ;
+    rdfs:subPropertyOf dul:isMemberOf .
+
+:isTimePeriodBeforeNextEventOf a owl:ObjectProperty ;
+    rdfs:label "is time period before next event of"@en ;
+    rdfs:comment "This property relates a time period, elapsing before the next event of an event member of a recurrent event series, to one of the member events."@en ;
+    rdfs:domain :TimePeriod ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :Event ;
+    rdfs:subPropertyOf :isTimePeriodOf .
+
+d0:Eventuality a owl:Class .
+
+dul:Collection a owl:Class .
+
+dul:Concept a owl:Class .
+
+dul:Situation a owl:Class .
+
+dul:follows a owl:ObjectProperty .
+
+dul:hasMember a owl:ObjectProperty .
+
+dul:isMemberOf a owl:ObjectProperty .
+
+dul:precedes a owl:ObjectProperty .
+
+:hasNextEvent a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "has next event"@en ;
+    rdfs:comment "This property relates an event member of a recurrent event series to a next event member of the same recurrent event series."@en ;
+    rdfs:domain :Event ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :Event ;
+    rdfs:subPropertyOf dul:precedes ;
+    owl:inverseOf :hasPreviousEvent .
+
+:hasTimePeriod a owl:ObjectProperty ;
+    rdfs:label "has time period"@en ;
+    rdfs:comment "This property relates a recurrent event series to a time period."@en ;
+    rdfs:domain :RecurrentEventSeries ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :TimePeriod ;
+    owl:inverseOf :isTimePeriodOf ;
+    owl:propertyChainAxiom ( :hasMemberEvent :hasTimePeriodBeforeNextEvent ) .
+
+:isTimePeriodOf a owl:ObjectProperty ;
+    rdfs:label "is time period of"@en ;
+    rdfs:comment "This property relates a time period to a recurrent event series having that time period."@en ;
+    rdfs:domain :TimePeriod ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :RecurrentEventSeries .
+
+:isUnifyingFactorOf a owl:ObjectProperty ;
+    rdfs:label "is unifying factor of"@en ;
+    rdfs:comment "This property relates a unifying factor to the recurrent event series that is unified by that factor."@en ;
+    rdfs:domain :UnifyingFactor ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :RecurrentEventSeries .
+
+:UnifyingFactor a owl:Class ;
+    rdfs:label "Unifying Factor"@en ;
+    rdfs:comment "A Unifying Factor is an element or property occurring in each event member of a recurrent event series, which unifies the collection and makes all the events attributable to a homogeneous collection."@en ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :isUnifyingFactorOf ;
+            owl:someValuesFrom :RecurrentEventSeries ],
+        dul:Concept .
+
+:hasMemberEvent a owl:ObjectProperty ;
+    rdfs:label "has member event"@en ;
+    rdfs:comment "This property relates a recurrent event series to an event that is member of it."@en ;
+    rdfs:domain :RecurrentEventSeries ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :Event ;
+    rdfs:subPropertyOf dul:hasMember ;
+    owl:inverseOf :isEventMemberOf .
+
+:hasPreviousEvent a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "has previous event"@en ;
+    rdfs:comment "This property relates an event member of a recurrent event series to a previous event member of the same recurrent event series."@en ;
+    rdfs:domain :Event ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:range :Event ;
+    rdfs:subPropertyOf dul:follows .
+
+:TimePeriod a owl:Class ;
+    rdfs:label "Time Period"@en ;
+    rdfs:comment "This class represents a Time Period (e.g. 1 week)."@en ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> .
+
+:RecurrentEventSeries a owl:Class ;
+    rdfs:label "Recurrent Event Series"@en ;
+    rdfs:comment "Recurrent event series is modeled as an intersection of the classes Collection and :Situation. Indeed, a recurrent event is seen as a collection, since it contains entities that share one or more common properties and are unified conceptually. These entities are member of the collection, and are all consecutive events, in such a manner that each event has either a previous event, or a next event, or both. At the same time, a recurrent event is a situation, intended as a relational context in which the contextualized things are based on a frame: a recurrent event is similar to a plan that defines how the things involved in that plan (i.e. the specific events) shall be carried out, e.g. where the events shall be located, in which time of the year, etc."@en ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :hasUnifyingFactor ;
+            owl:someValuesFrom :UnifyingFactor ],
+        [ a owl:Restriction ;
+            owl:onProperty :hasMemberEvent ;
+            owl:someValuesFrom :Event ],
+        [ a owl:Class ;
+            owl:intersectionOf ( dul:Collection dul:Situation ) ],
+        [ a owl:Restriction ;
+            owl:onProperty :hasTimePeriod ;
+            owl:someValuesFrom :TimePeriod ] ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty :hasMemberEvent ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:unionOf ( [ a owl:Restriction ;
+                                owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                owl:onClass :Event ;
+                                owl:onProperty :hasNextEvent ] [ a owl:Restriction ;
+                                owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                owl:onClass :Event ;
+                                owl:onProperty :hasPreviousEvent ] ) ] ] .
+
+:Event a owl:Class ;
+    rdfs:label "Event"@en ;
+    rdfs:comment "This class represents an Event."@en ;
+    rdfs:isDefinedBy <http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> ;
+    rdfs:subClassOf d0:Eventuality .
+
+<http://www.ontologydesignpatterns.org/cp/owl/recurrenteventseries.owl> a owl:Ontology ;
+    rdfs:label "recurrent event series" ;
+    opla:reusesPatternAsTemplate <http://ontologydesignpatterns.org/cp/owl/sequence.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/classification.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/collectionentity.owl>,
+        <http://www.ontologydesignpatterns.org/cp/owl/situation.owl> ;
+    dc:creator "Aldo Gangemi",
+        "Andrea Nuzzolese",
+        "Valentina Carriero",
+        "Valentina Presutti" ;
+    cpannotationschema:coversRequirements "What are the events of a recurrent event series?, Which is the time period elapsing between two events of a recurrent event series?, When is the next event of a recurrent event series scheduled?,  What are the unifying criteria shared by all the events in a recurrent event series?, Which is the (immediate) next event in a recurrent event series?, Which is the (immediate) previous event in a recurrent event series?" ;
+    cpannotationschema:hasConsequences "A series of recurrent events, its unifying factors and the recurrent time period can be modeled." ;
+    cpannotationschema:hasIntent "To represent recurrent event series as situations and collections of consecutive events, with a regular time period between events and unifying factors." ;
+    cpannotationschema:relatedCPs "Classification",
+        "Collection",
+        "Sequence",
+        "Situation" ;
+    cpannotationschema:scenarios "Umbria Jazz is a collection of events, which all take place in July and in the Italian region of Umbria, and has the musical genre jazz as a topic. Its events recur at regular time periods, i.e. annually." ;
+    rdfs:comment "A pattern for recurrent event series." ;
+    owl:imports <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl> .
+
