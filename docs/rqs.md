@@ -51,6 +51,6 @@ certify them.
 
 ## Most reused patterns
 
-<div id="odp-toppat" class="odp-viz" data-src="data/top_patterns.json"></div>
+Top 10 per portion by number of reusing ontologies.
 
-`abnormalAbsenceOfAnatomicalEntity` `abnormalAbsenceOfAnatomicalEntityInLocation` `abnormalAbsenceOfBiologicalProcess` `abnormalAbsenceOfBiologicalProcessInLocation` `abnormalAbsenceOfChemicalEntityInLocation` `abnormalAgenesisOfAnatomicalEntity` `abnormalAnatomicalEntity` `abnormalBiologicalProcess` `abnormalBiologicalProcessInLocation` `abnormalColorOfAnatomicalEntity` `DUL` `situation` `collectionentity` `partof` `timeinterval` `participation` `timeindexedsituation` `objectrole` `sequence` `description` `DUL` `situation` `actorODP` `resourceODP` 
+<div id="odp-toppat" class="odp-viz" data-src="data/top_patterns.json"></div>

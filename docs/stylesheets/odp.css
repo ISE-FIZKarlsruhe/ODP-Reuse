@@ -190,7 +190,12 @@
   background: var(--odp-panel); min-height: 200px;
 }
 .odp-viz--tall { min-height: 480px; }
-.odp-viz svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* Charts size their own viewBox to fit their content (see viz.js), so
+   clipping here is a backstop, not the primary fix -- but a backstop is
+   worth having: the constellation graph's force layout used to let outlier
+   nodes drift outside its frame, and overflow:visible rendered them over
+   the rest of the page instead of at the frame's edge. */
+.odp-viz svg { display: block; width: 100%; height: auto; overflow: hidden; }
 .odp-viz text { font-family: 'Outfit', system-ui, sans-serif; fill: var(--odp-ink); }
 .odp-viz .odp-axis text { font-size: 11px; fill: var(--md-default-fg-color--light); }
 .odp-viz .odp-axis line, .odp-viz .odp-axis path { stroke: var(--odp-line); }

@@ -28,7 +28,7 @@
  },
  {
   "label": "dataset-informed CF vs no-dataset floor",
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "delta": 0.2754,
   "lo": 0.0371,
   "hi": 0.5247,
@@ -37,7 +37,7 @@
  },
  {
   "label": "CF vs popularity prior",
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "delta": -0.0078,
   "lo": -0.0659,
   "hi": 0.0503,
@@ -46,7 +46,7 @@
  },
  {
   "label": "CF vs Doc2Vec content matching",
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "delta": 0.2718,
   "lo": 0.0158,
   "hi": 0.5464,

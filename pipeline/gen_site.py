@@ -52,6 +52,12 @@ VIEW_ORDER = ["github-reuse", "github-complete", "noOBO-reuse",
               "noOBO-complete", "OBO-reuse", "OBO-complete"]
 PORTION_LABEL = {"github": "GitHub", "noOBO": "Paper &amp; Repository",
                  "OBO": "DOS-DP"}
+# Same labels without the HTML entity: PORTION_LABEL is written straight into
+# Markdown tables, where the entity is required, but the JSON payloads below
+# are read by viz.js and inserted as plain text, where the entity leaked
+# through verbatim ("Paper &amp; Repository" in every tooltip and axis label).
+PORTION_LABEL_JSON = {"github": "GitHub", "noOBO": "Paper & Repository",
+                      "OBO": "DOS-DP"}
 
 
 def read(p: Path) -> list[dict]:
@@ -343,7 +349,6 @@ def page_rqs(ctx: dict) -> str:
     rq2 = ctx["rq"].get("rq2_reuse_forms", [])
     rq3 = ctx["rq"].get("rq3_complexity", [])
     rq4 = ctx["rq"].get("rq4_expansion", [])
-    top = ctx["rq"].get("rq1_top_patterns", [])
 
     return f"""# Research questions
 
@@ -398,9 +403,9 @@ certify them.
 
 ## Most reused patterns
 
-<div id="odp-toppat" class="odp-viz" data-src="data/top_patterns.json"></div>
+Top 10 per portion by number of reusing ontologies.
 
-{"".join(f"`{r['pattern']}` " for r in top[:24]) if top else ""}
+<div id="odp-toppat" class="odp-viz" data-src="data/top_patterns.json"></div>
 """
 
 
@@ -853,7 +858,7 @@ def build_payloads(ctx: dict, out: Path) -> None:
 
     # per-portion rule breakdown
     (d / "rules.json").write_text(json.dumps([
-        {"portion": PORTION_LABEL.get(r["dataset"], r["dataset"]),
+        {"portion": PORTION_LABEL_JSON.get(r["dataset"], r["dataset"]),
          "discovered": num(r["discovered"]),
          "bands": [{"rule": RULE_LABEL[k], "n": num(r.get(f"dropped_{k}")),
                     "color": RULE_COLOR[k]}
@@ -873,12 +878,12 @@ def build_payloads(ctx: dict, out: Path) -> None:
 
     # thresholds / forms from the RQ tables
     (d / "thresholds.json").write_text(json.dumps([
-        {"portion": PORTION_LABEL.get(r["dataset"], r["dataset"]),
+        {"portion": PORTION_LABEL_JSON.get(r["dataset"], r["dataset"]),
          "points": [{"t": t, "n": num(r.get(f"ge_{t}pct"))}
                     for t in (10, 30, 50, 70, 90, 100)]}
         for r in ctx["rq"].get("rq1_extent", [])], indent=1), encoding="utf-8")
     (d / "forms.json").write_text(json.dumps([
-        {"portion": PORTION_LABEL.get(r["dataset"], r["dataset"]),
+        {"portion": PORTION_LABEL_JSON.get(r["dataset"], r["dataset"]),
          "roles": [{"role": k.replace("_pct", "").replace("_", " "),
                     "pct": fnum(r[k])}
                    for k in r if k.endswith("_pct")]}
@@ -886,7 +891,7 @@ def build_payloads(ctx: dict, out: Path) -> None:
 
     # top patterns
     (d / "top_patterns.json").write_text(json.dumps([
-        {"portion": PORTION_LABEL.get(r["dataset"], r["dataset"]),
+        {"portion": PORTION_LABEL_JSON.get(r["dataset"], r["dataset"]),
          "pattern": r["pattern"], "n": num(r["n_ontologies"]),
          "rank": num(r["rank"])}
         for r in ctx["rq"].get("rq1_top_patterns", [])], indent=1),
@@ -911,13 +916,13 @@ def build_payloads(ctx: dict, out: Path) -> None:
 
     # uc1 = extraction, uc2 = recommendation, as in the manuscript.
     (d / "uc1.json").write_text(json.dumps([
-        {"portion": PORTION_LABEL.get(r["dataset"], r["dataset"]),
+        {"portion": PORTION_LABEL_JSON.get(r["dataset"], r["dataset"]),
          "method": r["method"], "clusterer": r["clusterer"],
          "oracle": fnum(r["oracle_f1"]), "unsup": fnum(r["unsup_f1"]),
          "n": num(r["n_ontologies"])} for r in ctx["uc1"]], indent=1),
         encoding="utf-8")
     (d / "uc2.json").write_text(json.dumps([
-        {"label": r["comparison"], "portion": PORTION_LABEL.get(
+        {"label": r["comparison"], "portion": PORTION_LABEL_JSON.get(
             r.get("dataset"), r.get("dataset")),
          "delta": fnum(r["mean_delta_map"]),
          "lo": fnum(r["ci_lo_95"]), "hi": fnum(r["ci_hi_95"]),

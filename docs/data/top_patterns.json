@@ -120,61 +120,61 @@
   "rank": 10
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "DUL",
   "n": 20,
   "rank": 1
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "situation",
   "n": 7,
   "rank": 2
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "actorODP",
   "n": 4,
   "rank": 3
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "resourceODP",
   "n": 4,
   "rank": 4
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "timeinterval",
   "n": 4,
   "rank": 5
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "processODP",
   "n": 3,
   "rank": 6
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "participation",
   "n": 3,
   "rank": 7
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "IOLite",
   "n": 3,
   "rank": 8
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "timeindexedsituation",
   "n": 3,
   "rank": 9
  },
  {
-  "portion": "Paper &amp; Repository",
+  "portion": "Paper & Repository",
   "pattern": "list",
   "n": 2,
   "rank": 10

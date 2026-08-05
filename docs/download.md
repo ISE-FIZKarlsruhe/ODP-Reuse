@@ -69,12 +69,12 @@ sibling.
 ## Cite
 
 ```bibtex
-@dataset{odp_reuse_7e587bf,
+@dataset{odp_reuse_1_2_0,
   title  = {ODP-Reuse: a quality-gated benchmark of Ontology Design Pattern reuse},
   author = {Norouzi, Ebrahim and Hertling, Sven and
             Waitelonis, J{\"o}rg and Sack, Harald},
   year   = {2026},
   doi    = {10.5281/zenodo.17751740},
-  version = {7e587bf}
+  version = {v1.2.0}
 }
 ```

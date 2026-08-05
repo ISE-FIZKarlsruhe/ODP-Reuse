@@ -161,15 +161,34 @@
     const data = await load(el);
     if (!data.length) return;
     const roles = data[0].roles.map(r => r.role);
-    const W = el.clientWidth || 800, rowH = 46, H = data.length * rowH + 40;
-    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
-    const x = d3.scaleLinear().domain([0, 100]).range([0, W - 160]);
+    const W = el.clientWidth || 800, rowH = 46, top = 22;
     const color = d3.scaleOrdinal().domain(roles).range([
       css('--odp-coral'), css('--odp-violet'), css('--odp-amber'),
       css('--odp-mint'), '#4cc9f0', '#f72585', '#8b8b9e', '#06d6a0']);
 
+    // Lay the legend out first, wrapping it to as many lines as the chart's
+    // own width needs, then size the SVG to fit those lines. The legend used
+    // to sit on one fixed line near the bottom regardless of how much room
+    // its 8 chips actually needed, so on any but the widest viewport it ran
+    // past the chart's own right edge and, with the container's overflow
+    // left visible, past its border too.
+    const legendPad = 4, chipGap = 22, lineH = 18;
+    let lx = 0, ly = 0;
+    const legendItems = roles.map(r => {
+      const w = r.length * 5.6 + 16;
+      if (lx > 0 && lx + w > W - legendPad) { lx = 0; ly += lineH; }
+      const item = { role: r, x: lx, y: ly };
+      lx += w + chipGap;
+      return item;
+    });
+    const legendH = ly + lineH + 10;
+    const H = data.length * rowH + top + legendH;
+
+    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+    const x = d3.scaleLinear().domain([0, 100]).range([0, W - 160]);
+
     data.forEach((row, i) => {
-      const g = svg.append('g').attr('transform', `translate(0,${i * rowH + 22})`);
+      const g = svg.append('g').attr('transform', `translate(0,${i * rowH + top})`);
       g.append('text').attr('y', 18).attr('font-size', 12).attr('font-weight', 600)
         .text(row.portion);
       let acc = 0;
@@ -183,44 +202,161 @@
           `<b>${d.role}</b><br>${d.pct.toFixed(1)}% of reuse occurrences`, ev))
         .on('mouseleave', tip.hide);
     });
-    const lg = svg.append('g').attr('transform', `translate(160,${H - 10})`);
-    let off = 0;
-    roles.forEach(r => {
-      const g = lg.append('g').attr('transform', `translate(${off},0)`);
+
+    const lg = svg.append('g')
+      .attr('transform', `translate(0,${data.length * rowH + top + 14})`);
+    legendItems.forEach(it => {
+      const g = lg.append('g').attr('transform', `translate(${it.x},${it.y})`);
       g.append('rect').attr('width', 9).attr('height', 9).attr('rx', 2)
-        .attr('y', -8).attr('fill', color(r));
-      g.append('text').attr('x', 13).attr('font-size', 9.5).attr('opacity', .8).text(r);
-      off += r.length * 5.6 + 30;
+        .attr('y', -8).attr('fill', color(it.role));
+      g.append('text').attr('x', 13).attr('font-size', 9.5).attr('opacity', .8)
+        .text(it.role);
     });
+  }
+
+  /* ---- most-reused patterns, top 10 per portion -------------------------- */
+  async function topPatterns(el) {
+    const data = await load(el);
+    if (!data.length) return;
+    const portions = [...new Set(data.map(d => d.portion))];
+    const byPortion = new Map(portions.map(p =>
+      [p, data.filter(d => d.portion === p).sort((a, b) => a.rank - b.rank)]));
+    const rowH = 20, top = 34, labelW = 118;
+    const maxRows = d3.max(portions, p => byPortion.get(p).length);
+    const W = el.clientWidth || 900, colW = W / portions.length;
+    const H = top + maxRows * rowH + 10;
+    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+    const color = d3.scaleOrdinal().domain(portions)
+      .range([css('--odp-coral'), css('--odp-violet'), css('--odp-mint')]);
+
+    portions.forEach((p, pi) => {
+      const rows = byPortion.get(p);
+      const x0 = pi * colW + 6;
+      const max = d3.max(rows, d => d.n) || 1;
+      const x = d3.scaleLinear().domain([0, max]).range([0, colW - labelW - 50]);
+      svg.append('text').attr('x', x0).attr('y', 16).attr('font-size', 12)
+        .attr('font-weight', 700).attr('fill', color(p)).text(p);
+      rows.forEach((d, i) => {
+        const y = top + i * rowH;
+        svg.append('text').attr('x', x0).attr('y', y + rowH - 7).attr('font-size', 10.5)
+          .attr('fill', 'currentColor')
+          .text(d.pattern.length > 15 ? d.pattern.slice(0, 14) + '…' : d.pattern);
+        svg.append('rect').attr('class', 'odp-band')
+          .attr('x', x0 + labelW).attr('y', y + 2).attr('height', rowH - 7).attr('rx', 2)
+          .attr('width', Math.max(1, x(d.n)))
+          .attr('fill', color(p)).attr('fill-opacity', .82)
+          .on('mousemove', ev => tip.show(
+            `<b>${d.pattern}</b><br>reused by ${fmt(d.n)} ${p} ontolog${d.n === 1 ? 'y' : 'ies'}`,
+            ev))
+          .on('mouseleave', tip.hide);
+        svg.append('text').attr('x', x0 + labelW + x(d.n) + 5).attr('y', y + rowH - 7)
+          .attr('font-size', 9.5).attr('opacity', .65).text(fmt(d.n));
+      });
+    });
+  }
+
+  /* ---- view sizes at a glance -------------------------------------------- */
+  async function views(el) {
+    const data = await load(el);
+    if (!data.length) return;
+    const metrics = [
+      { key: 'ontologies', label: 'Ontologies' },
+      { key: 'pairs', label: 'Pairs' },
+      { key: 'patterns', label: 'Patterns' },
+      { key: 'complete', label: 'Complete pairs' },
+    ];
+    const left = 132, colGap = 16, rowH = 24, top = 24;
+    const W = el.clientWidth || 800;
+    const H = top + data.length * rowH + 24;
+    const colW = (W - left - colGap * (metrics.length - 1)) / metrics.length;
+    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+    const portionColor = v => v.startsWith('github') ? css('--odp-coral')
+      : v.startsWith('noOBO') ? css('--odp-violet') : css('--odp-mint');
+
+    data.forEach((d, i) => {
+      svg.append('text').attr('x', 0).attr('y', top + i * rowH + rowH / 2)
+        .attr('dy', '.32em').attr('font-size', 11).text(d.view);
+    });
+    metrics.forEach((m, mi) => {
+      const x0 = left + mi * (colW + colGap);
+      const max = d3.max(data, d => d[m.key]) || 1;
+      const x = d3.scaleLinear().domain([0, max]).range([2, Math.max(2, colW - 4)]);
+      svg.append('text').attr('x', x0).attr('y', 14).attr('font-size', 10.5)
+        .attr('font-weight', 600).attr('opacity', .7).text(m.label);
+      data.forEach((d, i) => {
+        const y = top + i * rowH + 4;
+        svg.append('rect').attr('class', 'odp-band')
+          .attr('x', x0).attr('y', y).attr('height', rowH - 10).attr('rx', 2)
+          .attr('width', Math.max(1, x(d[m.key])))
+          .attr('fill', portionColor(d.view)).attr('fill-opacity', .82)
+          .on('mousemove', ev => tip.show(
+            `<b>${d.view}</b><br>${m.label}: ${fmt(d[m.key])}`, ev))
+          .on('mouseleave', tip.hide);
+      });
+    });
+    svg.append('text').attr('x', left).attr('y', H - 6).attr('font-size', 9.5)
+      .attr('opacity', .55)
+      .text('Median entities/ontology omitted here — the OBO views’ ~32,095 ' +
+            'would flatten every other bar; see the table above.');
   }
 
   /* ---- ontology <-> pattern constellation ------------------------------ */
   async function constellation(el) {
     const g = await load(el);
     if (!g.nodes || !g.nodes.length) return;
-    const W = el.clientWidth || 900, H = 460;
-    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+    const W = el.clientWidth || 900, H = 460, pad = 14;
+    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`)
+      .attr('role', 'img').attr('aria-label', 'Ontology-to-pattern reuse graph');
+
+    // A visible frame: with the simulation now clamped to stay inside it
+    // (see the tick handler below), the frame is a true bound on the graph
+    // rather than a border the graph used to spill past.
+    svg.append('rect').attr('x', .5).attr('y', .5)
+      .attr('width', W - 1).attr('height', H - 1).attr('rx', 10)
+      .attr('fill', 'none').attr('stroke', css('--odp-line'));
+
     const root = svg.append('g');
-    svg.call(d3.zoom().scaleExtent([.25, 5])
+    svg.call(d3.zoom().scaleExtent([.4, 6])
       .on('zoom', ev => root.attr('transform', ev.transform)));
 
     const rr = d3.scaleSqrt()
-      .domain([1, d3.max(g.nodes, d => d.v) || 1]).range([3, 22]);
-    const sim = d3.forceSimulation(g.nodes)
-      .force('link', d3.forceLink(g.links).id(d => d.id).distance(46).strength(.35))
-      .force('charge', d3.forceManyBody().strength(-58))
-      .force('center', d3.forceCenter(W / 2, H / 2))
-      .force('collide', d3.forceCollide(d => rr(d.v) + 3));
+      .domain([1, d3.max(g.nodes, d => d.v) || 1]).range([3.5, 24]);
 
-    const link = root.append('g').attr('stroke', css('--odp-line'))
+    // Adjacency, keyed by the raw string ids -- computed before
+    // d3.forceLink mutates link.source/target into node references, and
+    // used by the chip filter below to highlight a pattern's neighbourhood.
+    const neighbors = new Map();
+    g.links.forEach(l => {
+      if (!neighbors.has(l.source)) neighbors.set(l.source, new Set());
+      if (!neighbors.has(l.target)) neighbors.set(l.target, new Set());
+      neighbors.get(l.source).add(l.target);
+      neighbors.get(l.target).add(l.source);
+    });
+
+    const sim = d3.forceSimulation(g.nodes)
+      .force('link', d3.forceLink(g.links).id(d => d.id).distance(44).strength(.3))
+      .force('charge', d3.forceManyBody().strength(-52))
+      .force('center', d3.forceCenter(W / 2, H / 2))
+      .force('collide', d3.forceCollide(d => rr(d.v) + 3))
+      .force('x', d3.forceX(W / 2).strength(.02))
+      .force('y', d3.forceY(H / 2).strength(.02));
+
+    // Edges were previously drawn in the page's near-invisible grid-line
+    // colour (12% alpha) whenever a reuse was partial, which is most of
+    // them -- the graph read as unconnected dots. Partial links now carry
+    // enough opacity to read as edges; complete reuse still stands out.
+    const link = root.append('g')
       .selectAll('line').data(g.links).join('line')
-      .attr('stroke-width', d => d.complete ? 1.8 : .6)
-      .attr('stroke', d => d.complete ? css('--odp-mint') : css('--odp-line'));
+      .attr('stroke-width', d => d.complete ? 2 : .9)
+      .attr('stroke', d => d.complete ? css('--odp-mint') : css('--odp-violet'))
+      .attr('stroke-opacity', d => d.complete ? .75 : .3);
 
     const node = root.append('g').selectAll('circle').data(g.nodes).join('circle')
-      .attr('r', d => d.kind === 'pattern' ? rr(d.v) : 3)
+      .attr('r', d => d.kind === 'pattern' ? rr(d.v) : 3.5)
       .attr('fill', d => d.kind === 'pattern' ? css('--odp-violet') : css('--odp-coral'))
-      .attr('fill-opacity', d => d.kind === 'pattern' ? .92 : .55)
+      .attr('fill-opacity', d => d.kind === 'pattern' ? .95 : .6)
+      .attr('stroke', d => d.kind === 'pattern' ? css('--odp-panel') : 'none')
+      .attr('stroke-width', 1.2)
       .style('cursor', 'grab')
       .on('mousemove', (ev, d) => tip.show(
         d.kind === 'pattern'
@@ -228,25 +364,59 @@
           : `<b>${d.label}</b><br>ontology`, ev))
       .on('mouseleave', tip.hide)
       .call(d3.drag()
-        .on('start', (ev, d) => { if (!ev.active) sim.alphaTarget(.25).restart();
+        .on('start', (ev, d) => { if (!ev.active) sim.alphaTarget(.2).restart();
                                   d.fx = d.x; d.fy = d.y; })
         .on('drag', (ev, d) => { d.fx = ev.x; d.fy = ev.y; })
         .on('end', (ev, d) => { if (!ev.active) sim.alphaTarget(0);
                                 d.fx = null; d.fy = null; }));
 
-    const label = root.append('g').selectAll('text')
-      .data(g.nodes.filter(d => d.kind === 'pattern' && d.v >= 4)).join('text')
-      .attr('font-size', 10).attr('font-weight', 600)
-      .attr('text-anchor', 'middle').attr('pointer-events', 'none')
-      .attr('fill', 'currentColor').text(d => d.label);
+    // Labels get a background pill so they read against the tangle of
+    // edges/dots instead of floating loose text; shown for enough patterns
+    // (v >= 3, not just v >= 4) that the chip list below has something to
+    // point at.
+    const label = root.append('g')
+      .selectAll('g').data(g.nodes.filter(d => d.kind === 'pattern' && d.v >= 3))
+      .join('g').attr('pointer-events', 'none');
+    label.append('rect').attr('fill', css('--odp-panel')).attr('opacity', .85)
+      .attr('rx', 3);
+    label.append('text').attr('font-size', 10).attr('font-weight', 600)
+      .attr('text-anchor', 'middle').attr('fill', 'currentColor').text(d => d.label)
+      .each(function () {
+        const b = this.getBBox();
+        d3.select(this.previousSibling)
+          .attr('x', b.x - 3).attr('y', b.y - 1)
+          .attr('width', b.width + 6).attr('height', b.height + 2);
+      });
 
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
     sim.on('tick', () => {
+      // Nothing bounded node positions before: a hairball of 561 nodes and
+      // weak forces let outliers drift far outside the frame, and the
+      // container's overflow was left visible so they rendered over the
+      // rest of the page instead of just clipping.
+      g.nodes.forEach(d => {
+        const r = (d.kind === 'pattern' ? rr(d.v) : 3.5) + pad;
+        d.x = clamp(d.x, r, W - r);
+        d.y = clamp(d.y, r, H - r);
+      });
       link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
           .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
       node.attr('cx', d => d.x).attr('cy', d => d.y);
-      label.attr('x', d => d.x).attr('y', d => d.y - rr(d.v) - 4);
+      label.attr('transform', d => `translate(${d.x},${d.y - rr(d.v) - 10})`);
     });
     setTimeout(() => sim.stop(), 9000);   // settle, then stop burning CPU
+
+    // Driven by the pattern chips on the page: highlight one pattern and
+    // its ontologies, dim the rest. Previously the chips only toggled their
+    // own pressed state and touched nothing in the graph.
+    el.__focus = function (patternName) {
+      const target = patternName ? `p:${patternName}` : null;
+      const active = target ? (neighbors.get(target) || new Set()) : null;
+      node.attr('opacity', d => !target || d.id === target || active.has(d.id) ? 1 : .1);
+      link.attr('opacity', d => !target
+        || d.source.id === target || d.target.id === target ? 1 : .04);
+      label.attr('opacity', d => !target || d.id === target ? 1 : .1);
+    };
   }
 
   /* ---- forest plot: paired improvements with CIs ------------------------ */
@@ -317,7 +487,8 @@
   /* ---- boot ------------------------------------------------------------- */
   const CHARTS = {
     'odp-funnel': funnel, 'odp-rules': rules, 'odp-thresholds': thresholds,
-    'odp-forms': forms, 'odp-constellation': constellation,
+    'odp-forms': forms, 'odp-toppat': topPatterns, 'odp-views': views,
+    'odp-constellation': constellation,
     'odp-uc1': oracleGap, 'odp-uc2': forest,
   };
 
@@ -340,7 +511,10 @@
         const on = c.getAttribute('aria-pressed') === 'true';
         document.querySelectorAll('.odp-chip')
           .forEach(o => o.setAttribute('aria-pressed', 'false'));
-        c.setAttribute('aria-pressed', on ? 'false' : 'true');
+        const next = on ? null : c.dataset.pattern;
+        c.setAttribute('aria-pressed', next ? 'true' : 'false');
+        const viz = document.getElementById('odp-constellation');
+        if (viz && viz.__focus) viz.__focus(next);
       });
     });
   }

@@ -18,7 +18,7 @@ used — and **why** is the interesting part.
 <div class="odp-stat"><b>673</b><span>fully reused</span></div>
 </div>
 
-<span class="odp-version">version 7e587bf</span>
+<span class="odp-version">version v1.2.0</span>
 
 </div>
 

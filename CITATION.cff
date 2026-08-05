@@ -6,8 +6,8 @@ message: >-
   file) and the accompanying paper (see preferred-citation).
 type: dataset
 license: CC-BY-4.0
-version: 1.1.0
-date-released: '2026-07-30'
+version: 1.2.0
+date-released: '2026-08-05'
 repository-code: https://github.com/ISE-FIZKarlsruhe/ODP-Reuse
 url: https://doi.org/10.5281/zenodo.17751740
 abstract: >-
