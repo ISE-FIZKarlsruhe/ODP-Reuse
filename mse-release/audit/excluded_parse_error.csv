@@ -1,0 +1,5 @@
+dataset,ontology,reason,detail,run
+mseo,catalog-v001,parse_error,ParserError: file:///C:/Users/eno/Documents/PhD/odp-reuse-benchmark/use-cases/odp-extraction/corpora/mseo/catalog-v001.xml:4:109: Repeat node-elements inside property elements: urn:oasis:names:tc:entity:xmlns:xml:cataloguri,mseo
+mseo,MSLE,parse_error,ParserError: file:///C:/Users/eno/Documents/PhD/odp-reuse-benchmark/use-cases/odp-extraction/corpora/mseo/MSLE.owl:20:80: Repeat node-elements inside property elements: http://www.w3.org/2002/07/owl#Literal,mseo
+mseo,catalog-v001,parse_error,ParserError: file:///C:/Users/eno/Documents/PhD/odp-reuse-benchmark/use-cases/odp-extraction/corpora/mseo/catalog-v001.xml:4:109: Repeat node-elements inside property elements: urn:oasis:names:tc:entity:xmlns:xml:cataloguri,mseo-embed
+mseo,MSLE,parse_error,ParserError: file:///C:/Users/eno/Documents/PhD/odp-reuse-benchmark/use-cases/odp-extraction/corpora/mseo/MSLE.owl:20:80: Repeat node-elements inside property elements: http://www.w3.org/2002/07/owl#Literal,mseo-embed

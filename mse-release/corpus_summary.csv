@@ -1,0 +1,13 @@
+measure,value
+files_in_corpus,116
+files_parsed,114
+files_refreshed_from_upstream,29
+upstream_unknown,1
+upstream_update_available,43
+upstream_upstream_gone,7
+upstream_up_to_date,63
+excluded_no_ground_truth_predict_only,204
+excluded_no_entities,6
+excluded_parse_error,4
+excluded_too_many_entities,2
+excluded_asprino_too_many_entities,1

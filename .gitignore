@@ -251,16 +251,6 @@ cred.txt
 *.key
 
 # --- SAGE LaTeX template ---------------------------------------------------
-# sagej.cls and the SageV/SageH .bst files are redistributed by SAGE under an
-# explicit restriction: "This software may only be used to prepare an article
-# for publication in a SAGE Publications journal. Any other use constitutes an
-# infringement of copyright."  This repository is public, so the class is kept
-# locally for compiling but NOT committed.  Get it from:
-#   https://uk.sagepub.com/sites/default/files/sage_latex_template_4.zip
-paper-iri/sagej.cls
-paper-iri/Sage*.bst
-paper-iri-label/sagej.cls
-paper-iri-label/Sage*.bst
 docs/sage-template/
 
 # --- LaTeX build artefacts -------------------------------------------------
@@ -286,9 +276,6 @@ docs/sage-template/
 *.idx
 *.ilg
 *.ind
-# compiled manuscripts: regenerate with pdflatex, do not commit
-paper-iri/main.pdf
-paper-iri-label/main.pdf
 
 # --- stale intermediates superseded by the T=1 rebuild ----------------------
 # (machine_verdicts.01.bak.csv is NOT ignored -- PROVENANCE.md cites it as the
@@ -306,14 +293,6 @@ pipeline/out/gate_summary_t10.*
 slides-*/
 paper-*/*
 
-# ...but the reproducibility apparatus of Track A is published, because the paper
-# claims it. Appendix B states that PROVENANCE.md "carries the same table in
-# machine-readable form together with the commands that re-verify it"; that is
-# false to a reader if the file is not in the clone. These two are not the
-# manuscript -- they are a 140-assertion checker and its provenance index -- so
-# they ship while the LaTeX stays unpublished during review.
-!paper-iri/verify_numbers.py
-!paper-iri/PROVENANCE.md
 
 # =============================================================================
 #  Publication scope, 2026-08-04
@@ -331,8 +310,6 @@ pipeline/out_iri_label/
 pipeline/out/rq_iri-label_gated/
 pipeline/out/rq_iri-label_all/
 pipeline/out/comparison_tracks/
-paper-iri-label/
-slides-iri-label/
 use-cases/odp-extraction/results/iri-label/
 use-cases/odp-recommendation/results_reco/iri-label*/
 use-cases/odp-recommendation/stats_iri-label*/
@@ -413,6 +390,8 @@ pipeline/out_obo/**
 # The IRI-anonymised twin of the corpus: several GiB of N-Triples, built by
 # pipeline/hash_corpus.py and published as a Zenodo file, never through git.
 release-*/corpus-hashed/
+mse-release/corpus/
+mse-eval-webapp
 
 # --- Zenodo upload staging ----------------------------------------------------
 # Archives built for a deposition are derived artefacts of files that are either
@@ -421,3 +400,9 @@ release-*/corpus-hashed/
 # `git add -A` while staging a release would fail the push.
 release-*/*.zip
 release-*/zenodo/
+
+# Extraction use case: locally copied corpora and their run outputs.
+use-cases/odp-extraction/corpora/*
+!use-cases/odp-extraction/corpora/.gitignore
+!use-cases/odp-extraction/corpora/README.md
+use-cases/odp-extraction/results/

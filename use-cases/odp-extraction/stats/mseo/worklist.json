@@ -1,0 +1,800 @@
+[
+{
+"file": "AMONTOLOGY.owl",
+"iri": "http://www.semanticweb.org/ina3/ontologies/2016/2/untitled-ontology-122",
+"version": "",
+"title": "",
+"triples": "408"
+},
+{
+"file": "asmo.owl",
+"iri": "http://purls.helmholtz-metadaten.de/asmo/",
+"version": "0.0.1",
+"title": "Atomistic Simulation Methods Ontology (ASMO)",
+"triples": "592"
+},
+{
+"file": "battinfo.ttl",
+"iri": "https://big-map.github.io/BattINFO/ontology/BattINFO",
+"version": "0.5.0",
+"title": "Battery Interface Ontology (BattINFO)",
+"triples": "32"
+},
+{
+"file": "bmo.ttl",
+"iri": "https://w3id.org/digitalconstruction/BuildingMaterials",
+"version": "0.1",
+"title": "Digital Construction - BuildingMaterials | Digital construction - Buil",
+"triples": "425"
+},
+{
+"file": "bmo_contexts.ttl",
+"iri": "https://w3id.org/digitalconstruction/0.3/Contexts",
+"version": "",
+"title": "Digital Construction Contexts",
+"triples": "130"
+},
+{
+"file": "bmo_ontology.ttl",
+"iri": "https://w3id.org/digitalconstruction/Entities",
+"version": "",
+"title": "Digital Construction Entities",
+"triples": "668"
+},
+{
+"file": "bmo_variables.ttl",
+"iri": "https://w3id.org/digitalconstruction/Variables",
+"version": "",
+"title": "Digital Construction Variables",
+"triples": "286"
+},
+{
+"file": "BTO3.0.2-EMMO.ttl",
+"iri": "https://gitlab.com/kupferdigital/process-graphs/brinell-hardness-test/",
+"version": "3.0.2 (EMMO, CHAMEO)",
+"title": "Brinell Test Ontology (BTO)",
+"triples": "863"
+},
+{
+"file": "BTO4.0.2-PMDco.ttl",
+"iri": "https://gitlab.com/kupferdigital/process-graphs/brinell-hardness-test/",
+"version": "4.0.2 (PROV, PMDco)",
+"title": "Brinell Test Ontology (BTO)",
+"triples": "800"
+},
+{
+"file": "BTO5.0.2-IOF.ttl",
+"iri": "https://gitlab.com/kupferdigital/process-graphs/brinell-hardness-test/",
+"version": "5.0.2 (BFO, IOF)",
+"title": "Brinell Test Ontology (BTO)",
+"triples": "795"
+},
+{
+"file": "BVCO.ttl",
+"iri": "https://bvco.ontology.link",
+"version": "",
+"title": "ZFolder",
+"triples": "956"
+},
+{
+"file": "BWMD-DOMAIN.owl",
+"iri": "https://www.materials.fraunhofer.de/ontologies/BWMD_ontology/domain",
+"version": "v1.0.6",
+"title": "Rp03",
+"triples": "1814"
+},
+{
+"file": "BWMD-MID.owl",
+"iri": "https://www.materials.fraunhofer.de/ontologies/BWMD_ontology/mid",
+"version": "v1.0.10",
+"title": "author",
+"triples": "1736"
+},
+{
+"file": "BWMD_domain.owl",
+"iri": "https://www.materials.fraunhofer.de/ontologies/BWMD_ontology/domain",
+"version": "v1.0.6",
+"title": "Rp03",
+"triples": "1814"
+},
+{
+"file": "BWMD_mid.owl",
+"iri": "https://www.materials.fraunhofer.de/ontologies/BWMD_ontology/mid",
+"version": "v1.0.10",
+"title": "author",
+"triples": "1736"
+},
+{
+"file": "CCO.ttl",
+"iri": "http://www.ontologyrepository.com/CommonCoreOntologies/Mid/MergedAllCoreOntology",
+"version": "Version 1.3",
+"title": "Merged All Core Ontology",
+"triples": "13958"
+},
+{
+"file": "cdco.owl",
+"iri": "http://purls.helmholtz-metadaten.de/cdos/cdco",
+"version": "",
+"title": "Crystallographic Defect Core Ontology",
+"triples": "64"
+},
+{
+"file": "CHAMEO.ttl",
+"iri": "http://emmo.info/emmo/domain/chameo/chameo",
+"version": "1.0.0-alpha2",
+"title": "CHAracterisation MEthodology Ontology",
+"triples": "570"
+},
+{
+"file": "cheminf.owl",
+"iri": "http://semanticchemistry.github.io/semanticchemistry/ontology/cheminf.owl",
+"version": "2.1.0",
+"title": "chemical information ontology (cheminf) - information entities about c",
+"triples": "2856"
+},
+{
+"file": "chmo.owl",
+"iri": "http://purl.obolibrary.org/obo/chmo.owl",
+"version": "http://purl.obolibrary.org/obo/chmo/releases/2022-04-19/chmo",
+"title": "Chemical Methods Ontology",
+"triples": "44853"
+},
+{
+"file": "cif-core.ttl",
+"iri": "http://emmo.info/emmo/cif-core",
+"version": "",
+"title": "",
+"triples": "324"
+},
+{
+"file": "cmso.owl",
+"iri": "http://purls.helmholtz-metadaten.de/cmso/",
+"version": "0.0.1",
+"title": "Computational Material Sample Ontology (CMSO)",
+"triples": "565"
+},
+{
+"file": "collection.ttl",
+"iri": "http://emmo.info/datamodel/collection",
+"version": "http://emmo.info/datamodel/0.0.2/collection",
+"title": "Collection module of the datamodel ontology",
+"triples": "12"
+},
+{
+"file": "CSO.owl",
+"iri": "https://purls.helmholtz-metadaten.de/disos/cso",
+"version": "1.1",
+"title": "Crystal Structure Ontology",
+"triples": "722"
+},
+{
+"file": "datamodel.ttl",
+"iri": "http://emmo.info/datamodel/metamodel",
+"version": "http://emmo.info/datamodel/0.0.2/metamodel",
+"title": "Metamodel module of the datamodel ontology",
+"triples": "129"
+},
+{
+"file": "DEB.owl",
+"iri": "http://www.semanticweb.org/osnathakimi/ontologies/deb",
+"version": "",
+"title": "Devices, Experimental scaffolds and Biomaterials Ontology (DEB)",
+"triples": "2358"
+},
+{
+"file": "DISO.ttl",
+"iri": "https://purls.helmholtz-metadaten.de/diso",
+"version": "1.0",
+"title": "Dislocation Ontology",
+"triples": "746"
+},
+{
+"file": "DSIM.owl",
+"iri": "https://purls.helmholtz-metadaten.de/disos/sim",
+"version": "1.0",
+"title": "Dislocation Simulation and Model Ontology",
+"triples": "680"
+},
+{
+"file": "emmo-mechanical-testing.owl",
+"iri": "http://emmo.info/emmo/domain/mechanical-testing",
+"version": "1.0.0",
+"title": "Domain Mechanical Testing",
+"triples": "2577"
+},
+{
+"file": "emmo-microstructure.owl",
+"iri": "http://www.semanticweb.org/jesperf/ontologies/2019/11/untitled-ontology-9",
+"version": "",
+"title": "SubgrainSize",
+"triples": "287"
+},
+{
+"file": "EMMO.ttl",
+"iri": "http://emmo.info/emmo",
+"version": "1.0.0-beta4",
+"title": "Chemistry | Distinctional | Domain | EMMO perspectives-level ontology ",
+"triples": "12900"
+},
+{
+"file": "EMMO_atomistic.ttl",
+"iri": "http://emmo.info/domain-atomistic",
+"version": "0.0.1",
+"title": "Atomistic",
+"triples": "96"
+},
+{
+"file": "EMMO_BattINFO.ttl",
+"iri": "https://big-map.github.io/BattINFO/ontology/BattINFO",
+"version": "0.7.0",
+"title": "Battery Interface Ontology (BattINFO)",
+"triples": "32"
+},
+{
+"file": "EMMO_BVC.ttl",
+"iri": "https://bvco.ontology.link",
+"version": "https://bvco.ontology.link/0.4.3",
+"title": "",
+"triples": "1719"
+},
+{
+"file": "EMMO_crystallography.ttl",
+"iri": "http://emmo.info/domain-crystallography/crystallography",
+"version": "http://emmo.info/domain-crystallography/0.0.1/crystallograph",
+"title": "",
+"triples": "586"
+},
+{
+"file": "EMMO_Datamodel.ttl",
+"iri": "http://emmo.info/datamodel/metamodel",
+"version": "http://emmo.info/datamodel/0.0.2/metamodel",
+"title": "Metamodel module of the datamodel ontology",
+"triples": "129"
+},
+{
+"file": "emmo_datamodel_entity.ttl",
+"iri": "http://emmo.info/datamodel/entity",
+"version": "http://emmo.info/datamodel/0.0.2/entity",
+"title": "Datamodel ontology",
+"triples": "220"
+},
+{
+"file": "emmo_datamodel_metamodel.ttl",
+"iri": "http://emmo.info/datamodel/metamodel",
+"version": "http://emmo.info/datamodel/0.0.2/metamodel",
+"title": "Metamodel module of the datamodel ontology",
+"triples": "135"
+},
+{
+"file": "EMMO_mappings.ttl",
+"iri": "http://emmo.info/domain-mappings",
+"version": "0.0.1",
+"title": "Mappings ontology",
+"triples": "95"
+},
+{
+"file": "EMMO_mechanical_testing.owl",
+"iri": "http://emmo.info/emmo/domain/mechanical-testing",
+"version": "1.0.0",
+"title": "Domain Mechanical Testing",
+"triples": "2577"
+},
+{
+"file": "EMMO_microstructure.owl",
+"iri": "http://www.semanticweb.org/jesperf/ontologies/2019/11/untitled-ontology-9",
+"version": "",
+"title": "SubgrainSize",
+"triples": "287"
+},
+{
+"file": "enanomapper.ttl",
+"iri": "http://enanomapper.github.io/ontologies/enanomapper-auto.owl",
+"version": "9.0",
+"title": "eNanoMapper ontology",
+"triples": "2983"
+},
+{
+"file": "EXPO.owl",
+"iri": "http://www.hozo.jp/owl/EXPOApr19.xml/",
+"version": "",
+"title": "Role",
+"triples": "2923"
+},
+{
+"file": "FOAF.owl",
+"iri": "http://xmlns.com/foaf/0.1/",
+"version": "",
+"title": "Friend of a Friend (FOAF) vocabulary",
+"triples": "396"
+},
+{
+"file": "GPO.ttl",
+"iri": "https://gpo.ontology.link",
+"version": "",
+"title": "HasObject",
+"triples": "888"
+},
+{
+"file": "IAO.owl",
+"iri": "http://purl.obolibrary.org/obo/iao.owl",
+"version": "2022-11-07",
+"title": "Information Artifact Ontology (IAO)",
+"triples": "5002"
+},
+{
+"file": "IOF.ttl",
+"iri": "https://spec.industrialontologies.org/ontology/core/Core/",
+"version": "https://spec.industrialontologies.org/ontology/202401/core/C",
+"title": "Industrial Ontology Foundry (IOF) Core Ontology | Core Ontology",
+"triples": "3480"
+},
+{
+"file": "ldo.owl",
+"iri": "http://purls.helmholtz-metadaten.de/cdos/ldo",
+"version": "",
+"title": "Line Defect Ontology",
+"triples": "73"
+},
+{
+"file": "LPBFO.owl",
+"iri": "https://www.emi.fraunhofer.de/ontologies/LPBFO",
+"version": "v1.1.9",
+"title": "hasEnvironmentalImpact",
+"triples": "673"
+},
+{
+"file": "m4i.ttl",
+"iri": "http://w3id.org/nfdi4ing/metadata4ing#",
+"version": "v1.0.0",
+"title": "Metadata4Ing: An ontology for describing the generation of research da",
+"triples": "1236"
+},
+{
+"file": "MAMBO.owl",
+"iri": "file:///home/fabio/Projects/MAMBO/mambo.owl",
+"version": "",
+"title": "continuant",
+"triples": "834"
+},
+{
+"file": "mat.ttl",
+"iri": "http://bimerr.iot.linkeddata.es/def/material-properties#",
+"version": "0.0.8",
+"title": "Material properties ontology",
+"triples": "699"
+},
+{
+"file": "MaterialsMine.ttl",
+"iri": "https://material-digital.de/pmdco",
+"version": "1.0",
+"title": "Platform Material Digital Core Ontology (pmdco)",
+"triples": "580"
+},
+{
+"file": "matinfo/OM-structure.owl",
+"iri": "http://www.owl-ontologies.com/Ontology1195612079.owl",
+"version": "",
+"title": "",
+"triples": "20"
+},
+{
+"file": "matinfo/OML-Environment.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/OML-Environment.owl",
+"version": "",
+"title": "",
+"triples": "149"
+},
+{
+"file": "matinfo/OML-Geometry.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/OML-Geometry.owl",
+"version": "",
+"title": "",
+"triples": "69"
+},
+{
+"file": "matinfo/OML-MaterialInformation.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/OML-MaterialInformation.owl",
+"version": "",
+"title": "",
+"triples": "80"
+},
+{
+"file": "matinfo/OML-Process.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/OML-Process.owl",
+"version": "",
+"title": "",
+"triples": "183"
+},
+{
+"file": "matinfo/OML-Property.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/OML-Property.owl",
+"version": "",
+"title": "",
+"triples": "598"
+},
+{
+"file": "matinfo/OML-Substance.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/OML-Substance.owl",
+"version": "",
+"title": "",
+"triples": "997"
+},
+{
+"file": "matinfo/OML-UnitDimension.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/OML-UnitDimension.owl",
+"version": "",
+"title": "",
+"triples": "161"
+},
+{
+"file": "matinfo/PhysicalConstant.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/PhysicalConstant.owl",
+"version": "",
+"title": "",
+"triples": "157"
+},
+{
+"file": "matinfo.owl",
+"iri": "https://raw.githubusercontent.com/ebrahimnorouzi/mseo.github.io/master/Ontology_files/matinfo/OML-MaterialInformation.owl",
+"version": "",
+"title": "",
+"triples": "80"
+},
+{
+"file": "MatOnto.ttl",
+"iri": "http://matonto.org/ontologies/matonto",
+"version": "1.0 | 2.0 | 2.01 | 2.1 | 3.0",
+"title": "Annotation Properties | Atom (complex) - Atomic Number | Atom Ontology",
+"triples": "11350"
+},
+{
+"file": "MDO.owl",
+"iri": "",
+"version": "1.0",
+"title": "Materials Design Ontology - Calculation Module",
+"triples": "969"
+},
+{
+"file": "MDS.owl",
+"iri": "https://cwrusdle.bitbucket.io/mds#Ontology",
+"version": "0.2.0.5",
+"title": "mds",
+"triples": "1713"
+},
+{
+"file": "metal-alloy.owl",
+"iri": "http://home.agh.edu.pl/~pmaciol/metal-alloy",
+"version": "http://home.agh.edu.pl/~pmaciol/metal-alloy/0.0.1",
+"title": "",
+"triples": "236"
+},
+{
+"file": "MOL_BRINELL.ttl",
+"iri": "https://purl.matolab.org/mseo/methods/example/",
+"version": "",
+"title": "Brinell Hardness method modelling",
+"triples": "16357"
+},
+{
+"file": "MOL_TENSILE.owl",
+"iri": "https://www.materials.fraunhofer.de/ontologies/MoL_TensileTest",
+"version": "https://gitlab.cc-asp.fraunhofer.de/hart/matolab_mechanik/-/",
+"title": "position_with_respect_to_specimen",
+"triples": "358"
+},
+{
+"file": "MSEO.ttl",
+"iri": "https://purl.matolab.org/mseo/mid",
+"version": "",
+"title": "Material Science and Engineering Ontology | Material Science and Engin",
+"triples": "907"
+},
+{
+"file": "mvc.ttl",
+"iri": "http://stream-ontology.com/matvoc-core/",
+"version": "1.0.0",
+"title": "Materials Vocabulary: MatVoc-Core",
+"triples": "170"
+},
+{
+"file": "mwo.owl",
+"iri": "http://purls.helmholtz-metadaten.de/mwo/",
+"version": "",
+"title": "The MatWerk ontology",
+"triples": "1261"
+},
+{
+"file": "nanomine.ttl",
+"iri": "http://nanomine.tw.rpi.edu/ns",
+"version": "",
+"title": "Nanomaterials Ontology",
+"triples": "985"
+},
+{
+"file": "nfdicore.ttl",
+"iri": "https://nfdi.fiz-karlsruhe.de/ontology",
+"version": "v1.1.1-alpha1",
+"title": "NFDIcore Ontology",
+"triples": "486"
+},
+{
+"file": "NPO.owl",
+"iri": "http://purl.bioontology.org/ontology/npo",
+"version": "2013-05-31 (yyyy-mm-dd)",
+"title": "Concept_Status",
+"triples": "37934"
+},
+{
+"file": "nschema.ttl",
+"iri": "http://www.nanopub.org/nschema",
+"version": "",
+"title": "",
+"triples": "18"
+},
+{
+"file": "OA.ttl",
+"iri": "http://www.w3.org/ns/oa#",
+"version": "2016-11-12T21:28:11Z",
+"title": "Web Annotation Ontology",
+"triples": "334"
+},
+{
+"file": "OBO.owl",
+"iri": "http://purl.obolibrary.org/obo/bfo.owl",
+"version": "http://purl.obolibrary.org/obo/bfo/2020/bfo.owl",
+"title": "BFO 2020",
+"triples": "1382"
+},
+{
+"file": "OBO.ttl",
+"iri": "http://purl.obolibrary.org/obo/bfo.owl",
+"version": "http://purl.obolibrary.org/obo/bfo/2020/bfo-core.ttl",
+"title": "BFO 2020",
+"triples": "1014"
+},
+{
+"file": "oeo.owl",
+"iri": "http://openenergy-platform.org/ontology/oeo/",
+"version": "http://openenergy-platform.org/ontology/oeo/releases/2.3.0/o",
+"title": "Open Energy Ontology",
+"triples": "53"
+},
+{
+"file": "OIEcharacterisation-methods.ttl",
+"iri": "http://emmo.info/emmo/domain/oie/characterisation-methods",
+"version": "",
+"title": "",
+"triples": "136"
+},
+{
+"file": "OIEmanufacturing.ttl",
+"iri": "http://emmo.info/emmo/domain/oie/manufacturing",
+"version": "1.0.0-beta3",
+"title": "Manufacturing",
+"triples": "879"
+},
+{
+"file": "OIEmaterials.ttl",
+"iri": "http://emmo.info/emmo/domain/oie/materials",
+"version": "1.0.0-beta3",
+"title": "Materials",
+"triples": "564"
+},
+{
+"file": "OIEmodels.ttl",
+"iri": "http://emmo.info/emmo/domain/oie/models",
+"version": "1.0.0-beta3",
+"title": "Models",
+"triples": "413"
+},
+{
+"file": "OIEsoftware.ttl",
+"iri": "http://emmo.info/emmo/domain/oie/software",
+"version": "0.1",
+"title": "",
+"triples": "489"
+},
+{
+"file": "OM.rdf",
+"iri": "http://www.ontology-of-units-of-measure.org/resource/om-2",
+"version": "2.0.38",
+"title": "Semantic Support of Quantitative Research | Ontology of units of Measu",
+"triples": "28377"
+},
+{
+"file": "OM.ttl",
+"iri": "http://www.ontology-of-units-of-measure.org/resource/om-2",
+"version": "2.0.56",
+"title": "IAU 2012 | Ontologie van Maateenheden (OM) | Ontology of units of Meas",
+"triples": "30699"
+},
+{
+"file": "ONTORULEsteel.ttl",
+"iri": "http://ontorule-project.eu/resources/steel",
+"version": "Final version",
+"title": "action",
+"triples": "372"
+},
+{
+"file": "opmw.owl",
+"iri": "http://www.opmw.org/ontology/",
+"version": "3.1",
+"title": "The OPMW ontology",
+"triples": "228"
+},
+{
+"file": "OSMO.ttl",
+"iri": "https://purl.vimmp.eu/semantics/osmo/osmo.ttl",
+"version": "version 1.7.5",
+"title": "OSMO: Ontology for Simulation, Modelling, and Optimization",
+"triples": "2386"
+},
+{
+"file": "P-Plan.owl",
+"iri": "http://purl.org/net/p-plan#",
+"version": "1.2",
+"title": "The P-Plan ontology",
+"triples": "113"
+},
+{
+"file": "PATO.owl",
+"iri": "http://purl.obolibrary.org/obo/pato.owl",
+"version": "2022-12-15",
+"title": "PATO - the Phenotype And Trait Ontology",
+"triples": "376682"
+},
+{
+"file": "periodictable.owl",
+"iri": "http://www.daml.org/2003/01/periodictable/PeriodicTable",
+"version": "$Id: PeriodicTable.owl,v 1.10 2004/02/05 15:49:58 mdean Exp ",
+"title": "",
+"triples": "1847"
+},
+{
+"file": "photovoltaics.ttl",
+"iri": "http://onto.onto-ns.com/domain-photovoltaics",
+"version": "0.0.1",
+"title": "EMMO Domain Ontology for Photovoltaics",
+"triples": "13"
+},
+{
+"file": "pldo.owl",
+"iri": "http://purls.helmholtz-metadaten.de/pldo/",
+"version": "0.0.1",
+"title": "Planar Defects Ontology (PLDO)",
+"triples": "221"
+},
+{
+"file": "PMDCO.ttl",
+"iri": "https://w3id.org/pmd/co",
+"version": "2.0.0-alpha4",
+"title": "Platform Material Digital Core Ontology (PMDco)",
+"triples": "2709"
+},
+{
+"file": "podo.owl",
+"iri": "http://purls.helmholtz-metadaten.de/podo/",
+"version": "0.0.1",
+"title": "Point Defects Ontology (PODO)",
+"triples": "185"
+},
+{
+"file": "prima-core.ttl",
+"iri": "https://purls.helmholtz-metadaten.de/prima/core",
+"version": "2.0",
+"title": "PRIMA Ontology - Core Module",
+"triples": "234"
+},
+{
+"file": "PROVO.owl",
+"iri": "http://www.w3.org/ns/prov-o#",
+"version": "Recommendation version 2013-04-30",
+"title": "W3C PROVenance Interchange Ontology (PROV-O)",
+"triples": "1146"
+},
+{
+"file": "QUDT.ttl",
+"iri": "http://qudt.org/2.1/schema/qudt",
+"version": "http://qudt.org/2.1/schema/qudt",
+"title": "QUDT Schema - Version 2.1.24",
+"triples": "2344"
+},
+{
+"file": "QUDV.owl",
+"iri": "http://www.example.org/SysML-QUDV.owl",
+"version": "",
+"title": "baseDimension",
+"triples": "504"
+},
+{
+"file": "SAREF.ttl",
+"iri": "https://saref.etsi.org/core/",
+"version": "v3.1.1",
+"title": "SAREF: the Smart Applications REFerence ontology",
+"triples": "908"
+},
+{
+"file": "SEMMD.ttl",
+"iri": "http://w3id.org/semmd/v0.7/schma/mpschm_merged",
+"version": "2.0",
+"title": "Materials Property Ontology Schema",
+"triples": "16609"
+},
+{
+"file": "SKOS_MDO.ttl",
+"iri": "",
+"version": "",
+"title": "Metadata for NIST Materials Resource Registry",
+"triples": "5501"
+},
+{
+"file": "SO.owl",
+"iri": "http://purl.org/ontology/service",
+"version": "0.2.0",
+"title": "Service Ontology",
+"triples": "86"
+},
+{
+"file": "SP.owl",
+"iri": "http://purl.org/net/SMARTprotocol#",
+"version": "4.0",
+"title": "SMART Protocols Ontology: Document Module",
+"triples": "3262"
+},
+{
+"file": "SSN.ttl",
+"iri": "http://www.w3.org/ns/sosa/",
+"version": "",
+"title": "Sensor, Observation, Sample, and Actuator (SOSA) Ontology",
+"triples": "345"
+},
+{
+"file": "ssos.owl",
+"iri": "https://www.niso.org/standards-committees/ssos/ssos01.owl",
+"version": "",
+"title": "",
+"triples": "279"
+},
+{
+"file": "sysml-qudv.owl",
+"iri": "http://www.example.org/SysML-QUDV.owl",
+"version": "",
+"title": "baseDimension",
+"triples": "504"
+},
+{
+"file": "transaction.ttl",
+"iri": "http://emmo.info/datamodel/transaction",
+"version": "http://emmo.info/datamodel/0.0.2/transaction",
+"title": "Transaction module of the datamodel ontology",
+"triples": "39"
+},
+{
+"file": "tribAin.ttl",
+"iri": "http://ktmfk.de/ontology/tribAIn",
+"version": "http://ktmfk.de/ontology/tribAIn",
+"title": "tribAIn - Derived from the ancient Greek word \u201ctribein\u201d (= rubbing) an",
+"triples": "1728"
+},
+{
+"file": "UO.owl",
+"iri": "http://purl.obolibrary.org/obo/uo.owl",
+"version": "",
+"title": "unit",
+"triples": "5504"
+},
+{
+"file": "vimmp.owl",
+"iri": "https://purl.vimmp.eu/semantics/combined/combined-vimmp-ontologies.ttl",
+"version": "Combined ontology release dated 2nd January 2021",
+"title": "Combined ontologies developed or co-developed by the VIMMP project",
+"triples": "15805"
+},
+{
+"file": "WILD.owl",
+"iri": "http://purl.org/wild/vocab",
+"version": "",
+"title": "WiLD ontology",
+"triples": "91"
+}
+]

@@ -1,0 +1,13 @@
+method,n_ontologies,groups_per_ontology_mean,groups_per_ontology_median,group_size_mean,group_size_median,groups_ge_min_size,entity_coverage_mean
+all_in_one,103,1,1,527.61,124,103,1.0
+asprino_cc,102,51.02,14.5,3.97,3.0,5197,0.4313
+asprino_cc_full,94,6.49,4.0,40.7,11.0,609,0.4748
+connected_components,103,18.55,6,28.44,1,405,1.0
+law_ap,103,14.2,2,8.08,2,1456,0.1366
+law_cfp,103,1.67,0,28.41,14.0,172,0.0569
+namespace,103,5.67,4,93.05,5.0,435,1.0
+owl2vec|hdbscan,100,21.11,10.5,10.28,6,2111,0.5995
+owl2vec|kmeans,100,8,9.0,49.05,12.0,764,1.0
+rdf2vec|hdbscan,100,20.57,11.5,8.95,5,2057,0.5503
+rdf2vec|kmeans,100,6.4,7.0,61.31,12.0,612,1.0
+singletons,103,527.61,124,1,1.0,0,1.0

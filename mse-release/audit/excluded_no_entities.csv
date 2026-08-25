@@ -1,0 +1,7 @@
+dataset,ontology,reason,detail,run
+mseo,battinfo,no_entities,,mseo
+mseo,EMMO_BattINFO,no_entities,,mseo
+mseo,photovoltaics,no_entities,,mseo
+mseo,battinfo,no_entities,,mseo-embed
+mseo,EMMO_BattINFO,no_entities,,mseo-embed
+mseo,photovoltaics,no_entities,,mseo-embed

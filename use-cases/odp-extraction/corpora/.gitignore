@@ -1,0 +1,11 @@
+# Corpora copied in for reproducible local runs. Not redistributed here: each
+# has its own upstream home and its own licence.
+#
+#   mseo/  -- materials-science ontologies from
+#             https://github.com/ebrahimnorouzi/mseo.github.io (Ontology_files/)
+#
+# Re-create with:
+#   cp -r <mseo.github.io>/Ontology_files use-cases/odp-extraction/corpora/mseo
+*
+!.gitignore
+!README.md

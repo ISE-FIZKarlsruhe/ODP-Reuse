@@ -1,0 +1,3 @@
+dataset,ontology,reason,detail,run
+mseo,MOL_BRINELL,too_many_entities,6224>5000,mseo-embed
+mseo,PATO,too_many_entities,8877>5000,mseo-embed

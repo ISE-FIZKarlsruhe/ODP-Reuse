@@ -1,0 +1,3567 @@
+{
+  "n_methods": 12,
+  "n_ontologies": 103,
+  "methods": [
+    "all_in_one",
+    "asprino_cc",
+    "asprino_cc_full",
+    "connected_components",
+    "law_ap",
+    "law_cfp",
+    "namespace",
+    "owl2vec|hdbscan",
+    "owl2vec|kmeans",
+    "rdf2vec|hdbscan",
+    "rdf2vec|kmeans",
+    "singletons"
+  ],
+  "A_yield": [
+    {
+      "method": "all_in_one",
+      "n_ontologies": 103,
+      "groups_per_ontology_mean": 1,
+      "groups_per_ontology_median": 1,
+      "group_size_mean": 527.61,
+      "group_size_median": 124,
+      "groups_ge_min_size": 103,
+      "entity_coverage_mean": 1.0
+    },
+    {
+      "method": "asprino_cc",
+      "n_ontologies": 102,
+      "groups_per_ontology_mean": 51.02,
+      "groups_per_ontology_median": 14.5,
+      "group_size_mean": 3.97,
+      "group_size_median": 3.0,
+      "groups_ge_min_size": 5197,
+      "entity_coverage_mean": 0.4313
+    },
+    {
+      "method": "asprino_cc_full",
+      "n_ontologies": 94,
+      "groups_per_ontology_mean": 6.49,
+      "groups_per_ontology_median": 4.0,
+      "group_size_mean": 40.7,
+      "group_size_median": 11.0,
+      "groups_ge_min_size": 609,
+      "entity_coverage_mean": 0.4748
+    },
+    {
+      "method": "connected_components",
+      "n_ontologies": 103,
+      "groups_per_ontology_mean": 18.55,
+      "groups_per_ontology_median": 6,
+      "group_size_mean": 28.44,
+      "group_size_median": 1,
+      "groups_ge_min_size": 405,
+      "entity_coverage_mean": 1.0
+    },
+    {
+      "method": "law_ap",
+      "n_ontologies": 103,
+      "groups_per_ontology_mean": 14.2,
+      "groups_per_ontology_median": 2,
+      "group_size_mean": 8.08,
+      "group_size_median": 2,
+      "groups_ge_min_size": 1456,
+      "entity_coverage_mean": 0.1366
+    },
+    {
+      "method": "law_cfp",
+      "n_ontologies": 103,
+      "groups_per_ontology_mean": 1.67,
+      "groups_per_ontology_median": 0,
+      "group_size_mean": 28.41,
+      "group_size_median": 14.0,
+      "groups_ge_min_size": 172,
+      "entity_coverage_mean": 0.0569
+    },
+    {
+      "method": "namespace",
+      "n_ontologies": 103,
+      "groups_per_ontology_mean": 5.67,
+      "groups_per_ontology_median": 4,
+      "group_size_mean": 93.05,
+      "group_size_median": 5.0,
+      "groups_ge_min_size": 435,
+      "entity_coverage_mean": 1.0
+    },
+    {
+      "method": "owl2vec|hdbscan",
+      "n_ontologies": 100,
+      "groups_per_ontology_mean": 21.11,
+      "groups_per_ontology_median": 10.5,
+      "group_size_mean": 10.28,
+      "group_size_median": 6,
+      "groups_ge_min_size": 2111,
+      "entity_coverage_mean": 0.5995
+    },
+    {
+      "method": "owl2vec|kmeans",
+      "n_ontologies": 100,
+      "groups_per_ontology_mean": 8,
+      "groups_per_ontology_median": 9.0,
+      "group_size_mean": 49.05,
+      "group_size_median": 12.0,
+      "groups_ge_min_size": 764,
+      "entity_coverage_mean": 1.0
+    },
+    {
+      "method": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "groups_per_ontology_mean": 20.57,
+      "groups_per_ontology_median": 11.5,
+      "group_size_mean": 8.95,
+      "group_size_median": 5,
+      "groups_ge_min_size": 2057,
+      "entity_coverage_mean": 0.5503
+    },
+    {
+      "method": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "groups_per_ontology_mean": 6.4,
+      "groups_per_ontology_median": 7.0,
+      "group_size_mean": 61.31,
+      "group_size_median": 12.0,
+      "groups_ge_min_size": 612,
+      "entity_coverage_mean": 1.0
+    },
+    {
+      "method": "singletons",
+      "n_ontologies": 103,
+      "groups_per_ontology_mean": 527.61,
+      "groups_per_ontology_median": 124,
+      "group_size_mean": 1,
+      "group_size_median": 1.0,
+      "groups_ge_min_size": 0,
+      "entity_coverage_mean": 1.0
+    }
+  ],
+  "B_cross_method_agreement": [
+    {
+      "method_a": "all_in_one",
+      "method_b": "connected_components",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.8994
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "namespace",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.8827
+    },
+    {
+      "method_a": "owl2vec|hdbscan",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.7759
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "asprino_cc_full",
+      "n_ontologies": 93,
+      "mean_best_match_f1": 0.7015
+    },
+    {
+      "method_a": "connected_components",
+      "method_b": "singletons",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.6566
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.6278
+    },
+    {
+      "method_a": "owl2vec|kmeans",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.6255
+    },
+    {
+      "method_a": "connected_components",
+      "method_b": "namespace",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.5718
+    },
+    {
+      "method_a": "owl2vec|hdbscan",
+      "method_b": "owl2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.5553
+    },
+    {
+      "method_a": "owl2vec|kmeans",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.5238
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "owl2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.5115
+    },
+    {
+      "method_a": "rdf2vec|hdbscan",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.4836
+    },
+    {
+      "method_a": "owl2vec|hdbscan",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.4638
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "asprino_cc_full",
+      "n_ontologies": 94,
+      "mean_best_match_f1": 0.4454
+    },
+    {
+      "method_a": "namespace",
+      "method_b": "singletons",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.4178
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "singletons",
+      "n_ontologies": 102,
+      "mean_best_match_f1": 0.4034
+    },
+    {
+      "method_a": "namespace",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.3684
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 92,
+      "mean_best_match_f1": 0.3577
+    },
+    {
+      "method_a": "law_ap",
+      "method_b": "law_cfp",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.3552
+    },
+    {
+      "method_a": "namespace",
+      "method_b": "owl2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.3516
+    },
+    {
+      "method_a": "connected_components",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.3508
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "owl2vec|kmeans",
+      "n_ontologies": 92,
+      "mean_best_match_f1": 0.3393
+    },
+    {
+      "method_a": "rdf2vec|hdbscan",
+      "method_b": "singletons",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.3324
+    },
+    {
+      "method_a": "owl2vec|hdbscan",
+      "method_b": "singletons",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.3263
+    },
+    {
+      "method_a": "connected_components",
+      "method_b": "owl2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.3147
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "namespace",
+      "n_ontologies": 94,
+      "mean_best_match_f1": 0.3117
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "owl2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2919
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "owl2vec|hdbscan",
+      "n_ontologies": 92,
+      "mean_best_match_f1": 0.2816
+    },
+    {
+      "method_a": "law_ap",
+      "method_b": "singletons",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.2774
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "owl2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.274
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "owl2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2683
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "connected_components",
+      "n_ontologies": 94,
+      "mean_best_match_f1": 0.2638
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2621
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 92,
+      "mean_best_match_f1": 0.2611
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2526
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "namespace",
+      "n_ontologies": 102,
+      "mean_best_match_f1": 0.2379
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "singletons",
+      "n_ontologies": 94,
+      "mean_best_match_f1": 0.237
+    },
+    {
+      "method_a": "namespace",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2361
+    },
+    {
+      "method_a": "namespace",
+      "method_b": "owl2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2333
+    },
+    {
+      "method_a": "owl2vec|kmeans",
+      "method_b": "singletons",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.232
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2283
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "law_ap",
+      "n_ontologies": 102,
+      "mean_best_match_f1": 0.2206
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "connected_components",
+      "n_ontologies": 102,
+      "mean_best_match_f1": 0.2183
+    },
+    {
+      "method_a": "connected_components",
+      "method_b": "owl2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2117
+    },
+    {
+      "method_a": "rdf2vec|kmeans",
+      "method_b": "singletons",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.2104
+    },
+    {
+      "method_a": "connected_components",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.207
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "asprino_cc",
+      "n_ontologies": 102,
+      "mean_best_match_f1": 0.1735
+    },
+    {
+      "method_a": "law_ap",
+      "method_b": "owl2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.1515
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "law_ap",
+      "n_ontologies": 94,
+      "mean_best_match_f1": 0.1465
+    },
+    {
+      "method_a": "law_ap",
+      "method_b": "owl2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.1456
+    },
+    {
+      "method_a": "law_ap",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.1408
+    },
+    {
+      "method_a": "law_ap",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.1343
+    },
+    {
+      "method_a": "law_cfp",
+      "method_b": "owl2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.1194
+    },
+    {
+      "method_a": "law_cfp",
+      "method_b": "rdf2vec|hdbscan",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.115
+    },
+    {
+      "method_a": "law_cfp",
+      "method_b": "owl2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.1029
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "law_ap",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.1014
+    },
+    {
+      "method_a": "connected_components",
+      "method_b": "law_ap",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.0801
+    },
+    {
+      "method_a": "law_ap",
+      "method_b": "namespace",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.0798
+    },
+    {
+      "method_a": "law_cfp",
+      "method_b": "rdf2vec|kmeans",
+      "n_ontologies": 100,
+      "mean_best_match_f1": 0.0748
+    },
+    {
+      "method_a": "asprino_cc",
+      "method_b": "law_cfp",
+      "n_ontologies": 102,
+      "mean_best_match_f1": 0.0745
+    },
+    {
+      "method_a": "asprino_cc_full",
+      "method_b": "law_cfp",
+      "n_ontologies": 94,
+      "mean_best_match_f1": 0.073
+    },
+    {
+      "method_a": "connected_components",
+      "method_b": "law_cfp",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.0712
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "law_cfp",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.0631
+    },
+    {
+      "method_a": "law_cfp",
+      "method_b": "singletons",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.0549
+    },
+    {
+      "method_a": "law_cfp",
+      "method_b": "namespace",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.0532
+    },
+    {
+      "method_a": "all_in_one",
+      "method_b": "singletons",
+      "n_ontologies": 103,
+      "mean_best_match_f1": 0.0374
+    }
+  ],
+  "C_recurrence_by_iri": {
+    "view": "shared entity IRIs",
+    "n_groups_considered": 13921,
+    "n_recurrent_keysets": 1106,
+    "pct_groups_recurrent": 23.02,
+    "top": [
+      {
+        "n_ontologies": 13,
+        "n_occurrences": 13,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000029",
+          "http://purl.obolibrary.org/obo/BFO_0000141"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000001",
+          "http://purl.obolibrary.org/obo/BFO_0000002"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000001",
+          "http://purl.obolibrary.org/obo/BFO_0000003"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000004"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000020"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000031"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000017",
+          "http://purl.obolibrary.org/obo/BFO_0000020"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000003",
+          "http://purl.obolibrary.org/obo/BFO_0000015"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000141"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000017",
+          "http://purl.obolibrary.org/obo/BFO_0000023"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000030",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000141"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000019",
+          "http://purl.obolibrary.org/obo/BFO_0000020"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000003",
+          "http://purl.obolibrary.org/obo/BFO_0000008"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000008",
+          "http://purl.obolibrary.org/obo/BFO_0000038"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000016",
+          "http://purl.obolibrary.org/obo/BFO_0000017"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000009"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000027",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000019",
+          "http://purl.obolibrary.org/obo/BFO_0000145"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000016",
+          "http://purl.obolibrary.org/obo/BFO_0000034"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000015",
+          "http://purl.obolibrary.org/obo/BFO_0000182"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000003",
+          "http://purl.obolibrary.org/obo/BFO_0000035"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000008",
+          "http://purl.obolibrary.org/obo/BFO_0000148"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000024",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000140",
+          "http://purl.obolibrary.org/obo/BFO_0000141"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000003",
+          "http://purl.obolibrary.org/obo/BFO_0000011"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000028"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000018"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000026"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000140",
+          "http://purl.obolibrary.org/obo/BFO_0000147"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000140",
+          "http://purl.obolibrary.org/obo/BFO_0000146"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000140",
+          "http://purl.obolibrary.org/obo/BFO_0000142"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 9,
+        "n_occurrences": 9,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000030",
+          "http://purl.obolibrary.org/obo/IAO_0000310"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000038",
+          "http://purl.obolibrary.org/obo/BFO_0000202"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000031",
+          "http://purl.obolibrary.org/obo/IAO_0000030"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000027",
+          "http://purl.obolibrary.org/obo/IAO_0000030"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000030",
+          "http://purl.obolibrary.org/obo/IAO_0000033"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000033",
+          "http://purl.obolibrary.org/obo/IAO_0000104"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 14,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000121",
+          "http://purl.obolibrary.org/obo/BFO_0000148"
+        ],
+        "methods": [
+          "asprino_cc",
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000148",
+          "http://purl.obolibrary.org/obo/BFO_0000203"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000010",
+          "http://purl.obolibrary.org/obo/IAO_0000104"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000005",
+          "http://purl.obolibrary.org/obo/IAO_0000033"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000033",
+          "http://purl.obolibrary.org/obo/IAO_0000098"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000007",
+          "http://purl.obolibrary.org/obo/IAO_0000033"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000030",
+          "http://purl.obolibrary.org/obo/IAO_0000300"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "http://purl.obolibrary.org/obo/IAO_0000028",
+          "http://purl.obolibrary.org/obo/IAO_0000129"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 6,
+        "n_occurrences": 7,
+        "size": 4,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000015",
+          "http://purl.obolibrary.org/obo/BFO_0000017",
+          "http://purl.obolibrary.org/obo/BFO_0000054",
+          "http://purl.obolibrary.org/obo/BFO_0000055"
+        ],
+        "methods": [
+          "asprino_cc",
+          "asprino_cc_full"
+        ]
+      },
+      {
+        "n_ontologies": 6,
+        "n_occurrences": 6,
+        "size": 5,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000008",
+          "http://purl.obolibrary.org/obo/BFO_0000011",
+          "http://purl.obolibrary.org/obo/BFO_0000132",
+          "http://purl.obolibrary.org/obo/BFO_0000139",
+          "http://purl.obolibrary.org/obo/BFO_0000153"
+        ],
+        "methods": [
+          "asprino_cc"
+        ]
+      },
+      {
+        "n_ontologies": 6,
+        "n_occurrences": 6,
+        "size": 3,
+        "members": [
+          "http://purl.obolibrary.org/obo/BFO_0000035",
+          "http://purl.obolibrary.org/obo/BFO_0000117",
+          "http://purl.obolibrary.org/obo/BFO_0000121"
+        ],
+        "methods": [
+          "asprino_cc"
+        ]
+      }
+    ]
+  },
+  "C_recurrence_by_localname": {
+    "view": "shared local names",
+    "n_groups_considered": 13921,
+    "n_recurrent_keysets": 1136,
+    "pct_groups_recurrent": 23.49,
+    "top": [
+      {
+        "n_ontologies": 13,
+        "n_occurrences": 13,
+        "size": 2,
+        "members": [
+          "bfo_0000029",
+          "bfo_0000141"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000001",
+          "bfo_0000002"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000001",
+          "bfo_0000003"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000002",
+          "bfo_0000004"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000002",
+          "bfo_0000020"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000002",
+          "bfo_0000031"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000017",
+          "bfo_0000020"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000003",
+          "bfo_0000015"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000004",
+          "bfo_0000040"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000004",
+          "bfo_0000141"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 12,
+        "n_occurrences": 12,
+        "size": 2,
+        "members": [
+          "bfo_0000017",
+          "bfo_0000023"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000030",
+          "bfo_0000040"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000006",
+          "bfo_0000141"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000019",
+          "bfo_0000020"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000003",
+          "bfo_0000008"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000008",
+          "bfo_0000038"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000016",
+          "bfo_0000017"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000006",
+          "bfo_0000009"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000027",
+          "bfo_0000040"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000019",
+          "bfo_0000145"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000016",
+          "bfo_0000034"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000015",
+          "bfo_0000182"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000003",
+          "bfo_0000035"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 11,
+        "n_occurrences": 11,
+        "size": 2,
+        "members": [
+          "bfo_0000008",
+          "bfo_0000148"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000024",
+          "bfo_0000040"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000140",
+          "bfo_0000141"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000003",
+          "bfo_0000011"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000006",
+          "bfo_0000028"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000006",
+          "bfo_0000018"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000006",
+          "bfo_0000026"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000140",
+          "bfo_0000147"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000140",
+          "bfo_0000146"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 10,
+        "n_occurrences": 10,
+        "size": 2,
+        "members": [
+          "bfo_0000140",
+          "bfo_0000142"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 9,
+        "n_occurrences": 9,
+        "size": 2,
+        "members": [
+          "iao_0000030",
+          "iao_0000310"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "bfo_0000038",
+          "bfo_0000202"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "bfo_0000031",
+          "iao_0000030"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "iao_0000027",
+          "iao_0000030"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "iao_0000030",
+          "iao_0000033"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 8,
+        "n_occurrences": 8,
+        "size": 2,
+        "members": [
+          "iao_0000033",
+          "iao_0000104"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 14,
+        "size": 2,
+        "members": [
+          "bfo_0000121",
+          "bfo_0000148"
+        ],
+        "methods": [
+          "asprino_cc",
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "bfo_0000148",
+          "bfo_0000203"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "iao_0000010",
+          "iao_0000104"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "iao_0000005",
+          "iao_0000033"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "iao_0000033",
+          "iao_0000098"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "iao_0000007",
+          "iao_0000033"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "iao_0000030",
+          "iao_0000300"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 7,
+        "n_occurrences": 7,
+        "size": 2,
+        "members": [
+          "iao_0000028",
+          "iao_0000129"
+        ],
+        "methods": [
+          "law_ap"
+        ]
+      },
+      {
+        "n_ontologies": 6,
+        "n_occurrences": 7,
+        "size": 4,
+        "members": [
+          "bfo_0000015",
+          "bfo_0000017",
+          "bfo_0000054",
+          "bfo_0000055"
+        ],
+        "methods": [
+          "asprino_cc",
+          "asprino_cc_full"
+        ]
+      },
+      {
+        "n_ontologies": 6,
+        "n_occurrences": 6,
+        "size": 5,
+        "members": [
+          "bfo_0000008",
+          "bfo_0000011",
+          "bfo_0000132",
+          "bfo_0000139",
+          "bfo_0000153"
+        ],
+        "methods": [
+          "asprino_cc"
+        ]
+      },
+      {
+        "n_ontologies": 6,
+        "n_occurrences": 6,
+        "size": 3,
+        "members": [
+          "bfo_0000035",
+          "bfo_0000117",
+          "bfo_0000121"
+        ],
+        "methods": [
+          "asprino_cc"
+        ]
+      }
+    ]
+  },
+  "D_foundational_anchoring": [
+    {
+      "method": "all_in_one",
+      "groups": 103,
+      "anchored": 60,
+      "pct_anchored": 58.25,
+      "by_vocabulary": {
+        "BFO": 27,
+        "EMMO": 20,
+        "QUDT": 16,
+        "RO": 14,
+        "IAO": 12,
+        "SKOS": 9,
+        "PMDco": 4,
+        "CCO": 4
+      }
+    },
+    {
+      "method": "asprino_cc",
+      "groups": 5197,
+      "anchored": 2277,
+      "pct_anchored": 43.81,
+      "by_vocabulary": {
+        "BFO": 886,
+        "EMMO": 702,
+        "RO": 504,
+        "IAO": 305,
+        "PMDco": 229,
+        "CCO": 187,
+        "QUDT": 64,
+        "SKOS": 17
+      }
+    },
+    {
+      "method": "asprino_cc_full",
+      "groups": 609,
+      "anchored": 315,
+      "pct_anchored": 51.72,
+      "by_vocabulary": {
+        "BFO": 208,
+        "RO": 151,
+        "IAO": 85,
+        "PMDco": 39,
+        "EMMO": 37,
+        "CCO": 30,
+        "QUDT": 24,
+        "SKOS": 13
+      }
+    },
+    {
+      "method": "connected_components",
+      "groups": 405,
+      "anchored": 123,
+      "pct_anchored": 30.37,
+      "by_vocabulary": {
+        "BFO": 51,
+        "EMMO": 43,
+        "QUDT": 19,
+        "IAO": 14,
+        "RO": 14,
+        "SKOS": 10,
+        "CCO": 9,
+        "PMDco": 6
+      }
+    },
+    {
+      "method": "law_ap",
+      "groups": 1456,
+      "anchored": 1255,
+      "pct_anchored": 86.2,
+      "by_vocabulary": {
+        "BFO": 788,
+        "IAO": 434,
+        "RO": 133,
+        "PMDco": 70,
+        "EMMO": 57,
+        "QUDT": 27,
+        "CCO": 23,
+        "SKOS": 1
+      }
+    },
+    {
+      "method": "law_cfp",
+      "groups": 172,
+      "anchored": 102,
+      "pct_anchored": 59.3,
+      "by_vocabulary": {
+        "BFO": 63,
+        "RO": 44,
+        "PMDco": 25,
+        "IAO": 20,
+        "EMMO": 13,
+        "CCO": 5,
+        "QUDT": 2,
+        "SKOS": 1
+      }
+    },
+    {
+      "method": "namespace",
+      "groups": 435,
+      "anchored": 121,
+      "pct_anchored": 27.82,
+      "by_vocabulary": {
+        "EMMO": 65,
+        "BFO": 27,
+        "QUDT": 15,
+        "RO": 14,
+        "IAO": 12,
+        "SKOS": 5,
+        "PMDco": 4,
+        "CCO": 4
+      }
+    },
+    {
+      "method": "owl2vec|hdbscan",
+      "groups": 2111,
+      "anchored": 524,
+      "pct_anchored": 24.82,
+      "by_vocabulary": {
+        "EMMO": 230,
+        "CCO": 100,
+        "PMDco": 74,
+        "BFO": 60,
+        "IAO": 46,
+        "QUDT": 23,
+        "RO": 19,
+        "SKOS": 7
+      }
+    },
+    {
+      "method": "owl2vec|kmeans",
+      "groups": 764,
+      "anchored": 326,
+      "pct_anchored": 42.67,
+      "by_vocabulary": {
+        "EMMO": 132,
+        "BFO": 123,
+        "IAO": 50,
+        "RO": 45,
+        "QUDT": 38,
+        "PMDco": 28,
+        "CCO": 26,
+        "SKOS": 16
+      }
+    },
+    {
+      "method": "rdf2vec|hdbscan",
+      "groups": 2057,
+      "anchored": 624,
+      "pct_anchored": 30.34,
+      "by_vocabulary": {
+        "CCO": 189,
+        "EMMO": 181,
+        "PMDco": 125,
+        "IAO": 64,
+        "BFO": 61,
+        "RO": 25,
+        "QUDT": 17,
+        "SKOS": 5
+      }
+    },
+    {
+      "method": "rdf2vec|kmeans",
+      "groups": 612,
+      "anchored": 228,
+      "pct_anchored": 37.25,
+      "by_vocabulary": {
+        "EMMO": 113,
+        "BFO": 82,
+        "IAO": 29,
+        "QUDT": 27,
+        "RO": 20,
+        "PMDco": 14,
+        "SKOS": 12,
+        "CCO": 6
+      }
+    },
+    {
+      "method": "singletons",
+      "groups": 0,
+      "anchored": 0,
+      "pct_anchored": 0.0,
+      "by_vocabulary": {}
+    }
+  ],
+  "E_known_odp_contact": {
+    "n_reference_patterns": 120,
+    "per_method": [
+      {
+        "method": "all_in_one",
+        "groups": 103,
+        "touching_known_odp": 67,
+        "pct": 65.05,
+        "top_patterns": {
+          "alm-istack": 54,
+          "chesspattern": 49,
+          "notepattern": 48,
+          "scorepart": 46,
+          "SmartHome_Sensing": 46,
+          "invoice": 43,
+          "speciesconservation": 42,
+          "speciesnames": 42,
+          "recurrenteventseries": 32,
+          "recurrentsituationseries": 32
+        }
+      },
+      {
+        "method": "asprino_cc",
+        "groups": 5197,
+        "touching_known_odp": 446,
+        "pct": 8.58,
+        "top_patterns": {
+          "notepattern": 251,
+          "SmartHome_Sensing": 238,
+          "scorepart": 236,
+          "alm-istack": 227,
+          "chesspattern": 225,
+          "invoice": 214,
+          "speciesconservation": 205,
+          "speciesnames": 205,
+          "recurrenteventseries": 74,
+          "recurrentsituationseries": 74
+        }
+      },
+      {
+        "method": "asprino_cc_full",
+        "groups": 609,
+        "touching_known_odp": 164,
+        "pct": 26.93,
+        "top_patterns": {
+          "notepattern": 100,
+          "SmartHome_Sensing": 98,
+          "alm-istack": 96,
+          "scorepart": 96,
+          "chesspattern": 90,
+          "invoice": 86,
+          "speciesconservation": 83,
+          "speciesnames": 83,
+          "recurrenteventseries": 51,
+          "recurrentsituationseries": 51
+        }
+      },
+      {
+        "method": "connected_components",
+        "groups": 405,
+        "touching_known_odp": 21,
+        "pct": 5.19,
+        "top_patterns": {
+          "reportingevent": 10,
+          "BornDigitalArchives_ODP": 3,
+          "Policy_ODP": 3,
+          "alm-istack": 3,
+          "sensing": 2,
+          "object": 2,
+          "geometry": 1,
+          "SmartHome_Geometry": 1,
+          "time": 1,
+          "AAE": 1
+        }
+      },
+      {
+        "method": "law_ap",
+        "groups": 1456,
+        "touching_known_odp": 29,
+        "pct": 1.99,
+        "top_patterns": {
+          "reportingevent": 29
+        }
+      },
+      {
+        "method": "law_cfp",
+        "groups": 172,
+        "touching_known_odp": 1,
+        "pct": 0.58,
+        "top_patterns": {
+          "reportingevent": 1
+        }
+      },
+      {
+        "method": "namespace",
+        "groups": 435,
+        "touching_known_odp": 70,
+        "pct": 16.09,
+        "top_patterns": {
+          "alm-istack": 48,
+          "chesspattern": 44,
+          "notepattern": 42,
+          "scorepart": 42,
+          "SmartHome_Sensing": 42,
+          "invoice": 40,
+          "speciesconservation": 39,
+          "speciesnames": 39,
+          "recurrenteventseries": 31,
+          "recurrentsituationseries": 31
+        }
+      },
+      {
+        "method": "owl2vec|hdbscan",
+        "groups": 2111,
+        "touching_known_odp": 45,
+        "pct": 2.13,
+        "top_patterns": {
+          "alm-istack": 25,
+          "notepattern": 19,
+          "chesspattern": 17,
+          "scorepart": 17,
+          "SmartHome_Sensing": 14,
+          "invoice": 13,
+          "speciesconservation": 13,
+          "speciesnames": 13,
+          "DUL": 9,
+          "recurrenteventseries": 7
+        }
+      },
+      {
+        "method": "owl2vec|kmeans",
+        "groups": 764,
+        "touching_known_odp": 128,
+        "pct": 16.75,
+        "top_patterns": {
+          "alm-istack": 60,
+          "chesspattern": 54,
+          "notepattern": 54,
+          "SmartHome_Sensing": 54,
+          "scorepart": 50,
+          "invoice": 42,
+          "speciesconservation": 40,
+          "speciesnames": 40,
+          "recurrenteventseries": 34,
+          "recurrentsituationseries": 34
+        }
+      },
+      {
+        "method": "rdf2vec|hdbscan",
+        "groups": 2057,
+        "touching_known_odp": 47,
+        "pct": 2.28,
+        "top_patterns": {
+          "alm-istack": 26,
+          "notepattern": 19,
+          "chesspattern": 17,
+          "scorepart": 17,
+          "recurrenteventseries": 15,
+          "recurrentsituationseries": 15,
+          "SmartHome_Sensing": 15,
+          "bag": 13,
+          "set": 13,
+          "timeperiod": 13
+        }
+      },
+      {
+        "method": "rdf2vec|kmeans",
+        "groups": 612,
+        "touching_known_odp": 99,
+        "pct": 16.18,
+        "top_patterns": {
+          "alm-istack": 56,
+          "chesspattern": 52,
+          "notepattern": 51,
+          "scorepart": 49,
+          "SmartHome_Sensing": 45,
+          "invoice": 43,
+          "speciesconservation": 40,
+          "speciesnames": 40,
+          "recurrenteventseries": 36,
+          "recurrentsituationseries": 36
+        }
+      },
+      {
+        "method": "singletons",
+        "groups": 0,
+        "touching_known_odp": 0,
+        "pct": 0.0,
+        "top_patterns": {}
+      }
+    ]
+  },
+  "F_review_shortlist": {
+    "n_candidates": 1761,
+    "top": [
+      {
+        "size": 2,
+        "n_ontologies": 13,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo"
+        ],
+        "local_names": [
+          "bfo_0000029",
+          "bfo_0000141"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000029",
+          "http://purl.obolibrary.org/obo/BFO_0000141"
+        ],
+        "priority": 27
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000001",
+          "bfo_0000002"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000001",
+          "http://purl.obolibrary.org/obo/BFO_0000002"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000001",
+          "bfo_0000003"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000001",
+          "http://purl.obolibrary.org/obo/BFO_0000003"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000002",
+          "bfo_0000004"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000004"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000002",
+          "bfo_0000020"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000020"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000002",
+          "bfo_0000031"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000031"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000017",
+          "bfo_0000020"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000017",
+          "http://purl.obolibrary.org/obo/BFO_0000020"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000003",
+          "bfo_0000015"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000003",
+          "http://purl.obolibrary.org/obo/BFO_0000015"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000004",
+          "bfo_0000040"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000004",
+          "bfo_0000141"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000141"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 12,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000017",
+          "bfo_0000023"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000017",
+          "http://purl.obolibrary.org/obo/BFO_0000023"
+        ],
+        "priority": 25
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000030",
+          "bfo_0000040"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000030",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000006",
+          "bfo_0000141"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000141"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000019",
+          "bfo_0000020"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000019",
+          "http://purl.obolibrary.org/obo/BFO_0000020"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000003",
+          "bfo_0000008"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000003",
+          "http://purl.obolibrary.org/obo/BFO_0000008"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000008",
+          "bfo_0000038"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000008",
+          "http://purl.obolibrary.org/obo/BFO_0000038"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000016",
+          "bfo_0000017"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000016",
+          "http://purl.obolibrary.org/obo/BFO_0000017"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000006",
+          "bfo_0000009"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000009"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000027",
+          "bfo_0000040"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000027",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000019",
+          "bfo_0000145"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000019",
+          "http://purl.obolibrary.org/obo/BFO_0000145"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000016",
+          "bfo_0000034"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000016",
+          "http://purl.obolibrary.org/obo/BFO_0000034"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000015",
+          "bfo_0000182"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000015",
+          "http://purl.obolibrary.org/obo/BFO_0000182"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000003",
+          "bfo_0000035"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000003",
+          "http://purl.obolibrary.org/obo/BFO_0000035"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 11,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000008",
+          "bfo_0000148"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000008",
+          "http://purl.obolibrary.org/obo/BFO_0000148"
+        ],
+        "priority": 23
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000024",
+          "bfo_0000040"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000024",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000140",
+          "bfo_0000141"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000140",
+          "http://purl.obolibrary.org/obo/BFO_0000141"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000003",
+          "bfo_0000011"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000003",
+          "http://purl.obolibrary.org/obo/BFO_0000011"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000006",
+          "bfo_0000028"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000028"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000006",
+          "bfo_0000018"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000018"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000006",
+          "bfo_0000026"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000006",
+          "http://purl.obolibrary.org/obo/BFO_0000026"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000140",
+          "bfo_0000147"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000140",
+          "http://purl.obolibrary.org/obo/BFO_0000147"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000140",
+          "bfo_0000146"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000140",
+          "http://purl.obolibrary.org/obo/BFO_0000146"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 10,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "bfo_0000140",
+          "bfo_0000142"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000140",
+          "http://purl.obolibrary.org/obo/BFO_0000142"
+        ],
+        "priority": 21
+      },
+      {
+        "size": 2,
+        "n_ontologies": 9,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "SP",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo",
+          "prima-core"
+        ],
+        "local_names": [
+          "iao_0000030",
+          "iao_0000310"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000030",
+          "http://purl.obolibrary.org/obo/IAO_0000310"
+        ],
+        "priority": 19
+      },
+      {
+        "size": 2,
+        "n_ontologies": 8,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "BTO5.0.2-IOF",
+          "CCO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000038",
+          "bfo_0000202"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000038",
+          "http://purl.obolibrary.org/obo/BFO_0000202"
+        ],
+        "priority": 17
+      },
+      {
+        "size": 2,
+        "n_ontologies": 8,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo",
+          "prima-core"
+        ],
+        "local_names": [
+          "bfo_0000031",
+          "iao_0000030"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000031",
+          "http://purl.obolibrary.org/obo/IAO_0000030"
+        ],
+        "priority": 17
+      },
+      {
+        "size": 2,
+        "n_ontologies": 8,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo",
+          "prima-core"
+        ],
+        "local_names": [
+          "iao_0000027",
+          "iao_0000030"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000027",
+          "http://purl.obolibrary.org/obo/IAO_0000030"
+        ],
+        "priority": 17
+      },
+      {
+        "size": 2,
+        "n_ontologies": 8,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo",
+          "prima-core"
+        ],
+        "local_names": [
+          "iao_0000030",
+          "iao_0000033"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000030",
+          "http://purl.obolibrary.org/obo/IAO_0000033"
+        ],
+        "priority": 17
+      },
+      {
+        "size": 2,
+        "n_ontologies": 8,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo",
+          "prima-core"
+        ],
+        "local_names": [
+          "iao_0000033",
+          "iao_0000104"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000033",
+          "http://purl.obolibrary.org/obo/IAO_0000104"
+        ],
+        "priority": 17
+      },
+      {
+        "size": 2,
+        "n_ontologies": 7,
+        "n_methods": 2,
+        "methods": [
+          "asprino_cc",
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000121",
+          "bfo_0000148"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000121",
+          "http://purl.obolibrary.org/obo/BFO_0000148"
+        ],
+        "priority": 16
+      },
+      {
+        "size": 2,
+        "n_ontologies": 7,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "CCO",
+          "MDS",
+          "OBO",
+          "OBO_file",
+          "PMDCO",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000148",
+          "bfo_0000203"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000148",
+          "http://purl.obolibrary.org/obo/BFO_0000203"
+        ],
+        "priority": 15
+      },
+      {
+        "size": 2,
+        "n_ontologies": 7,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "iao_0000010",
+          "iao_0000104"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000010",
+          "http://purl.obolibrary.org/obo/IAO_0000104"
+        ],
+        "priority": 15
+      },
+      {
+        "size": 2,
+        "n_ontologies": 7,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "iao_0000005",
+          "iao_0000033"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000005",
+          "http://purl.obolibrary.org/obo/IAO_0000033"
+        ],
+        "priority": 15
+      },
+      {
+        "size": 2,
+        "n_ontologies": 7,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "iao_0000033",
+          "iao_0000098"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000033",
+          "http://purl.obolibrary.org/obo/IAO_0000098"
+        ],
+        "priority": 15
+      },
+      {
+        "size": 2,
+        "n_ontologies": 7,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "iao_0000007",
+          "iao_0000033"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000007",
+          "http://purl.obolibrary.org/obo/IAO_0000033"
+        ],
+        "priority": 15
+      },
+      {
+        "size": 2,
+        "n_ontologies": 7,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "SP",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "iao_0000030",
+          "iao_0000300"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000030",
+          "http://purl.obolibrary.org/obo/IAO_0000300"
+        ],
+        "priority": 15
+      },
+      {
+        "size": 2,
+        "n_ontologies": 7,
+        "n_methods": 1,
+        "methods": [
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "SP",
+          "mwo",
+          "nfdicore",
+          "oeo"
+        ],
+        "local_names": [
+          "iao_0000028",
+          "iao_0000129"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/IAO_0000028",
+          "http://purl.obolibrary.org/obo/IAO_0000129"
+        ],
+        "priority": 15
+      },
+      {
+        "size": 4,
+        "n_ontologies": 6,
+        "n_methods": 2,
+        "methods": [
+          "asprino_cc",
+          "asprino_cc_full"
+        ],
+        "ontologies": [
+          "CCO",
+          "IAO",
+          "OBO",
+          "OBO_file",
+          "SEMMD",
+          "chmo"
+        ],
+        "local_names": [
+          "bfo_0000015",
+          "bfo_0000017",
+          "bfo_0000054",
+          "bfo_0000055"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000015",
+          "http://purl.obolibrary.org/obo/BFO_0000017",
+          "http://purl.obolibrary.org/obo/BFO_0000054",
+          "http://purl.obolibrary.org/obo/BFO_0000055"
+        ],
+        "priority": 14
+      },
+      {
+        "size": 3,
+        "n_ontologies": 6,
+        "n_methods": 2,
+        "methods": [
+          "asprino_cc",
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000051",
+          "iao_0000005",
+          "iao_0000104"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000051",
+          "http://purl.obolibrary.org/obo/IAO_0000005",
+          "http://purl.obolibrary.org/obo/IAO_0000104"
+        ],
+        "priority": 14
+      },
+      {
+        "size": 3,
+        "n_ontologies": 6,
+        "n_methods": 2,
+        "methods": [
+          "asprino_cc",
+          "law_ap"
+        ],
+        "ontologies": [
+          "IAO",
+          "PMDCO",
+          "SEMMD",
+          "chmo",
+          "mwo",
+          "nfdicore"
+        ],
+        "local_names": [
+          "bfo_0000051",
+          "iao_0000007",
+          "iao_0000104"
+        ],
+        "example_iris": [
+          "http://purl.obolibrary.org/obo/BFO_0000051",
+          "http://purl.obolibrary.org/obo/IAO_0000007",
+          "http://purl.obolibrary.org/obo/IAO_0000104"
+        ],
+        "priority": 14
+      }
+    ]
+  }
+}

@@ -1,0 +1,519 @@
+@prefix bfo: <http://purl.obolibrary.org/obo/> .
+@prefix bto: <https://gitlab.com/kupferdigital/process-graphs/brinell-hardness-test/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix iof: <https://spec.industrialontologies.org/ontology/core/Core/> .
+@prefix mseo: <https://github.com/Mat-O-Lab/MSEO/raw/main/domain/util/readable_bfo_iris.ttl/> .
+@prefix ns1: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <https://qudt.org/2.1/schema/qudt/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+bfo:BFO_0000066 a owl:ObjectProperty .
+
+bfo:BFO_0000202 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000038 .
+
+bfo:has_continuant_part_at_some_time a owl:ObjectProperty .
+
+bfo:has_occurrent_part a owl:ObjectProperty .
+
+bfo:has_participant_at_some_time a owl:ObjectProperty .
+
+bfo:occupies_temporal_region a owl:ObjectProperty .
+
+bfo:precedes a owl:ObjectProperty .
+
+xsd:string a rdfs:Datatype .
+
+ns1:definition a owl:AnnotationProperty .
+
+mseo:in_accordance_with a owl:ObjectProperty .
+
+bto: a owl:Ontology ;
+    dcterms:biblographicCitation "Hossein Beygi Nasrabadi and Birgit Skrotzki. Brinell Test Ontology (BTO). 2024, www.gitlab.com/kupferdigital/process-graphs/brinell-hardness-test" ;
+    dcterms:created "2024.07.01" ;
+    dcterms:creator "Beygi Nasrabadi, Hossein (www.orcid.org/0000-0002-3092-0532)",
+        "Skrotzki, Birgit" ;
+    dcterms:licence "www.creativecommons.org/licenses/by/4.0/" ;
+    dcterms:title "Brinell Test Ontology (BTO)" ;
+    rdfs:comment "Brinell Test Ontology (BTO) has developed for representing the Brinell testing process, testing equipment requirements, test pieces charactristics, and related testing parameters and their measurement procedure according to DIN EN ISO 6506-1 standard.",
+        "KupferDigital project (www.materialdigital.de/project/1)" ;
+    owl:imports "https://raw.githubusercontent.com/iofoundry/ontology/master/core/Core.rdf" ;
+    owl:versionInfo "5.0.4 (BFO, IOF. MSEO)" .
+
+bto:OpticalMeasuringSystem a owl:Class ;
+    rdfs:subClassOf mseo:MeasurementDevice ;
+    ns1:definition "noncontact measurement using various light sources." ;
+    bto:definitionSource "" .
+
+bto:ReferenceBlock a owl:Class ;
+    rdfs:subClassOf bto:CalibrationAccessory ;
+    ns1:definition "The certified reference material is equivalent to the hardness reference block, i.e. a piece of material with a certified value and associated uncertainty." ;
+    bto:definitionSource "ISO 6506-1:2015-02" .
+
+bto:cause a owl:ObjectProperty .
+
+bto:definitionSource a owl:AnnotationProperty .
+
+bto:use a owl:ObjectProperty .
+
+qudt:hasUnit a owl:ObjectProperty .
+
+iof:ValueExpression a owl:Class ;
+    rdfs:subClassOf iof:InformationContentEntity .
+
+iof:achivesAtSomeTime a owl:ObjectProperty .
+
+iof:actsOnBehalfOfAtSomeTime a owl:ObjectProperty .
+
+iof:designatedBy a owl:ObjectProperty .
+
+iof:hasInput a owl:ObjectProperty .
+
+iof:hasOutput a owl:ObjectProperty .
+
+iof:hasQuality a owl:ObjectProperty .
+
+iof:hasSimpleExpressionValue a owl:DatatypeProperty .
+
+iof:hasSpecificOutput a owl:ObjectProperty .
+
+iof:isAchevedByAtSomeTime a owl:ObjectProperty .
+
+iof:isInputOf a owl:ObjectProperty .
+
+iof:located_in_at_some_time a owl:ObjectProperty .
+
+iof:measuredByAtSomeTime a owl:ObjectProperty .
+
+iof:prescribedBy a owl:ObjectProperty .
+
+iof:requirementSatisfiedBy a owl:ObjectProperty .
+
+bfo:BFO_0000006 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000141 .
+
+bfo:BFO_0000008 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000003 .
+
+bfo:BFO_0000009 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000006 .
+
+bfo:BFO_0000015 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000003 .
+
+bfo:BFO_0000016 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000017 .
+
+bfo:BFO_0000017 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000020 .
+
+bfo:BFO_0000029 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000141 .
+
+bfo:BFO_0000031 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000002 .
+
+bfo:BFO_0000040 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000004 .
+
+mseo:Experiment a owl:Class ;
+    rdfs:subClassOf iof:MeasurementProcess .
+
+mseo:IndentationHardness a owl:Class ;
+    rdfs:subClassOf iof:Hardness .
+
+mseo:Regulation a owl:Class ;
+    rdfs:subClassOf iof:PlanSpecification .
+
+mseo:Specimen a owl:Class ;
+    rdfs:subClassOf iof:MaterialArtifact .
+
+mseo:Strength a owl:Class ;
+    rdfs:subClassOf iof:Capability .
+
+bto:BrinellHardnessTestEquipment a owl:Class ;
+    rdfs:subClassOf bto:HardnessMeasurementDevice ;
+    ns1:definition "equipment for measuring the Brinell indentation hardness of a material" ;
+    bto:definitionSource "" .
+
+bto:BrinellTestMeasurment a owl:NamedIndividual,
+        iof:MeasurementProcess ;
+    bfo:has_continuant_part_at_some_time bto:BrinellTestPiece ;
+    bfo:has_occurrent_part bto:CheckingTemperature,
+        bto:CheckingTestingMachine,
+        bto:ChoosingTestForce,
+        bto:Loading,
+        bto:OpticalMeasuringOfIndentation,
+        bto:PlacingTestPiece,
+        bto:Unloading ;
+    bfo:precedes bto:CalculatingHardness ;
+    iof:actsOnBehalfOfAtSomeTime bto:TestingOperator ;
+    iof:measuredByAtSomeTime bto:HardnessTestingEquipment .
+
+bto:CalculatingHardness a owl:NamedIndividual,
+        mseo:ActOfAnalysing ;
+    bfo:has_occurrent_part bto:CalculatingAverageDiameter,
+        bto:CalculatingBrinellHardness ;
+    iof:actsOnBehalfOfAtSomeTime bto:HardnessTestingEquipment,
+        bto:TestingOperator .
+
+bto:CalibrationAccessory a owl:Class ;
+    rdfs:subClassOf iof:PieceOfEquipment ;
+    ns1:definition "the artifact that uses for calibration of a machine or device" ;
+    bto:definitionSource "" .
+
+bto:CheckingTemperature a owl:NamedIndividual,
+        iof:MeasurementProcess ;
+    bfo:precedes bto:CheckingTestingMachine ;
+    iof:hasQuality bto:TestTemperature .
+
+bto:Force a owl:Class ;
+    rdfs:subClassOf iof:ProcessCharacteristic ;
+    ns1:definition "strength or energy as an attribute of physical action or movement." ;
+    bto:definitionSource "Oxford Languages" .
+
+bto:HardnessMeasurementDevice a owl:Class ;
+    rdfs:subClassOf mseo:MeasurementDevice ;
+    ns1:definition "an indentation testing machine used for performing indentation hardness tests" ;
+    bto:definitionSource "ISO 23718_2007(en)" .
+
+bto:HardnessTest a owl:Class ;
+    rdfs:subClassOf bto:MechanicalTesting ;
+    ns1:definition "indentation test carried out using a hardness testing machine to measure the hardness of a material" ;
+    bto:definitionSource "ISO 17918:2015(en)" .
+
+bto:Indentation a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000009 ;
+    ns1:definition "impression made in the surface of the material by the indenter in an indentation test" ;
+    bto:definitionSource "ISO 23718_2007(en)" .
+
+bto:IndentationAverageDiameter a owl:NamedIndividual,
+        bto:Diameter ;
+    qudt:hasUnit qudt:MiliM ;
+    iof:hasSimpleExpressionValue "IndentationAverageDiameterValue"^^xsd:string ;
+    iof:isInputOf bto:CalculatingBrinellHardness .
+
+bto:IndentationHorizontalDiameter a owl:NamedIndividual,
+        bto:Diameter ;
+    qudt:hasUnit qudt:MiliM ;
+    iof:hasSimpleExpressionValue "IndentationHorizontalDiameterValue"^^xsd:string ;
+    iof:hasSpecificOutput bto:BrinellIndentation ;
+    iof:isInputOf bto:CalculatingAverageDiameter .
+
+bto:IndentationVerticalDiameter a owl:NamedIndividual,
+        bto:Diameter ;
+    qudt:hasUnit qudt:MiliM ;
+    iof:hasSimpleExpressionValue "IndentationVerticalDiameterValue"^^xsd:string ;
+    iof:hasSpecificOutput bto:BrinellIndentation ;
+    iof:isInputOf bto:CalculatingAverageDiameter .
+
+bto:Indenter a owl:Class ;
+    rdfs:subClassOf iof:PieceOfEquipment ;
+    ns1:definition "body with a hard tip, typically of diamond, hardmetal (tungsten carbide alloy), or, in special cases, steel, of specified geometry through which the test force is applied in the course of an indentation test" ;
+    bto:definitionSource "ISO 23718_2007(en)" .
+
+bto:IndenterDiameter a owl:NamedIndividual,
+        bto:Diameter ;
+    qudt:hasUnit qudt:MiliM ;
+    iof:hasSimpleExpressionValue "BrinellIndenterDiameterValue"^^xsd:string ;
+    iof:isInputOf bto:CalculatingBrinellHardness .
+
+bto:Loading a owl:NamedIndividual,
+        iof:MeasurementProcess ;
+    bfo:has_participant_at_some_time bto:HardnessTestingEquipment ;
+    bfo:precedes bto:PlacingTestPiece,
+        bto:Unloading ;
+    bto:cause bto:BrinellIndentation ;
+    iof:hasQuality bto:LoadingTime,
+        bto:MaintainingTime .
+
+bto:LoadingTime a owl:NamedIndividual,
+        bto:TestForceApplicationTime ;
+    qudt:hasUnit qudt:SEC ;
+    iof:hasSimpleExpressionValue "LoadingTimeValue"^^xsd:string .
+
+bto:MaintainingTime a owl:NamedIndividual,
+        bto:TestForceDuration ;
+    qudt:hasUnit qudt:SEC ;
+    iof:hasSimpleExpressionValue "MaintainingTimeValue"^^xsd:string .
+
+bto:MechanicalTesting a owl:Class ;
+    rdfs:subClassOf mseo:Experiment ;
+    ns1:definition "any tests for the determination of mechanical properties" ;
+    bto:definitionSource "ISO 23718_2007(en)" .
+
+bto:OneDimensionalExtent a owl:Class ;
+    rdfs:subClassOf bto:SizeQuality ;
+    ns1:definition "A One Dimensional Extent that inheres in a bearer in virtue of the bearer's extension in a downward, backward, or inward direction" ;
+    bto:definitionSource "ontologyrepository.com/CommonCoreOntologies/Mid/QualityOntology" .
+
+bto:ShapeQuality a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000019 ;
+    ns1:definition "the external form, contours, or outline of someone or something." ;
+    bto:definitionSource "Oxford Languages" .
+
+bto:SizeQuality a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000019 ;
+    ns1:definition "the relative extent of something; a thing's overall dimensions or magnitude; how big something is." ;
+    bto:definitionSource "Oxford Languages" .
+
+bto:Temperature a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000019 ;
+    ns1:definition "A Quality that inheres in a bearer in virtue of its thermal energy." ;
+    bto:definitionSource "ontologyrepository.com/CommonCoreOntologies/Mid/QualityOntology" .
+
+bto:TestForce a owl:NamedIndividual,
+        bto:Force ;
+    qudt:hasUnit qudt:N ;
+    iof:hasSimpleExpressionValue "TestForceValue"^^xsd:string ;
+    iof:isInputOf bto:CalculatingBrinellHardness .
+
+bto:TestForceApplicationTime a owl:Class ;
+    rdfs:subClassOf bto:ExperimentTime ;
+    ns1:definition "period from the start of application of force to the material until the test force is reached" ;
+    bto:definitionSource "ISO 23718_2007(en)" .
+
+bto:TestForceDuration a owl:Class ;
+    rdfs:subClassOf bto:ExperimentTime ;
+    ns1:definition "period during which the test force is held constant during a hardness test, beginning when the test force is fully applied and ending either at the start of its removal or at the start of the application of an additional force" ;
+    bto:definitionSource "ISO 23718_2007(en)" .
+
+bto:TestPieceID a owl:NamedIndividual,
+        iof:Identifier ;
+    iof:hasSimpleExpressionValue "TestPieceIndenter"^^xsd:string .
+
+bto:TestPieceMaterialComposition a owl:NamedIndividual,
+        mseo:MaterialComposition ;
+    iof:hasSimpleExpressionValue "TestPieceComposition"^^xsd:string .
+
+bto:TestTemperature a owl:NamedIndividual,
+        bto:Temperature ;
+    qudt:hasUnit qudt:DEG_C ;
+    iof:hasSimpleExpressionValue "TestTemperatureValue"^^xsd:string .
+
+bto:TestingDate a bfo:BFO_0000038,
+        owl:NamedIndividual ;
+    iof:hasSimpleExpressionValue "TestDateIdentifier"^^xsd:string .
+
+bto:TestingMachineID a owl:NamedIndividual ;
+    iof:hasSimpleExpressionValue "BrinellTestingMachineIdentifier"^^xsd:string .
+
+bto:TestingStandard a owl:NamedIndividual,
+        mseo:Regulation ;
+    iof:hasSimpleExpressionValue "DIN EN ISO 6506-1:2015-02"^^xsd:string ;
+    iof:prescribedBy bto:BrinellHardnessEquation,
+        bto:IndenterMaterial,
+        bto:IndenterTipShape ;
+    iof:requirementSatisfiedBy bto:CheckingTestingMachine,
+        bto:ChoosingTestForce,
+        bto:OpticalMeasuringOfIndentation,
+        bto:PlacingTestPiece,
+        bto:Unloading .
+
+bto:ThreeDimensionalShape a owl:Class ;
+    rdfs:subClassOf bto:ShapeQuality ;
+    ns1:definition "A Shape Quality that inheres only in a three dimensional entity." ;
+    bto:definitionSource "ontologyrepository.com/CommonCoreOntologies/Mid/QualityOntology" .
+
+qudt:DEG_C a owl:NamedIndividual,
+        qudt:Unit .
+
+qudt:HBW a owl:NamedIndividual,
+        qudt:Unit .
+
+qudt:N a owl:NamedIndividual,
+        qudt:Unit .
+
+iof:Algorithm a owl:Class ;
+    rdfs:subClassOf iof:InformationContentEntity .
+
+iof:Capability a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000016 .
+
+iof:Hardness a owl:Class ;
+    rdfs:subClassOf mseo:Strength .
+
+iof:Identifier a owl:Class ;
+    rdfs:subClassOf iof:InformationContentEntity .
+
+iof:Person a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000030 .
+
+iof:PlanSpecification a owl:Class ;
+    rdfs:subClassOf iof:InformationContentEntity .
+
+iof:ProcessCharacteristic a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000003 .
+
+bfo:BFO_0000001 a owl:Class .
+
+bfo:BFO_0000004 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000002 .
+
+bfo:BFO_0000020 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000002 .
+
+bfo:BFO_0000030 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000040 .
+
+bfo:BFO_0000141 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000004 .
+
+mseo:MaterialComposition a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000019 .
+
+mseo:MeasurementDevice a owl:Class ;
+    rdfs:subClassOf iof:PieceOfEquipment .
+
+bto:BrinellHardnessEquation a owl:NamedIndividual,
+        iof:Algorithm ;
+    iof:isAchevedByAtSomeTime bto:BrinellHardness .
+
+bto:BrinellHardnessTest a owl:Class,
+        owl:NamedIndividual,
+        bto:BrinellHardnessTest ;
+    bfo:BFO_0000066 bto:TestingLaboratory ;
+    bfo:has_occurrent_part bto:BrinellTestMeasurment ;
+    bfo:has_participant_at_some_time bto:HardnessTestingEquipment ;
+    bfo:occupies_temporal_region bto:TestingDate ;
+    rdfs:subClassOf bto:HardnessTest ;
+    ns1:definition "hardness value of a material measured normally using a 10 mm diameter tungsten carbide ball indenter with a force of 29,42 kN" ;
+    mseo:in_accordance_with bto:TestingStandard ;
+    bto:definitionSource "ISO 15156-2:2020(en)" ;
+    iof:actsOnBehalfOfAtSomeTime bto:TestingOperator ;
+    iof:hasInput bto:BrinellTestPiece .
+
+bto:BrinellIndenter a owl:NamedIndividual,
+        bto:Indenter ;
+    iof:hasQuality bto:IndenterDiameter,
+        bto:IndenterMaterial,
+        bto:IndenterTipShape .
+
+bto:ExperimentTime a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000038 ;
+    ns1:definition "time taken after the stabilization period to record dryer performance" ;
+    bto:definitionSource "ISO 23718_2007(en)" .
+
+bto:IndenterMaterial a owl:NamedIndividual,
+        mseo:MaterialComposition ;
+    iof:hasSimpleExpressionValue "TungstenCarbideComposite"^^xsd:string .
+
+bto:IndenterTipShape a owl:NamedIndividual,
+        bto:ThreeDimensionalShape ;
+    iof:hasSimpleExpressionValue "Spherical"^^xsd:string .
+
+bto:TestingLaboratory a bfo:BFO_0000029,
+        owl:NamedIndividual ;
+    iof:hasSimpleExpressionValue "LaboratoryNameAndLocation"^^xsd:string .
+
+qudt:SEC a owl:NamedIndividual,
+        qudt:Unit .
+
+iof:MaterialArtifact a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000030 .
+
+iof:PlannedProcess a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000015 .
+
+bfo:BFO_0000002 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000001 .
+
+bfo:BFO_0000003 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000001 .
+
+bfo:BFO_0000038 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000008 .
+
+mseo:ActOfAnalysing a owl:Class ;
+    rdfs:subClassOf iof:PlannedProcess .
+
+bto:BrinellHardness a owl:Class,
+        owl:NamedIndividual,
+        bto:BrinellHardness ;
+    rdfs:subClassOf mseo:IndentationHardness ;
+    ns1:definition "The Brinell hardness is proportional to the quotient obtained by dividing the test force by the curved surface area of the indentation." ;
+    bto:definitionSource "ISO 6506-1:2015-02" ;
+    qudt:hasUnit qudt:HBW ;
+    iof:hasOutput bto:BrinellHardnessTest ;
+    iof:hasQuality bto:BrinellTestPiece ;
+    iof:hasSimpleExpressionValue "BrinellHardnessValue"^^xsd:string .
+
+bto:BrinellIndentation a owl:NamedIndividual,
+        bto:Indentation ;
+    iof:achivesAtSomeTime bto:BrinellIndenter ;
+    iof:hasSimpleExpressionValue "IndentationID"^^xsd:string ;
+    iof:located_in_at_some_time bto:BrinellTestPiece .
+
+bto:CheckingTestingMachine a owl:NamedIndividual,
+        iof:MeasurementProcess ;
+    bfo:precedes bto:ChoosingTestForce .
+
+bto:ChoosingTestForce a owl:NamedIndividual,
+        iof:MeasurementProcess ;
+    bfo:precedes bto:PlacingTestPiece ;
+    iof:hasQuality bto:TestForce .
+
+bto:OpticalMeasuringOfIndentation a owl:NamedIndividual,
+        iof:MeasurementProcess ;
+    bfo:precedes bto:CalculatingAverageDiameter ;
+    iof:hasQuality bto:IndentationHorizontalDiameter,
+        bto:IndentationVerticalDiameter ;
+    iof:measuredByAtSomeTime bto:HardnessTestingEquipment .
+
+bto:TestingOperator a owl:NamedIndividual,
+        iof:Person ;
+    iof:hasSimpleExpressionValue "TestOperator"^^xsd:string .
+
+bto:Unloading a owl:NamedIndividual,
+        iof:MeasurementProcess ;
+    bfo:precedes bto:OpticalMeasuringOfIndentation .
+
+iof:PieceOfEquipment a owl:Class ;
+    rdfs:subClassOf iof:MaterialArtifact .
+
+bfo:BFO_0000019 a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000020 .
+
+bto:BrinellTestPiece a owl:NamedIndividual,
+        mseo:Specimen ;
+    iof:designatedBy bto:TestPieceID ;
+    iof:hasQuality bto:TestPieceMaterialComposition .
+
+bto:CalculatingAverageDiameter a owl:NamedIndividual,
+        mseo:ActOfAnalysing ;
+    bfo:precedes bto:CalculatingBrinellHardness ;
+    iof:hasQuality bto:IndentationAverageDiameter .
+
+bto:Diameter a owl:Class ;
+    rdfs:subClassOf bto:OneDimensionalExtent ;
+    ns1:definition "a straight line passing from side to side through the centre of a body or figure, especially a circle or sphere." ;
+    bto:definitionSource "Oxford Languages" .
+
+bto:PlacingTestPiece a owl:NamedIndividual,
+        iof:MeasurementProcess ;
+    bfo:has_participant_at_some_time bto:HardnessTestingEquipment .
+
+qudt:MiliM a owl:NamedIndividual,
+        qudt:Unit .
+
+iof:InformationContentEntity a owl:Class ;
+    rdfs:subClassOf bfo:BFO_0000031 .
+
+bto:CalculatingBrinellHardness a owl:NamedIndividual,
+        mseo:ActOfAnalysing ;
+    bto:use bto:BrinellHardnessEquation ;
+    iof:hasQuality bto:BrinellHardness .
+
+qudt:Unit a owl:Class .
+
+bto:HardnessTestingEquipment a owl:NamedIndividual,
+        bto:BrinellHardnessTestEquipment ;
+    bfo:has_participant_at_some_time bto:BrinellIndenter ;
+    iof:designatedBy bto:TestingMachineID ;
+    iof:located_in_at_some_time bto:TestingLaboratory .
+
+iof:MeasurementProcess a owl:Class ;
+    rdfs:subClassOf iof:PlannedProcess .
+

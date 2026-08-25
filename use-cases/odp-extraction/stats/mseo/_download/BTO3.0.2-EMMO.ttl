@@ -1,0 +1,619 @@
+@prefix bto: <https://gitlab.com/kupferdigital/process-graphs/brinell-hardness-test/> .
+@prefix chameo: <http://emmo.info/emmo/domain/chameo/chameo#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix emmo: <https://w3id.org/emmo#> .
+@prefix mt: <http://emmo.info/emmo/domain/mechanical-testing#> .
+@prefix ns1: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <https://qudt.org/2.1/schema/qudt/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+chameo:CalibrationProcess a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationProcedure .
+
+chameo:CharacterisationMeasurementProcess a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationProcedure .
+
+chameo:CharacterisationSystem a owl:Class ;
+    rdfs:subClassOf emmo:MeasuringSystem .
+
+chameo:hasCharactrizationProperty a owl:ObjectProperty .
+
+chameo:hasIntractionWithSample a owl:ObjectProperty .
+
+chameo:hasLab a owl:ObjectProperty .
+
+chameo:hasMeasurementSample a owl:ObjectProperty .
+
+chameo:hasMeasurementTime a owl:ObjectProperty .
+
+chameo:hasOperator a owl:ObjectProperty .
+
+xsd:string a rdfs:Datatype .
+
+ns1:definition a owl:AnnotationProperty .
+
+bto: a owl:Ontology ;
+    dcterms:biblographicCitation "Hossein Beygi Nasrabadi and Birgit Skrotzki. Brinell Test Ontology (BTO). 2024, www.gitlab.com/kupferdigital/process-graphs/brinell-hardness-test" ;
+    dcterms:created "2024.07.01" ;
+    dcterms:creator "Beygi Nasrabadi, Hossein (www.orcid.org/0000-0002-3092-0532)",
+        "Skrotzki, Birgit" ;
+    dcterms:licence "www.creativecommons.org/licenses/by/4.0/" ;
+    dcterms:title "Brinell Test Ontology (BTO)" ;
+    rdfs:comment "Brinell Test Ontology (BTO) has developed for representing the Brinell testing process, testing equipment requirements, test pieces charactristics, and related testing parameters and their measurement procedure according to DIN EN ISO 6506-1 standard.",
+        "KupferDigital project (www.materialdigital.de/project/1)" ;
+    owl:imports "https://emmo-repo.github.io/versions/1.0.0-beta7/emmo.ttl" ;
+    owl:versionInfo "3.0.4 (EMMO, CHAMEO, MT)" .
+
+bto:OpticalMeasuringSystem a owl:Class ;
+    rdfs:subClassOf emmo:MeasuringSystem ;
+    ns1:definition "noncontact measurement using various light sources." ;
+    bto:definitionSource "" .
+
+bto:ReferenceBlock a owl:Class ;
+    rdfs:subClassOf bto:CalibrationAccessory ;
+    ns1:definition "The certified reference material is equivalent to the hardness reference block, i.e. a piece of material with a certified value and associated uncertainty." ;
+    bto:definitionSource "ISO 6506-1:2015-02" .
+
+bto:accordingTo a owl:ObjectProperty .
+
+bto:definitionSource a owl:AnnotationProperty .
+
+bto:givenBy a owl:ObjectProperty .
+
+bto:hasDate a owl:ObjectProperty .
+
+bto:locatedIn a owl:ObjectProperty .
+
+bto:measuredBy a owl:ObjectProperty .
+
+bto:nextProcess a owl:ObjectProperty .
+
+bto:performedBy a owl:ObjectProperty .
+
+bto:used a owl:ObjectProperty .
+
+emmo:DigitalData a owl:Class ;
+    rdfs:subClassOf emmo:DiscreteData .
+
+emmo:hasInput a owl:ObjectProperty .
+
+emmo:hasNumericalData a owl:DatatypeProperty .
+
+emmo:hasOutput a owl:ObjectProperty .
+
+emmo:hasPart a owl:ObjectProperty .
+
+emmo:hasParticipant a owl:ObjectProperty .
+
+emmo:hasProperty a owl:ObjectProperty .
+
+emmo:hasQuantity a owl:ObjectProperty .
+
+emmo:hasQuantityValue a owl:ObjectProperty .
+
+emmo:hasReferenceUnit a owl:ObjectProperty .
+
+emmo:hasSign a owl:ObjectProperty .
+
+emmo:hasSubprocess a owl:ObjectProperty .
+
+emmo:hasSymbolData a owl:DatatypeProperty .
+
+emmo:hasquantity a owl:ObjectProperty .
+
+emmo:isCauseOf a owl:ObjectProperty .
+
+chameo:CharacterisationInstrument a owl:Class ;
+    rdfs:subClassOf emmo:Device,
+        emmo:MeasuringInstrument .
+
+chameo:CharacterisationMethod a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationProcedure .
+
+chameo:HardnessTesting a owl:Class ;
+    rdfs:subClassOf chameo:Mechanical .
+
+chameo:Laboratory a owl:Class .
+
+chameo:Mechanical a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationMethod .
+
+chameo:Operator a owl:Class ;
+    rdfs:subClassOf emmo:IntentionalAgent .
+
+chameo:Sample a owl:Class ;
+    rdfs:subClassOf emmo:Object .
+
+mt:BrinellHardness a owl:Class ;
+    rdfs:subClassOf mt:Hardness .
+
+mt:Hardness a owl:Class ;
+    rdfs:subClassOf emmo:MechanicalQuantity .
+
+mt:IndenterDevice a owl:Class ;
+    rdfs:subClassOf emmo:Device .
+
+mt:MechanicalTestingMachine a owl:Class ;
+    rdfs:subClassOf mt:TestingMachine .
+
+mt:TestingMachine a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationInstrument .
+
+bto:BrinellHardnessTestEquipment a owl:Class ;
+    rdfs:subClassOf bto:HardnessMeasurementDevice ;
+    ns1:definition "equipment for measuring the Brinell indentation hardness of a material" ;
+    bto:definitionSource "" .
+
+bto:BrinellHardnessTestingMachineIdentifier a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:Sign ;
+    emmo:hasSymbolData "BrinellTestingMachineIdentifier"^^xsd:string .
+
+bto:BrinellHardnessValue a chameo:SecondaryData,
+        owl:NamedIndividual,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "BrinellHardnessValue"^^xsd:string .
+
+bto:BrinellIndenter a mt:IndenterDevice,
+        owl:NamedIndividual ;
+    chameo:hasIntractionWithSample bto:BrinellTestPiece ;
+    emmo:hasParticipant bto:BrinellIndentation ;
+    emmo:hasProperty bto:IndenterDiameter,
+        bto:IndenterMaterial,
+        bto:IndenterTipShape .
+
+bto:BrinellIndenterDiameterValue a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "BrinellIndenterDiameterValue"^^xsd:string .
+
+bto:BrinellTestMeasurment a owl:NamedIndividual,
+        emmo:Procedure ;
+    chameo:hasMeasurementSample bto:BrinellTestPiece ;
+    bto:measuredBy bto:HardnessTestingEquipment,
+        bto:TestingOperator ;
+    bto:nextProcess bto:CalculatingHardness ;
+    emmo:hasSubprocess bto:CheckingTemperature,
+        bto:CheckingTestingMachine,
+        bto:ChoosingTestForce,
+        bto:Loading,
+        bto:OpticalMeasuringOfIndentation,
+        bto:PlacingTestPiece,
+        bto:Unloading .
+
+bto:CalculatingHardness a owl:NamedIndividual,
+        emmo:Computation ;
+    bto:performedBy bto:HardnessTestingEquipment,
+        bto:TestingOperator ;
+    emmo:hasSubprocess bto:CalculatingAverageDiameter,
+        bto:CalculatingBrinellHardness .
+
+bto:CalibrationAccessory a owl:Class ;
+    rdfs:subClassOf emmo:Device ;
+    ns1:definition "the artifact that uses for calibration of a machine or device" ;
+    bto:definitionSource "" .
+
+bto:CheckingTemperature a owl:NamedIndividual,
+        emmo:Procedure ;
+    bto:nextProcess bto:CheckingTestingMachine ;
+    emmo:hasProperty bto:TestTemperature .
+
+bto:HardnessMeasurementDevice a owl:Class ;
+    rdfs:subClassOf mt:MechanicalTestingMachine ;
+    ns1:definition "an indentation testing machine used for performing indentation hardness tests" ;
+    bto:definitionSource "ISO 23718:2007(en)" .
+
+bto:Indentation a owl:Class ;
+    ns1:definition "impression made in the surface of the material by the indenter in an indentation test" ;
+    bto:definitionSource "ISO 23718_2007(en)" .
+
+bto:IndentationAverageDiameter a owl:NamedIndividual,
+        emmo:Diameter ;
+    emmo:hasInput bto:CalculatingBrinellHardness ;
+    emmo:hasQuantityValue bto:IndentationAverageDiameterValue ;
+    emmo:hasReferenceUnit qudt:MiliM .
+
+bto:IndentationAverageDiameterValue a chameo:SecondaryData,
+        owl:NamedIndividual,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "IndentationAverageDiameterValue"^^xsd:string .
+
+bto:IndentationHorizontalDiameter a owl:NamedIndividual,
+        emmo:Diameter ;
+    emmo:hasInput bto:CalculatingAverageDiameter ;
+    emmo:hasQuantityValue bto:IndentationHorizontalDiameterValue ;
+    emmo:hasReferenceUnit qudt:MiliM ;
+    emmo:hasquantity bto:BrinellIndentation .
+
+bto:IndentationHorizontalDiameterValue a chameo:PrimaryData,
+        chameo:RawData,
+        owl:NamedIndividual,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "IndentationHorizontalDiameterValue"^^xsd:string .
+
+bto:IndentationID a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:Sign ;
+    emmo:hasNumericalData "IndentationID"^^xsd:string .
+
+bto:IndentationVerticalDiameter a owl:NamedIndividual,
+        emmo:Diameter ;
+    emmo:hasInput bto:CalculatingAverageDiameter ;
+    emmo:hasQuantityValue bto:IndentationVerticalDiameterValue ;
+    emmo:hasReferenceUnit qudt:MiliM ;
+    emmo:hasquantity bto:BrinellIndentation .
+
+bto:IndentationVerticalDiameterValue a chameo:PrimaryData,
+        chameo:RawData,
+        owl:NamedIndividual,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "IndentationVerticalDiameterValue"^^xsd:string .
+
+bto:IndenterDiameter a owl:NamedIndividual,
+        emmo:Diameter ;
+    emmo:hasInput bto:CalculatingBrinellHardness ;
+    emmo:hasQuantityValue bto:BrinellIndenterDiameterValue ;
+    emmo:hasReferenceUnit qudt:MiliM .
+
+bto:LaboratoryNameAndLocationIdentifier a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:Sign ;
+    emmo:hasSymbolData "LaboratoryNameAndLocation"^^xsd:string .
+
+bto:Loading a owl:NamedIndividual,
+        emmo:Procedure ;
+    chameo:hasMeasurementTime bto:LoadingTime,
+        bto:MaintainingTime ;
+    bto:nextProcess bto:PlacingTestPiece,
+        bto:Unloading ;
+    emmo:hasParticipant bto:HardnessTestingEquipment ;
+    emmo:isCauseOf bto:BrinellIndentation .
+
+bto:LoadingTime a chameo:MeasurementTime,
+        owl:NamedIndividual,
+        emmo:Duration ;
+    emmo:hasQuantityValue bto:LoadingTimeValue ;
+    emmo:hasReferenceUnit qudt:SEC .
+
+bto:LoadingTimeValue a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "LoadingTimeValue"^^xsd:string .
+
+bto:MaintainingTime a chameo:MeasurementTime,
+        owl:NamedIndividual,
+        emmo:Duration ;
+    emmo:hasQuantityValue bto:MaintainingTimeValue ;
+    emmo:hasReferenceUnit qudt:SEC .
+
+bto:MaintainingTimeValue a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "MaintainingTimeValue"^^xsd:string .
+
+bto:ShapeQuality a owl:Class ;
+    rdfs:subClassOf emmo:SpaceAndTimeQuantity ;
+    ns1:definition "the external form, contours, or outline of someone or something." ;
+    bto:definitionSource "Oxford Languages" .
+
+bto:Standard a owl:Class ;
+    ns1:definition "A document describing a standard: a specification organized through a standards body." ;
+    bto:definitionSource "purl.org/ontology/bibo/" .
+
+bto:TestDate a owl:Class ;
+    rdfs:subClassOf emmo:Time ;
+    ns1:definition "The date that the test was performed" ;
+    bto:definitionSource "NCI Thesaurus" .
+
+bto:TestDateIdentifier a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:Sign ;
+    emmo:hasSymbolData "TestDateIdentifier"^^xsd:string .
+
+bto:TestForce a owl:NamedIndividual,
+        emmo:Force ;
+    emmo:hasInput bto:CalculatingBrinellHardness ;
+    emmo:hasQuantityValue bto:TestForceValue ;
+    emmo:hasReferenceUnit qudt:N .
+
+bto:TestForceValue a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "TestForceValue"^^xsd:string .
+
+bto:TestOperatorIdentifier a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:Sign ;
+    emmo:hasSymbolData "TestOperator"^^xsd:string .
+
+bto:TestPieceComposition a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:Sign ;
+    emmo:hasSymbolData "TestPieceComposition"^^xsd:string .
+
+bto:TestPieceIndenter a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:Sign ;
+    emmo:hasSymbolData "TestPieceIndenter"^^xsd:string .
+
+bto:TestPieceMaterialComposition a owl:NamedIndividual,
+        emmo:Component,
+        emmo:Material ;
+    emmo:hasSign bto:TestPieceComposition .
+
+bto:TestTemperature a owl:NamedIndividual,
+        emmo:ThermodynamicTemperature ;
+    emmo:hasQuantityValue bto:TestTemperatureValue ;
+    emmo:hasReferenceUnit qudt:DEG_C .
+
+bto:TestTemperatureValue a owl:NamedIndividual,
+        bto:MetaData,
+        emmo:QuantityValue ;
+    emmo:hasNumericalData "TestTemperatureValue"^^xsd:string .
+
+bto:TestingDate a owl:NamedIndividual,
+        bto:TestDate ;
+    emmo:hasSign bto:TestDateIdentifier .
+
+bto:TestingStandard a owl:NamedIndividual,
+        bto:Standard ;
+    bto:accordingTo bto:CheckingTestingMachine,
+        bto:ChoosingTestForce,
+        bto:OpticalMeasuringOfIndentation,
+        bto:PlacingTestPiece,
+        bto:Unloading ;
+    bto:givenBy bto:BrinellHardnessEquation,
+        bto:IndenterMaterial,
+        bto:IndenterTipShape ;
+    emmo:hasSymbolData "DIN EN ISO 6506-1:2015-02"^^xsd:string .
+
+bto:ThreeDimensionalShape a owl:Class ;
+    rdfs:subClassOf bto:ShapeQuality ;
+    ns1:definition "A Shape Quality that inheres only in a three dimensional entity." ;
+    bto:definitionSource "ontologyrepository.com/CommonCoreOntologies/Mid/QualityOntology" .
+
+qudt:DEG_C a owl:NamedIndividual,
+        emmo:MeasurementUnit .
+
+qudt:HBW a owl:NamedIndividual,
+        emmo:MeasurementUnit .
+
+qudt:N a owl:NamedIndividual,
+        emmo:MeasurementUnit .
+
+emmo:Agent a owl:Class ;
+    rdfs:subClassOf emmo:Participant .
+
+emmo:Data a owl:Class .
+
+emmo:Equation a owl:Class ;
+    rdfs:subClassOf emmo:Mathematical .
+
+emmo:Force a owl:Class ;
+    rdfs:subClassOf emmo:Extensive .
+
+emmo:Intensive a owl:Class ;
+    rdfs:subClassOf emmo:CategorizedPhysicalQuantity .
+
+emmo:IntentionalAgent a owl:Class ;
+    rdfs:subClassOf emmo:Agent .
+
+emmo:IntentionalProcess a owl:Class ;
+    rdfs:subClassOf emmo:Process .
+
+emmo:Length a owl:Class ;
+    rdfs:subClassOf emmo:Extensive,
+        emmo:ISO80000Categorised .
+
+emmo:ManufacturedProduct a owl:Class ;
+    rdfs:subClassOf emmo:Object .
+
+emmo:Mathematical a owl:Class ;
+    rdfs:subClassOf emmo:Language .
+
+emmo:Measurement a owl:Class ;
+    rdfs:subClassOf emmo:Procedure .
+
+emmo:MeasuringInstrument a owl:Class ;
+    rdfs:subClassOf emmo:Measurer .
+
+emmo:MechanicalQuantity a owl:Class ;
+    rdfs:subClassOf emmo:ISO80000Categorised .
+
+emmo:Metrological a owl:Class ;
+    rdfs:subClassOf emmo:Language .
+
+emmo:Observer a owl:Class .
+
+emmo:Participant a owl:Class ;
+    rdfs:subClassOf emmo:Object .
+
+emmo:PhysicalQuantity a owl:Class .
+
+emmo:Process a owl:Class .
+
+emmo:Property a owl:Class .
+
+emmo:Symbolic a owl:Class ;
+    rdfs:subClassOf emmo:DiscreteData .
+
+emmo:ThermodynamicTemperature a owl:Class ;
+    rdfs:subClassOf emmo:Intensive .
+
+chameo:MeasurementTime a owl:Class ;
+    rdfs:subClassOf emmo:Property .
+
+chameo:PrimaryData a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationData .
+
+chameo:RawData a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationData .
+
+chameo:SecondaryData a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationData .
+
+bto:BrinellHardness a mt:BrinellHardness,
+        owl:NamedIndividual ;
+    emmo:hasProperty bto:BrinellHardnessTest ;
+    emmo:hasQuantity bto:BrinellTestPiece ;
+    emmo:hasQuantityValue bto:BrinellHardnessValue ;
+    emmo:hasReferenceUnit qudt:HBW .
+
+bto:BrinellHardnessEquation a owl:NamedIndividual,
+        emmo:Equation ;
+    emmo:hasParticipant bto:BrinellHardness .
+
+bto:BrinellHardnessTest a owl:Class,
+        owl:NamedIndividual,
+        bto:BrinellHardnessTest ;
+    chameo:hasLab bto:TestingLaboratory ;
+    chameo:hasOperator bto:TestingOperator ;
+    rdfs:subClassOf chameo:HardnessTesting ;
+    ns1:definition "hardness value of a material measured normally using a 10 mm diameter tungsten carbide ball indenter with a force of 29,42 kN" ;
+    bto:accordingTo bto:TestingStandard ;
+    bto:definitionSource "ISO 15156-2:2020(en)" ;
+    bto:hasDate bto:TestingDate ;
+    emmo:hasInput bto:BrinellTestPiece ;
+    emmo:hasParticipant bto:HardnessTestingEquipment ;
+    emmo:hasSubprocess bto:BrinellTestMeasurment .
+
+bto:IndenterMaterial a owl:NamedIndividual,
+        emmo:Component,
+        emmo:Material ;
+    emmo:hasSymbolData "TungstenCarbideComposite"^^xsd:string .
+
+bto:IndenterTipShape a owl:NamedIndividual,
+        bto:ThreeDimensionalShape ;
+    emmo:hasSymbolData "Spherical"^^xsd:string .
+
+bto:TestingLaboratory a chameo:Laboratory,
+        owl:NamedIndividual ;
+    emmo:hasSign bto:LaboratoryNameAndLocationIdentifier .
+
+qudt:SEC a owl:NamedIndividual,
+        emmo:MeasurementUnit .
+
+emmo:Component a owl:Class .
+
+emmo:DiscreteData a owl:Class .
+
+emmo:Duration a owl:Class ;
+    rdfs:subClassOf emmo:Time .
+
+emmo:Extensive a owl:Class ;
+    rdfs:subClassOf emmo:CategorizedPhysicalQuantity .
+
+emmo:Language a owl:Class ;
+    rdfs:subClassOf emmo:Symbolic .
+
+emmo:Material a owl:Class .
+
+emmo:Measurer a owl:Class ;
+    rdfs:subClassOf emmo:Observer .
+
+emmo:MeasuringSystem a owl:Class ;
+    rdfs:subClassOf emmo:Measurer .
+
+emmo:SpaceAndTimeQuantity a owl:Class ;
+    rdfs:subClassOf emmo:ISO80000Categorised .
+
+emmo:Time a owl:Class ;
+    rdfs:subClassOf emmo:SpaceAndTimeQuantity .
+
+chameo:CharacterisationProcedure a owl:Class ;
+    rdfs:subClassOf emmo:Procedure .
+
+bto:CheckingTestingMachine a owl:NamedIndividual,
+        emmo:Computation ;
+    bto:nextProcess bto:ChoosingTestForce .
+
+bto:ChoosingTestForce a owl:NamedIndividual,
+        emmo:Procedure ;
+    bto:nextProcess bto:PlacingTestPiece ;
+    emmo:hasProperty bto:TestForce .
+
+bto:OpticalMeasuringOfIndentation a owl:NamedIndividual,
+        emmo:Measurement ;
+    bto:measuredBy bto:HardnessTestingEquipment ;
+    bto:nextProcess bto:CalculatingAverageDiameter ;
+    emmo:hasOutput bto:IndentationHorizontalDiameter,
+        bto:IndentationVerticalDiameter .
+
+bto:TestingOperator a chameo:Operator,
+        owl:NamedIndividual ;
+    emmo:hasSign bto:TestOperatorIdentifier .
+
+bto:Unloading a owl:NamedIndividual,
+        emmo:Procedure ;
+    bto:nextProcess bto:OpticalMeasuringOfIndentation .
+
+emmo:CategorizedPhysicalQuantity a owl:Class ;
+    rdfs:subClassOf emmo:PhysicalQuantity .
+
+emmo:Device a owl:Class ;
+    rdfs:subClassOf emmo:ManufacturedProduct .
+
+emmo:ISO80000Categorised a owl:Class ;
+    rdfs:subClassOf emmo:CategorizedPhysicalQuantity .
+
+emmo:Object a owl:Class .
+
+chameo:CharacterisationData a owl:Class ;
+    rdfs:subClassOf emmo:Data .
+
+bto:BrinellIndentation a owl:NamedIndividual,
+        bto:Indentation ;
+    bto:locatedIn bto:BrinellTestPiece ;
+    emmo:hasSign bto:IndentationID .
+
+bto:CalculatingAverageDiameter a owl:NamedIndividual,
+        emmo:Computation ;
+    bto:nextProcess bto:CalculatingBrinellHardness ;
+    emmo:hasOutput bto:IndentationAverageDiameter .
+
+bto:PlacingTestPiece a owl:NamedIndividual,
+        emmo:Computation ;
+    emmo:hasParticipant bto:HardnessTestingEquipment .
+
+qudt:MiliM a owl:NamedIndividual,
+        emmo:MeasurementUnit .
+
+emmo:Diameter a owl:Class ;
+    rdfs:subClassOf emmo:Length .
+
+bto:BrinellTestPiece a chameo:Sample,
+        owl:NamedIndividual ;
+    chameo:hasCharactrizationProperty bto:TestPieceMaterialComposition ;
+    emmo:hasSign bto:TestPieceIndenter .
+
+bto:CalculatingBrinellHardness a owl:NamedIndividual,
+        emmo:Computation ;
+    bto:used bto:BrinellHardnessEquation ;
+    emmo:hasOutput bto:BrinellHardness .
+
+emmo:Computation a owl:Class ;
+    rdfs:subClassOf emmo:Procedure .
+
+emmo:MeasurementUnit a owl:Class .
+
+bto:HardnessTestingEquipment a owl:NamedIndividual,
+        bto:BrinellHardnessTestEquipment ;
+    bto:locatedIn bto:TestingLaboratory ;
+    emmo:hasPart bto:BrinellIndenter ;
+    emmo:hasSign bto:BrinellHardnessTestingMachineIdentifier .
+
+emmo:Sign a owl:Class .
+
+emmo:Procedure a owl:Class ;
+    rdfs:subClassOf emmo:IntentionalProcess .
+
+emmo:QuantityValue a owl:Class ;
+    rdfs:subClassOf emmo:Metrological .
+
+bto:MetaData a owl:Class ;
+    rdfs:subClassOf chameo:CharacterisationData ;
+    ns1:definition "data about data" ;
+    bto:definitionSource "ISO/TS 19129:2009" .
+

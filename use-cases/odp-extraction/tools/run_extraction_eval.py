@@ -130,12 +130,29 @@ def ground_truth(onto_dir: Path, host: set[str], strip_annots: bool,
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--manifest", required=True, type=Path)
-    ap.add_argument("--data-root", required=True, type=Path)
+    ap.add_argument("--manifest", type=Path, default=None)
+    ap.add_argument("--data-root", type=Path, default=None)
+    ap.add_argument("--corpus", type=Path, default=None,
+                    help="a directory of ontologies (one subdirectory each, or "
+                         "a flat directory of RDF files) instead of the gated "
+                         "ODP-Reuse population. Ground truth is used where "
+                         "patterns/ supplies it and absent otherwise, in which "
+                         "case the clusters are written to predictions.jsonl "
+                         "and no score is invented.")
+    ap.add_argument("--emit-predictions", action="store_true",
+                    help="write every predicted cluster, scored or not. "
+                         "Implied by --corpus.")
     ap.add_argument("--out", required=True, type=Path)
     ap.add_argument("--datasets", nargs="*", default=["noOBO", "OBO", "github"])
     ap.add_argument("--subset", choices=("complete", "reuse"), default="complete",
                     help="complete-reuse subset (paper default) or any-reuse")
+    ap.add_argument("--corpus-layout", choices=("source", "release"),
+                    default="source",
+                    help="'source' = the harvest tree (github_dataset/...); "
+                         "'release' = a release corpus (github/...), which is how "
+                         "the IRI-anonymised twin release-iri/corpus-hashed is "
+                         "evaluated. Reporting both answers which corpus the "
+                         "embedding baselines were run on.")
     ap.add_argument("--max-mb", type=float, default=0.0,
                     help="skip files larger than this (0 = no limit, default)")
     ap.add_argument("--max-entities", type=int, default=DEFAULT_MAX_ENTITIES,
@@ -167,7 +184,21 @@ def main() -> None:
                     approved.add((r["dataset"], r["ontology"], r["pattern"]))
         print(f"[iri+label] {len(approved)} human-confirmed label matches loaded")
 
+    # Resolve every input path before it is used. A relative --data-root turns
+    # each ontology path into cwd + "\..\..\" + the relative tail, and Windows
+    # applies its 260-character limit to that un-normalised string: directory
+    # listings then come back missing files that plainly exist, and the ontology
+    # is recorded as "no_ontology_file". Eighteen ontologies of the
+    # IRI-anonymised corpus were lost this way before this line existed.
+    for _attr in ("data_root", "corpus", "manifest", "out", "top_level",
+                  "approved_labels"):
+        _v = getattr(args, _attr, None)
+        if isinstance(_v, Path):
+            setattr(args, _attr, _v.resolve())
+
     args.out.mkdir(parents=True, exist_ok=True)
+    dirs = ({"github": "github", "noOBO": "noOBO", "OBO": "OBO"}
+            if args.corpus_layout == "release" else DATASETS)
     strip_annots = not args.keep_annotations
     per_path = args.out / "rq5_per_ontology.jsonl"
     done: set[tuple[str, str]] = set()
@@ -180,11 +211,23 @@ def main() -> None:
                 continue
         print(f"resuming: {len(done)} already done")
 
-    pop = load_population(args.manifest, args.datasets, args.subset)
+    emit = args.emit_predictions or bool(args.corpus)
+    if args.corpus:
+        sys.path.insert(0, str(_USECASE / "tools"))
+        from run_method_eval import walk_corpus
+        pop = walk_corpus(args.corpus)
+        print(f"corpus {args.corpus}: {len(pop)} ontologies")
+    else:
+        if not (args.manifest and args.data_root):
+            ap.error("give either --corpus DIR, or --manifest and --data-root")
+        pop = load_population(args.manifest, args.datasets, args.subset)
+        print(f"population ({args.subset}): {len(pop)} ontologies "
+              f"across {sorted({r['dataset'] for r in pop})}")
     if args.limit:
         pop = pop[:args.limit]
-    print(f"population ({args.subset}): {len(pop)} ontologies "
-          f"across {sorted({r['dataset'] for r in pop})}")
+    pred_path = args.out / "predictions.jsonl"
+    pfh = pred_path.open("w", encoding="utf-8") if emit else None
+    n_unscored = 0
 
     # Every exclusion is recorded with its reason. A silently dropped ontology is
     # how count inconsistencies get created, so skips are data, not noise.
@@ -196,8 +239,10 @@ def main() -> None:
             ds, oid = r["dataset"], r["ontology_id"]
             if (ds, oid) in done:
                 continue
-            onto_dir = args.data_root / DATASETS[ds] / oid
-            main_f = main_ontology_file(onto_dir)
+            onto_dir = (Path(r["dir"]) if r.get("dir")
+                        else args.data_root / dirs[ds] / oid)
+            main_f = (Path(r["file"]) if r.get("file")
+                      else main_ontology_file(onto_dir))
             if main_f is None:
                 skipped.append((ds, oid, "no_ontology_file", ""))
                 continue
@@ -223,10 +268,13 @@ def main() -> None:
                               complete_only=(args.subset == "complete"),
                               host_graph=g, dataset=ds,
                               approved_labels=approved or None)
-            if not gt:
+            if not gt and not emit:
                 skipped.append((ds, oid, "no_ground_truth",
                                 f"subset={args.subset}"))
                 continue
+            if not gt:
+                skipped.append((ds, oid, "no_ground_truth_predict_only",
+                                f"subset={args.subset}"))
 
             labels = {e: e.rsplit("/", 1)[-1] for e in entities}
             for mname, embed in EMBEDDERS.items():
@@ -249,6 +297,27 @@ def main() -> None:
                     continue
                 emb = np.nan_to_num(np.asarray(emb, dtype=np.float32))
                 for cl in CLUSTERERS:
+                    if not gt:
+                        # No answer key: emit the unsupervised clustering and
+                        # move on. evaluate_ontology would need the ground truth
+                        # both to pick the oracle config and to score.
+                        from extractbench.evaluate import CLUSTERERS as _CL
+                        best, best_sil = None, -2.0
+                        for name, clus, sil in _CL[cl](emb, entities):
+                            if sil > best_sil:
+                                best, best_sil = (name, clus), sil
+                        if best and pfh is not None:
+                            pfh.write(json.dumps({
+                                "corpus": args.corpus.name if args.corpus else "",
+                                "dataset": ds, "ontology": oid,
+                                "method": f"{mname}|{cl}", "config": best[0],
+                                "n_entities": len(entities),
+                                "n_clusters": len(best[1]),
+                                "scored": False,
+                                "clusters": [sorted(v) for v in best[1].values()],
+                            }) + chr(10))
+                            n_unscored += 1
+                        continue
                     res = evaluate_ontology(emb, entities, gt, cl)
                     rec = {
                         "dataset": ds, "ontology": oid, "method": mname,
@@ -268,6 +337,10 @@ def main() -> None:
                 print(f"[{i}/{len(pop)}] {el:6.0f}s "
                       f"({el / max(i - len(done), 1):.1f}s/onto)", flush=True)
 
+    if pfh is not None:
+        pfh.close()
+        print(f"[OK] {pred_path} ({n_unscored} unscored predictions)")
+
     # ---------------- skip report (never silent)
     if skipped:
         sp = args.out / "rq5_skipped.csv"
@@ -286,7 +359,11 @@ def main() -> None:
     recs = [json.loads(l) for l in per_path.open(encoding="utf-8")]
     print(f"\n{len(recs)} (ontology, method, clusterer) results")
     if not recs:
-        print("[ERROR] no results produced -- see the skip report above.")
+        if emit and n_unscored:
+            print(f"No ontology in this run had ground truth, so nothing was "
+                  f"scored. The {n_unscored} predictions are in {pred_path}.")
+        else:
+            print("[ERROR] no results produced -- see the skip report above.")
         return
     agg: list[dict] = []
     for ds in sorted({r["dataset"] for r in recs}):

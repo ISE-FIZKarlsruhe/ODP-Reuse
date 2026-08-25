@@ -1,0 +1,50 @@
+{
+  "title": "MSE-ODP: extracted ontology design pattern candidates from materials science and engineering ontologies (v1.0.0)",
+  "upload_type": "dataset",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "version": "1.0.0",
+  "description": "Candidate ontology design patterns extracted automatically from a corpus of 116 materials science and engineering (MSE) ontologies, together with the corpus as evaluated, the predicted groupings of every method, and the ground-truth-free statistics used to rank them.\n\nTHIS RELEASE HAS NO GROUND TRUTH. No ontology here is annotated with the patterns it reuses, so no accuracy is reported and none should be inferred. What is reported is what each method proposed, how much the methods agree with one another, how often a grouping recurs across ontologies, whether it is anchored in a foundational vocabulary, and whether it overlaps a documented pattern. Those are ranking signals for expert review, not scores.\n\nThe corpus is the collection assembled for the survey 'The landscape of ontologies in materials science and engineering' (arXiv:2408.06034), refreshed against each artefact's upstream release. provenance/ records, for every file, the version held, whether it was refreshed and from where, and the result of the upstream check even where no newer release was found.\n\nCompanion release: ODP-Reuse, a quality-gated benchmark of verified ODP reuse, which is where the same methods are scored against ground truth.",
+  "keywords": [
+    "ontology design patterns",
+    "materials science",
+    "ontology extraction",
+    "MSE",
+    "EMMO",
+    "BFO",
+    "PMDco",
+    "semantic web",
+    "OWL",
+    "reproducibility"
+  ],
+  "creators": [
+    {
+      "name": "Norouzi, Ebrahim",
+      "affiliation": "FIZ Karlsruhe -- Leibniz Institute for Information Infrastructure",
+      "orcid": "0000-0002-2691-6995"
+    },
+    {
+      "name": "Hertling, Sven",
+      "affiliation": "FIZ Karlsruhe / University of Mannheim",
+      "orcid": "0000-0003-0333-5888"
+    },
+    {
+      "name": "Waitelonis, J\u00f6rg",
+      "affiliation": "FIZ Karlsruhe",
+      "orcid": "0000-0001-7192-7143"
+    },
+    {
+      "name": "Sack, Harald",
+      "affiliation": "FIZ Karlsruhe / Karlsruhe Institute of Technology",
+      "orcid": "0000-0001-7069-9804"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "arXiv:2408.06034",
+      "relation": "isDerivedFrom",
+      "scheme": "arxiv"
+    }
+  ],
+  "notes": "The ontology files are redistributed under their own licences; MANIFEST.csv names the upstream of each. The CC-BY-4.0 licence above applies to the predictions, statistics and provenance produced here."
+}

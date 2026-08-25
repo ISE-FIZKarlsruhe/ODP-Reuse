@@ -1,0 +1,33 @@
+\begin{table*}[t]
+\centering
+\caption{UC1: automatic ODP extraction on the quality-gated corpus. Entity-level precision, recall and $F_1$, macro-averaged over ontologies after Hungarian matching of predicted clusters to ground-truth pattern instances. \emph{pred.} is the mean number of clusters predicted per ontology. Every score is computed over the ontologies present in \emph{both} corpora, so the plain and anonymised columns are paired; population sizes are given per dataset. The full conceptual-components pipeline is the exception: it needs the lexical content of entity labels for its disambiguation and frame-detection steps, which IRI anonymisation removes, so it is reported on the plain corpus only and over its own population. Embedding hyper-parameters are chosen by silhouette without consulting the ground truth. The best $F_1$ per column among the \emph{methods} is in bold; the reference points at the top are not methods and are excluded from that comparison. Clustering is by K-Means~\cite{lloyd1982kmeans} or HDBSCAN~\cite{campello2013hdbscan}, and matching by Hungarian assignment~\cite{kuhn1955hungarian}.}
+\label{tab:uc1_all_methods}
+\setlength{\tabcolsep}{4pt}
+\footnotesize
+\begin{tabular}{l|rrrr|r|rrrr|r}
+\toprule
+& \multicolumn{5}{c|}{\textbf{GitHub}} & \multicolumn{5}{c}{\textbf{Paper \& Repo}} \\
+& \multicolumn{4}{c|}{plain} & anon. & \multicolumn{4}{c|}{plain} & anon. \\
+\textbf{Method} & pred. & P & R & $F_1$ & $F_1$ & pred. & P & R & $F_1$ & $F_1$ \\
+\midrule
+\multicolumn{11}{l}{\textit{Reference points}} \\
+All entities in one cluster & 1.00 & 0.123 & 1.000 & 0.190 & 0.190 & 1.00 & 0.210 & 1.000 & 0.312 & 0.312 \\
+One entity per cluster & 91.71 & 0.992 & 0.568 & 0.640 & 0.640 & 93.39 & 1.000 & 0.397 & 0.487 & 0.487 \\
+Connected components & 8.57 & 0.333 & 0.792 & 0.320 & 0.319 & 6.06 & 0.344 & 0.842 & 0.369 & 0.369 \\
+IRI namespace grouping & 6.99 & 0.894 & 0.920 & 0.883 & 0.238 & 5.86 & 0.922 & 0.878 & 0.875 & 0.331 \\
+\multicolumn{11}{l}{\textit{Published extraction methods}} \\
+Conceptual components, communities~\cite{10.1145/3460210.3493542_extraction} & 13.05 & 0.269 & 0.414 & 0.263 & 0.265 & 14.61 & 0.392 & 0.341 & 0.317 & 0.323 \\
+Conceptual components, full pipeline~\cite{10.1145/3460210.3493542_extraction} & 5.47 & 0.214 & 0.456 & 0.223 & -- & 5.41 & 0.309 & 0.350 & 0.276 & -- \\
+Axiom-tree mining, axiom patterns~\cite{doi:10.3233/SW-170280_extraction} & 245.15 & 0.281 & 0.262 & 0.214 & 0.213 & 7.16 & 0.331 & 0.218 & 0.206 & 0.208 \\
+Axiom-tree mining, class frames~\cite{doi:10.3233/SW-170280_extraction} & 0.23 & 0.007 & 0.009 & 0.006 & 0.006 & 0.29 & 0.034 & 0.031 & 0.028 & 0.028 \\
+\multicolumn{11}{l}{\textit{Embedding baselines}} \\
+OWL2Vec*~\cite{chen2021owl2vec} + K-Means & 6.51 & 0.284 & 0.751 & \textbf{0.320} & \textbf{0.327} & 6.14 & 0.477 & 0.621 & \textbf{0.448} & \textbf{0.449} \\
+OWL2Vec* + HDBSCAN & 7.20 & 0.250 & 0.429 & 0.243 & 0.248 & 6.14 & 0.373 & 0.393 & 0.324 & 0.312 \\
+RDF2Vec~\cite{ristoski2016rdf2vec} + K-Means & 5.28 & 0.257 & 0.761 & 0.298 & 0.299 & 5.33 & 0.437 & 0.665 & 0.435 & 0.423 \\
+RDF2Vec + HDBSCAN & 8.43 & 0.260 & 0.435 & 0.258 & 0.253 & 9.98 & 0.356 & 0.397 & 0.305 & 0.306 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\footnotesize Paired populations: GitHub $n=437$; Paper \& Repo $n=51$;\\
+\emph{One entity per cluster} scores $P=0.992$ rather than $1.000$ because each ground-truth instance is matched to at most one predicted cluster: where an ontology's instances share entities, only one instance can claim the singleton holding a shared entity, and the remaining instances are matched to singletons lying outside them. Ten GitHub ontologies are affected. The constraint binds every method and not this reference point alone --- 73 of the 442 GitHub and 12 of the 51 Paper \& Repo ontologies have instances that overlap, and on those no hard partition can reach $F_1$ 1. The exact bound averages $0.964$ and $0.976$ over the two portions and falls to $0.333$ at worst.\\
+\emph{Populations.} Every method is scored over the same ontologies, the intersection of those both corpora provide, with one exception: steps 2--7 of the full conceptual-components pipeline consume the communities its first stage produces, and on 35 GitHub and 2 Paper \& Repo ontologies that stage produced none, so the pipeline is reported over the 407 and 49 it covers. Scored over those same ontologies its first stage reaches $F_1$ 0.286 and 0.330.\end{flushleft}
+\end{table*}
