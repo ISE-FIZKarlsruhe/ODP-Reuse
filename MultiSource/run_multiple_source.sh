@@ -60,128 +60,13 @@ fi
 echo "[i] Found $TOTAL_FILES ontology files."
 
 # -----------------------------
-# Comprehensive IRI extraction (single Python run via heredoc)
+# Comprehensive IRI extraction (pattern_iris.py; the CI harvest uses the same module)
 # -----------------------------
 TMP_IRIS="$(mktemp)"
 trap 'rm -f "$TMP_IRIS"' EXIT
 
-python3 - "$IRI_HOST_FILTER" "$EXTRACT_REPORT" "$DIRS_SUMMARY" "$DIRS_NO_IRI" "$FILES_NO_IRI" "${FILES[@]}" > "$TMP_IRIS" <<'PY'
-import sys, io, os, re, csv
-from collections import defaultdict
-
-host_filter = sys.argv[1]
-EXTRACT_REPORT = sys.argv[2]
-DIRS_SUMMARY   = sys.argv[3]
-DIRS_NO_IRI    = sys.argv[4]
-FILES_NO_IRI   = sys.argv[5]
-files = sys.argv[6:]
-
-# Regexes
-RX_XML_BASE       = re.compile(r'xml:base\s*=\s*"([^"]+)"', re.I)
-RX_XMLNS_BASE     = re.compile(r'xmlns:base\s*=\s*"([^"]+)"', re.I)   # non-standard but used here
-RX_XMLNS_DEFAULT  = re.compile(r'xmlns\s*=\s*"([^"]+)"', re.I)        # default namespace (strip '#')
-RX_ONTO_ATTR      = re.compile(r'<owl:Ontology[^>]*?(?:IRI|rdf:about)\s*=\s*"([^"]+)"', re.I)
-RX_OWLXML_ONTOIRI = re.compile(r'<Ontology[^>]*?\sontologyIRI\s*=\s*"([^"]+)"', re.I)   # OWL/XML
-RX_TTL_AT_BASE    = re.compile(r'@base\s*<([^>]+)>', re.I)
-RX_TTL_BASE       = re.compile(r'^\s*BASE\s*<([^>]+)>\s*$', re.I|re.M)                 # Turtle 1.1
-RX_TTL_EXPL_SUBJ  = re.compile(r'^\s*<([^>]+)>\s+a\s+owl:Ontology\b', re.I|re.M)
-RX_TTL_VER_IRI    = re.compile(r'owl:versionIRI\s*<([^>]+)>', re.I)
-RX_TTL_PREFIX_COLON = re.compile(r'@prefix\s*:\s*<([^>]+)>\s*\.', re.I)
-RX_TTL_COLON_IS_ONTO= re.compile(r'^\s*:\s+a\s+owl:Ontology\b', re.I|re.M)
-
-def read_text(p):
-    try:
-        with io.open(p, 'r', encoding='utf-8', errors='ignore') as fh:
-            return fh.read()
-    except Exception:
-        return ""
-
-def keep(iri: str) -> bool:
-    return (iri and (host_filter == "" or host_filter.lower() in iri.lower()))
-
-def add_match(matches, iri, method):
-    iri = iri.strip()
-    if iri and keep(iri):
-        matches.add((iri, method))
-
-rows = []
-dir_counts = defaultdict(lambda: {"total":0, "with":0, "without":0, "iris":set()})
-files_without = []
-
-for p in files:
-    text = read_text(p)
-    d = os.path.dirname(p)
-    dir_counts[d]["total"] += 1
-    matches = set()
-
-    for m in RX_XML_BASE.findall(text):
-        add_match(matches, m, "xml:base")
-    for m in RX_XMLNS_BASE.findall(text):
-        add_match(matches, m, "xmlns:base (namespace)")
-    for m in RX_XMLNS_DEFAULT.findall(text):
-        iri = m.strip().rstrip('#')  # e.g., http://.../Airline.owl#
-        add_match(matches, iri, "xmlns (default namespace)")
-    for m in RX_ONTO_ATTR.findall(text):
-        add_match(matches, m, "owl:Ontology IRI/rdf:about")
-    for m in RX_OWLXML_ONTOIRI.findall(text):
-        add_match(matches, m, "OWL/XML ontologyIRI")
-    for m in RX_TTL_AT_BASE.findall(text):
-        add_match(matches, m, "Turtle @base")
-    for m in RX_TTL_BASE.findall(text):
-        add_match(matches, m, "Turtle BASE")
-    for m in RX_TTL_EXPL_SUBJ.findall(text):
-        add_match(matches, m, "Turtle <IRI> a owl:Ontology")
-    for m in RX_TTL_VER_IRI.findall(text):
-        add_match(matches, m, "owl:versionIRI")
-
-    # Heuristic: default ':' prefix + ': a owl:Ontology'
-    m = RX_TTL_PREFIX_COLON.search(text)
-    if m and RX_TTL_COLON_IS_ONTO.search(text):
-        add_match(matches, m.group(1).strip(), "Turtle @prefix : <> + : a owl:Ontology")
-
-    if matches:
-        dir_counts[d]["with"] += 1
-        for iri, method in sorted(matches):
-            rows.append({"file": p, "dir": d, "iri": iri, "method": method})
-            dir_counts[d]["iris"].add(iri)
-    else:
-        dir_counts[d]["without"] += 1
-        files_without.append(p)
-
-# Detailed per-file report
-with open(EXTRACT_REPORT, "w", newline="", encoding="utf-8") as f:
-    w = csv.DictWriter(f, fieldnames=["file","dir","iri","method"])
-    w.writeheader()
-    for r in rows:
-        w.writerow(r)
-
-# Per-directory summary
-with open(DIRS_SUMMARY, "w", newline="", encoding="utf-8") as f:
-    w = csv.DictWriter(f, fieldnames=["dir","total_files","files_with_iri","files_without_iri","unique_iris"])
-    w.writeheader()
-    for d in sorted(dir_counts):
-        w.writerow({
-            "dir": d,
-            "total_files": dir_counts[d]["total"],
-            "files_with_iri": dir_counts[d]["with"],
-            "files_without_iri": dir_counts[d]["without"],
-            "unique_iris": len(dir_counts[d]["iris"]),
-        })
-
-# Dirs/files with no IRI
-with open(DIRS_NO_IRI, "w", encoding="utf-8") as f:
-    for d in sorted(dir_counts):
-        if dir_counts[d]["with"] == 0:
-            f.write(d + "\n")
-with open(FILES_NO_IRI, "w", encoding="utf-8") as f:
-    for p in files_without:
-        f.write(p + "\n")
-
-# Print unique IRIs to stdout (captured by the shell into $TMP_IRIS)
-uniq = sorted({r["iri"] for r in rows})
-for iri in uniq:
-    print(iri)
-PY
+python3 pattern_iris.py extract "$IRI_HOST_FILTER" "$EXTRACT_REPORT" "$DIRS_SUMMARY" \
+  "$DIRS_NO_IRI" "$FILES_NO_IRI" "${FILES[@]}" > "$TMP_IRIS"
 
 # Filter out generic template/homepage IRIs (optional)
 grep -viE '/template(/.*)?$' "$TMP_IRIS" | \
@@ -249,7 +134,7 @@ python3 "$PY_SCRIPT" \
   --out odp_google.csv \
   $EXTRA_ARGS
 
-run: all major sources (auto-discovers ODP IRIs)
+# run: all major sources (auto-discovers ODP IRIs)
 python3 "$PY_SCRIPT" \
   --patterns "$(paste -sd, "$PATTERNS_TXT")" \
   --sources "$SOURCES" \

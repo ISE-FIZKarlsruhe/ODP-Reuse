@@ -1,13 +1,22 @@
 name: Quarterly ODP-reuse harvest
 
-# Re-runs discovery, repair, de-duplication and the quality gate on a schedule,
-# and opens an issue listing ontology-pattern pairs that did not exist in the
-# published release. This is the resource's maintenance loop: it turns the
-# dataset from a one-time snapshot into something that keeps measuring.
+# Re-runs discovery, repair and the quality gate for the GitHub portion of the
+# corpus on a schedule, and opens an issue describing what changed since the
+# published release.
 #
-# The claim the paper makes -- that the pipeline is reproducible -- is TESTED by
-# this workflow rather than asserted: if the pipeline cannot be re-run from a
-# clean checkout on a schedule, the workflow fails and says so publicly.
+# What this tests, and what it does not. It tests that the harvester still runs
+# end to end from a clean checkout, that its output still passes the gate and
+# the removal audit, and what is new on GitHub. It does NOT test that the release
+# is reproducible: discovery queries live APIs, so a re-harvest finds a different
+# set of files by design. Exact reproducibility of the release -- archived
+# corpus in, released MANIFEST.csv out -- is tested by reproduce.yml.
+#
+# Time budget. GitHub-hosted jobs are capped at 6 h regardless of
+# timeout-minutes. GitHub code search allows 10 requests/minute; the finder paces
+# itself at 9 and searches ~150 pattern IRIs in about 75 minutes. Its GitHub
+# phase is capped at 150 minutes; if the cap is hit the remaining IRIs are
+# recorded as not_searched, the partial results are uploaded, and the run fails
+# saying so, instead of being killed with nothing to show.
 
 on:
   schedule:
@@ -16,29 +25,34 @@ on:
   workflow_dispatch:
     inputs:
       sources:
-        description: 'Discovery sources (comma-separated)'
-        default: 'github,google,bioportal,matportal,lov'
-      dry_run:
-        description: 'Discover and report only; do not commit'
-        type: boolean
-        default: false
+        description: >-
+          Discovery sources, comma-separated. GitHub feeds the gate; bioportal,
+          matportal and lov go to the discovery report only. Google's Custom
+          Search JSON API shuts down on 2027-01-01.
+        default: 'github,bioportal,matportal,lov'
+      github_max_minutes:
+        description: 'Cap on the GitHub search phase (minutes)'
+        default: '150'
 
 permissions:
-  contents: write
+  contents: read
   issues: write
 
 concurrency:
   group: quarterly-harvest
   cancel-in-progress: false
 
+env:
+  SOURCES: ${{ github.event.inputs.sources || 'github,bioportal,matportal,lov' }}
+  GITHUB_MAX_MINUTES: ${{ github.event.inputs.github_max_minutes || '150' }}
+
 jobs:
   harvest:
     runs-on: ubuntu-latest
-    timeout-minutes: 720          # discovery is API-rate-limited, not CPU-bound
+    timeout-minutes: 350          # under the 6 h hard cap, so the upload step still runs
 
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
 
       - uses: actions/setup-python@v5
         with:
@@ -51,8 +65,48 @@ jobs:
           pip install -r requirements.txt
           pip install -r pipeline/requirements.txt
 
+      # A source whose key is missing is skipped by the finder. Say so where it
+      # will be read, rather than letting the run look complete.
+      - name: Check credentials
+        env:
+          BIOPORTAL_API_KEY: ${{ secrets.BIOPORTAL_API_KEY }}
+          MATPORTAL_API_KEY: ${{ secrets.MATPORTAL_API_KEY }}
+          GOOGLE_API_KEY:    ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          {
+            echo "## Harvest configuration"
+            echo "- sources: \`$SOURCES\`"
+            echo "- GitHub search cap: $GITHUB_MAX_MINUTES min"
+          } >> "$GITHUB_STEP_SUMMARY"
+          for pair in bioportal:BIOPORTAL_API_KEY matportal:MATPORTAL_API_KEY google:GOOGLE_API_KEY; do
+            src="${pair%%:*}"; var="${pair#*:}"
+            if [[ ",$SOURCES," == *",$src,"* && -z "${!var}" ]]; then
+              echo "::warning::$src is selected but the $var secret is not set; $src will be skipped."
+              echo "- **$src skipped**: secret \`$var\` not set" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+          if [[ ",$SOURCES," == *",google,"* ]]; then
+            echo "::warning::Google's Custom Search JSON API is closed to new customers and shuts down on 2027-01-01."
+          fi
+
+      # The search set: the 144 IRIs the release searched, plus any IRI the ODPA
+      # repository has gained since, labelled so the report can keep the two apart.
+      - name: Build the pattern search set
+        run: |
+          set -o pipefail
+          mkdir -p harvest/report
+          cd MultiSource
+          git clone --depth 1 https://github.com/odpa/patterns-repository.git
+          echo "- ODPA patterns-repository: \`$(git -C patterns-repository rev-parse HEAD)\`" >> "$GITHUB_STEP_SUMMARY"
+          python pattern_iris.py sets \
+            --release report/retrieved_patterns.csv \
+            --repo patterns-repository \
+            --out ../harvest/report/pattern_sets.csv 2>&1 \
+            | sed 's/^/- /' | tee -a "$GITHUB_STEP_SUMMARY"
+
       # ---------------------------------------------------------------- 1. discover
       - name: Discover candidate ontologies
+        timeout-minutes: 200
         env:
           GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
           GOOGLE_API_KEY:    ${{ secrets.GOOGLE_API_KEY }}
@@ -61,23 +115,23 @@ jobs:
           MATPORTAL_API_KEY: ${{ secrets.MATPORTAL_API_KEY }}
         run: |
           cd MultiSource
-          # The pattern libraries are third-party and are not redistributed in
-          # this repository, so build_github_dataset.py has nothing to match
-          # against unless the ODPA repository is cloned first. The finder itself
-          # does not need it: with --patterns omitted it auto-discovers the
-          # pattern IRIs from odpa/patterns-repository over the API.
-          if [ ! -d patterns-repository ]; then
-            git clone --depth 1 https://github.com/odpa/patterns-repository.git
-          fi
           python odp_multi_source_finder.py \
-            --sources "${{ github.event.inputs.sources || 'github,google,bioportal,matportal,lov' }}" \
+            --sources "$SOURCES" \
+            --patterns-file ../harvest/report/pattern_sets.csv \
             --github-max-pages 5 \
+            --github-search-per-minute 9 \
+            --github-max-minutes "$GITHUB_MAX_MINUTES" \
             --google-pages 2 \
             --google-skip-on-403 \
             --google-skip-on-429 \
-            --out report/
+            --out ../harvest/report/results.csv
+
+      - name: Download candidate ontologies
+        timeout-minutes: 90
+        run: |
+          cd MultiSource
           python build_github_dataset.py \
-            --csv report/github.csv \
+            --csv ../harvest/report/results.csv \
             --patterns-repo ./patterns-repository \
             --out-dir ../harvest/github_dataset
 
@@ -100,7 +154,7 @@ jobs:
           python audit_filters.py --manifest ../harvest/out/MANIFEST.csv \
             --data-root ../harvest --out ../harvest/out/audit --sample 100
 
-      - name: Fail if any removal cannot be re-verified
+      - name: Fail if any re-verified removal is disputed
         run: |
           python - <<'PY'
           import csv, glob, sys
@@ -113,7 +167,7 @@ jobs:
               for f, o, e in bad[:20]:
                   print(f"::error file={f}::DISPUTED removal {o}: {e}")
               sys.exit(f"{len(bad)} removals could not be re-verified")
-          print("all sampled removals re-verified")
+          print("no sampled removal was disputed")
           PY
 
       # ---------------------------------------------------------------- 4. diff
@@ -124,9 +178,11 @@ jobs:
           python diff_release.py \
             --old ../release-iri/MANIFEST.csv \
             --new ../harvest/out/MANIFEST.csv \
-            --old-pairs ../release-iri/views \
-            --new-root ../harvest \
+            --discovery ../harvest/report/results.csv \
+            --search-status ../harvest/report/results_github_status.csv \
+            --audit ../harvest/out/audit \
             --out ../harvest/diff
+          cat ../harvest/diff/REPORT.md >> "$GITHUB_STEP_SUMMARY"
 
       # ---------------------------------------------------------------- 5. report
       - name: Open an issue when something changed
@@ -145,11 +201,15 @@ jobs:
         env:
           NEW_PAIRS: ${{ steps.diff.outputs.new_pairs }}
 
+      # Uploaded even when an earlier step failed or the job was cancelled, so a
+      # partial harvest is still inspectable.
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: harvest-${{ github.run_number }}
           path: |
+            harvest/report/
+            harvest/github_dataset/download_log.csv
             harvest/out/MANIFEST.csv
             harvest/out/gate_summary.md
             harvest/out/audit/
@@ -157,17 +217,6 @@ jobs:
             harvest/repair/
           retention-days: 90
 
-      # ---------------------------------------------------------------- 6. propose
-      - name: Open a PR with the updated manifest
-        if: steps.diff.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: harvest/${{ github.run_number }}
-          title: 'Quarterly harvest: update manifest and views'
-          body-path: harvest/diff/REPORT.md
-          labels: harvest
-          add-paths: |
-            release-iri/MANIFEST.csv
-            release-iri/gate_summary.csv
-            release-iri/gate_summary.md
-            release-iri/views/**
+      # No pull request is opened. The harvest's manifest covers the GitHub
+      # portion only and must not replace the release's; a new release is cut
+      # deliberately with release.yml after the issue has been reviewed.

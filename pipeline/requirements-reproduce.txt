@@ -1,0 +1,14 @@
+# Exact versions for .github/workflows/reproduce.yml.
+#
+# The reproduce job re-runs the quality gate on the archived corpus and compares
+# every row with release-iri/MANIFEST.csv, so the RDF parser is pinned: a parser
+# upgrade can change what parses and how many triples a file yields, which
+# would show up as a failed reproduction rather than a changed dependency.
+#
+# These versions re-gated v1.2.0 locally (2026-11-05) with 1958 of 1965 compared
+# rows identical; the other 6 differ only in pattern_errors, a --resume cache
+# defect since fixed in build_manifest.py.
+#
+# The gate and verify_reproduction.py need nothing else from pipeline/requirements.txt.
+rdflib==7.6.0
+pyparsing==3.0.9

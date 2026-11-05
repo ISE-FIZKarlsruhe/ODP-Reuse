@@ -80,8 +80,15 @@ def record_from_cache(d: dict) -> OntologyRecord:
     rec = OntologyRecord(ontology_id=d["ontology_id"], dataset=d["dataset"],
                          path=d["path"])
     for k, v in d.items():
-        if hasattr(rec, k) and k not in ("patterns", "entities"):
+        if hasattr(rec, k) and k not in ("patterns", "entities", "pattern_errors"):
             setattr(rec, k, v)
+    # The cache holds csv_row(): pattern_errors joined into one string, cut at
+    # 1000 characters, with the true count beside it. Restore the list, padded
+    # to that count, so csv_row() writes back exactly what was cached.
+    joined = d.get("pattern_errors") or ""
+    errors = joined.split(" ; ") if joined else []
+    n = int(d.get("n_pattern_errors") or 0)
+    rec.pattern_errors = errors + ["(truncated)"] * max(0, n - len(errors))
     return rec
 
 

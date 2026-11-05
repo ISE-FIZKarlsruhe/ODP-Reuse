@@ -181,6 +181,12 @@ def gh_request(session: requests.Session, url: str, params=None, *, max_retries:
             backoff = min(120, backoff * 2)
             continue
 
+        # Any other 4xx is a property of the request, not of the moment: a query
+        # GitHub cannot parse (422) fails identically on every retry, and each
+        # retry still counts against the search rate limit.
+        if 400 <= r.status_code < 500:
+            r.raise_for_status()
+
         # If we reach here and can retry, do so a few times
         attempt += 1
         if attempt <= max_retries:
@@ -255,16 +261,15 @@ def derive_label_from_iri(iri: str) -> str:
 
 def build_code_search_queries_for_iri(iri: str) -> List[str]:
     """
-    Returns a small set of GitHub Code Search queries:
-    - one grouped query OR-ing a few common extensions (preferred)
-    - per-extension fallbacks (in case the grouped one 422s)
-    Also adds `in:file` to force content search.
+    One GitHub Code Search query per file extension, with `in:file` to force
+    content search.
+
+    There is deliberately no grouped ``( extension:a OR extension:b )`` query:
+    the REST code-search parser rejects it with a 422 on every call, so it only
+    ever cost a request per IRI before these per-extension queries ran.
     """
     exts = ["owl", "ttl", "rdf", "xml"]  # concise set; expand if you want
-    grouped = " OR ".join(f"extension:{e}" for e in exts)
-    queries = [f'"{iri}" ( {grouped} ) in:file']
-    queries.extend([f'"{iri}" extension:{e} in:file' for e in exts])
-    return queries
+    return [f'"{iri}" extension:{e} in:file' for e in exts]
 
 
 def is_generic_iri(iri: str) -> bool:
@@ -284,12 +289,38 @@ def safe_queries(queries: List[str], max_len: int = 256) -> List[str]:
     return [q for q in queries if len(q) <= max_len]
 
 
-def github_code_search(session: requests.Session, query: str, *, per_page=50, max_pages=5, delay_ms=1200, max_retries=6) -> Iterable[Dict]:
+class SearchThrottle:
+    """
+    Space calls so that at most ``per_minute`` start in any minute.
+
+    GitHub allows 10 code-search requests per minute. Exceeding it does not just
+    fail the request: it trips the secondary rate limit, whose Retry-After is
+    typically ~12 minutes. Staying under the limit is far cheaper than obeying
+    the back-off afterwards.
+    """
+
+    def __init__(self, per_minute: float = 9, clock=time.monotonic, sleep=time.sleep):
+        self.interval = 60.0 / per_minute if per_minute > 0 else 0.0
+        self.clock, self.sleep = clock, sleep
+        self._last: Optional[float] = None
+
+    def wait(self) -> None:
+        if self._last is not None:
+            gap = self.interval - (self.clock() - self._last)
+            if gap > 0:
+                self.sleep(gap)
+        self._last = self.clock()
+
+
+def github_code_search(session: requests.Session, query: str, *, per_page=50, max_pages=5, delay_ms=1200, max_retries=6,
+                       throttle: Optional[SearchThrottle] = None) -> Iterable[Dict]:
     """
     Iterate GitHub code search results with polite pacing.
     """
     for page in range(1, max_pages + 1):
         params = {"q": query, "per_page": min(100, max(1, per_page)), "page": page}
+        if throttle is not None:
+            throttle.wait()
         r = gh_request(session, f"{GITHUB_API}/search/code", params=params, max_retries=max_retries)
         js = r.json()
         items = js.get("items", [])
@@ -299,6 +330,133 @@ def github_code_search(session: requests.Session, query: str, *, per_page=50, ma
             break
         # polite delay between pages
         time.sleep(_jitter_ms(delay_ms))
+
+
+def search_github_patterns(patterns: List[Tuple[str, str]], search, *,
+                           skip_generic: bool = False,
+                           deadline: Optional[float] = None,
+                           clock=None,
+                           on_pattern_done=None) -> Tuple[List[Dict[str, str]], List[Dict]]:
+    """
+    Run the per-extension code-search queries for every pattern IRI.
+
+    ``search(query)`` yields GitHub code-search items. Returns ``(rows, status)``:
+    one result row per hit, and one status row per pattern IRI saying whether it
+    was searched -- so a run that stops early says which IRIs it never reached
+    instead of silently reporting them as unreused.
+
+    Once ``clock()`` passes ``deadline`` the remaining IRIs are marked
+    ``not_searched`` and not queried.
+    """
+    now = clock if clock is not None else time.monotonic
+    rows: List[Dict[str, str]] = []
+    status: List[Dict] = []
+    for idx, (label, iri) in enumerate(patterns, 1):
+        st = {"source": "github", "pattern_iri": iri, "status": "done",
+              "queries": 0, "hits": 0, "note": ""}
+        status.append(st)
+        if deadline is not None and now() >= deadline:
+            st.update(status="not_searched", note="time budget exhausted")
+            continue
+        log(f"[GitHub {idx}/{len(patterns)}] Searching for IRI: {iri}")
+        if skip_generic and is_generic_iri(iri):
+            log(f"[GitHub] Skipping generic template/homepage IRI (flagged): {iri}")
+            st.update(status="skipped", note="generic IRI")
+            continue
+
+        queries = safe_queries(build_code_search_queries_for_iri(iri))
+        if not queries:
+            log(f"[GitHub] No usable queries (likely too long) for: {iri}")
+            st.update(status="skipped", note="query too long")
+            continue
+        rejected = 0
+        for q in queries:
+            st["queries"] += 1
+            try:
+                for item in search(q):
+                    rows.append({
+                        "source": "github",
+                        "pattern_label": as_str(label),
+                        "pattern_iri": as_str(iri),
+                        "match_label": as_str(item.get("repository", {}).get("full_name")),
+                        "url": normalize_url(item.get("html_url")),
+                        "details": as_str(item.get("path")),
+                    })
+                    st["hits"] += 1
+            except requests.HTTPError as e:
+                if e.response is not None and e.response.status_code == 422:
+                    log(f"[GitHub] 422 for query: {q}. Skipping it.")
+                    rejected += 1
+                    continue
+                raise
+        if rejected:
+            st["note"] = f"{rejected} quer{'y' if rejected == 1 else 'ies'} rejected (422)"
+        if on_pattern_done is not None:
+            on_pattern_done(rows, status)
+    return rows, status
+
+
+def load_patterns_file(path) -> Tuple[List[Tuple[str, str]], Dict[str, str]]:
+    """
+    Read pattern IRIs from a CSV with a ``pattern_iri`` column and an optional
+    ``pattern_set`` column (e.g. ``release`` / ``new``), or from a plain list
+    with one IRI per line. Returns ``(patterns, pattern_set_by_iri)``.
+    """
+    with open(path, newline="", encoding="utf-8") as fh:
+        lines = [l for l in fh.read().splitlines() if l.strip()]
+    if not lines:
+        return [], {}
+    sets: Dict[str, str] = {}
+    iris: List[str] = []
+    if lines[0].split(",")[0].strip() == "pattern_iri":
+        for r in csv.DictReader(lines):
+            iri = (r.get("pattern_iri") or "").strip()
+            if not iri:
+                continue
+            iris.append(iri)
+            if (r.get("pattern_set") or "").strip():
+                sets[iri] = r["pattern_set"].strip()
+    else:
+        iris = [l.strip() for l in lines]
+    return [(derive_label_from_iri(i), i) for i in iris], sets
+
+
+OUT_COLUMNS = ["source", "pattern_label", "pattern_iri", "match_label", "url", "details",
+               "pattern_set"]
+
+
+class IncrementalCsv:
+    """
+    Write result rows as they arrive, de-duplicated by (source, pattern_iri,
+    url) exactly as the end-of-run write used to be.
+
+    A harvest that is cancelled hours in keeps everything it found so far.
+    """
+
+    def __init__(self, path, pattern_sets: Optional[Dict[str, str]] = None):
+        self.path = path
+        self.pattern_sets = pattern_sets or {}
+        self._fh = open(path, "w", newline="", encoding="utf-8")
+        self._w = csv.DictWriter(self._fh, fieldnames=OUT_COLUMNS, extrasaction="ignore")
+        self._w.writeheader()
+        self._fh.flush()
+        self._seen = set()
+        self._done = 0
+        self.n_written = 0
+
+    def sync(self, rows: List[Dict[str, str]]) -> None:
+        for r in rows[self._done:]:
+            k = (as_str(r.get("source")), as_str(r.get("pattern_iri")), as_str(r.get("url")))
+            if k in self._seen:
+                continue
+            self._seen.add(k)
+            self._w.writerow({**r, "pattern_set": self.pattern_sets.get(as_str(r.get("pattern_iri")), "")})
+            self.n_written += 1
+        self._done = len(rows)
+        self._fh.flush()
+
+    def close(self) -> None:
+        self._fh.close()
 
 
 # ----------------------
@@ -458,10 +616,21 @@ def main():
     ap.add_argument("--sources", default="github,google,bioportal,lov",
                     help="Comma-separated sources: github,google,bioportal,matportal,lov,sparql")
     ap.add_argument("--patterns", help="Comma-separated list of pattern IRIs. If omitted, auto-discover from odpa/patterns-repository.")
+    ap.add_argument("--patterns-file",
+                    help="CSV with a pattern_iri column (and optionally pattern_set), or one IRI per line. "
+                         "Takes precedence over --patterns and auto-discovery.")
     ap.add_argument("--github-per-page", type=int, default=50, help="GitHub items per page (max 100). Lower to be gentler.")
     ap.add_argument("--github-max-pages", type=int, default=5, help="GitHub pages per query (100 items each).")
     ap.add_argument("--github-delay-ms", type=int, default=1200, help="Delay in milliseconds between GitHub queries (adds jitter).")
     ap.add_argument("--github-max-retries", type=int, default=6, help="Max retries for GitHub requests when rate limited/abuse detected.")
+    ap.add_argument("--github-search-per-minute", type=float, default=9,
+                    help="Ceiling on code-search calls per minute (GitHub allows 10; going over trips a "
+                         "~12-minute secondary-limit back-off). 0 disables pacing.")
+    ap.add_argument("--github-max-minutes", type=float, default=0,
+                    help="Stop issuing GitHub searches after this many minutes; remaining IRIs are recorded "
+                         "as not_searched and the run exits with status 3. 0 = no limit.")
+    ap.add_argument("--status-out",
+                    help="Per-IRI GitHub search status CSV (default: <out>_github_status.csv).")
     ap.add_argument("--google-pages", type=int, default=2, help="Google pages (10 results per page).")
     ap.add_argument("--google-keys", help="Comma-separated GOOGLE_API_KEYs to try (overrides env).")
     ap.add_argument("--google-cxs",  help="Comma-separated GOOGLE_CSE_IDs to try (overrides env).")
@@ -480,6 +649,7 @@ def main():
     ap.add_argument("--skip-generic", action="store_true", help="Skip generic/template ODP IRIs (e.g., /template, homepage IRIs).")
     ap.add_argument("--out", default="odp_multi_results.csv", help="Output CSV path.")
     args = ap.parse_args()
+    t_start = time.monotonic()
 
     # Credentials
     gh_token = get_env("GITHUB_TOKEN")
@@ -493,8 +663,16 @@ def main():
 
     # Get pattern IRIs
     patterns: List[Tuple[str, str]] = []  # (label, iri)
+    pattern_sets: Dict[str, str] = {}
 
-    if args.patterns:
+    if args.patterns_file:
+        patterns, pattern_sets = load_patterns_file(args.patterns_file)
+        by_set: Dict[str, int] = {}
+        for _l, iri in patterns:
+            by_set[pattern_sets.get(iri, "-")] = by_set.get(pattern_sets.get(iri, "-"), 0) + 1
+        log(f"Using {len(patterns)} pattern IRIs from {args.patterns_file} "
+            f"({', '.join(f'{k}: {v}' for k, v in sorted(by_set.items()))}).")
+    elif args.patterns:
         for iri in [p.strip() for p in args.patterns.split(",") if p.strip()]:
             label = derive_label_from_iri(iri)
             patterns.append((label, iri))
@@ -522,6 +700,22 @@ def main():
         sys.exit(1)
 
     rows: List[Dict[str, str]] = []
+    out = args.out
+    writer = IncrementalCsv(out, pattern_sets=pattern_sets)
+    status_out = args.status_out or (os.path.splitext(out)[0] + "_github_status.csv")
+    gh_status: List[Dict] = []
+
+    def write_status(status: List[Dict]) -> None:
+        with open(status_out, "w", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=["source", "pattern_iri", "pattern_set", "status",
+                                               "queries", "hits", "note"])
+            w.writeheader()
+            for s in status:
+                w.writerow({**s, "pattern_set": pattern_sets.get(s["pattern_iri"], "")})
+
+    def checkpoint(rows_so_far, status_so_far):
+        writer.sync(rows_so_far)
+        write_status(status_so_far)
 
     # ---------------- GitHub ----------------
     if "github" in sources:
@@ -529,48 +723,27 @@ def main():
             log("[GitHub] Missing GITHUB_TOKEN; skipping GitHub search.")
         else:
             session = gh_session(gh_token)
-            for idx, (label, iri) in enumerate(patterns, 1):
-                log(f"[GitHub {idx}/{len(patterns)}] Searching for IRI: {iri}")
-                if args.skip_generic and is_generic_iri(iri):
-                    log(f"[GitHub] Skipping generic template/homepage IRI (flagged): {iri}")
-                    continue
+            throttle = SearchThrottle(per_minute=args.github_search_per_minute)
+            deadline = (t_start + 60 * args.github_max_minutes) if args.github_max_minutes > 0 else None
 
-                queries = safe_queries(build_code_search_queries_for_iri(iri))
-                tried_any = False
-                for q in queries:
-                    try:
-                        tried_any = True
-                        for item in github_code_search(
-                            session,
-                            q,
-                            per_page=args.github_per_page,
-                            max_pages=args.github_max_pages,
-                            delay_ms=args.github_delay_ms,
-                            max_retries=args.github_max_retries
-                        ):
-                            repo = as_str(item.get("repository", {}).get("full_name"))
-                            file_path = as_str(item.get("path"))
-                            html_url = normalize_url(item.get("html_url"))
-                            rows.append({
-                                "source": "github",
-                                "pattern_label": as_str(label),
-                                "pattern_iri": as_str(iri),
-                                "match_label": repo,
-                                "url": html_url,
-                                "details": file_path
-                            })
-                        # If the grouped OR-query worked, we likely don't need per-ext fallbacks.
-                        if " OR " in q:
-                            break
-                    except requests.HTTPError as e:
-                        if e.response is not None and e.response.status_code == 422:
-                            log(f"[GitHub] 422 for query: {q}. Trying a simpler query...")
-                            continue
-                        raise
-                    time.sleep(0.6)
-                if not tried_any:
-                    log(f"[GitHub] No usable queries (likely too long) for: {iri}")
-                sleep_short()
+            def search(q):
+                return github_code_search(
+                    session, q,
+                    per_page=args.github_per_page,
+                    max_pages=args.github_max_pages,
+                    delay_ms=args.github_delay_ms,
+                    max_retries=args.github_max_retries,
+                    throttle=throttle,
+                )
+
+            gh_rows, gh_status = search_github_patterns(
+                patterns, search,
+                skip_generic=args.skip_generic,
+                deadline=deadline,
+                on_pattern_done=lambda r, s: checkpoint(rows + r, s),
+            )
+            rows.extend(gh_rows)
+            checkpoint(rows, gh_status)
 
     # ---------------- Google CSE ----------------
     if "google" in sources:
@@ -753,23 +926,19 @@ def main():
                     "details": "owl:imports"
                 })
 
-    # Deduplicate rows crudely by (source, pattern_iri, url)
-    seen = set()
-    unique_rows = []
-    for r in rows:
-        k = (as_str(r.get("source")), as_str(r.get("pattern_iri")), as_str(r.get("url")))
-        if k not in seen:
-            unique_rows.append(r)
-            seen.add(k)
+    # Rows are de-duplicated by (source, pattern_iri, url) as they are written.
+    writer.sync(rows)
+    writer.close()
+    log(f"Done. Wrote {writer.n_written} rows to {out}")
 
-    # Write CSV
-    out = args.out
-    with open(out, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["source","pattern_label","pattern_iri","match_label","url","details"])
-        w.writeheader()
-        w.writerows(unique_rows)
-
-    log(f"Done. Wrote {len(unique_rows)} rows to {out}")
+    unsearched = [s for s in gh_status if s["status"] == "not_searched"]
+    if gh_status:
+        log(f"GitHub search status: {status_out}")
+    if unsearched:
+        log(f"[GitHub] INCOMPLETE: {len(unsearched)} of {len(gh_status)} pattern IRIs were not searched "
+            f"(--github-max-minutes={args.github_max_minutes:g}). Their absence from the results is "
+            f"not evidence of no reuse.")
+        sys.exit(3)
 
 
 if __name__ == "__main__":

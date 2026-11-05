@@ -70,19 +70,25 @@ def download_file(url: str, out_path: Path) -> Tuple[bool, str, Optional[str]]:
             time.sleep(attempt)
     return False, last_err, None
 
-def find_pattern_files_by_iri(patterns_repo: Path, pattern_iri: str) -> List[Path]:
-    hits: List[Path] = []
-    if not patterns_repo.is_dir() or not pattern_iri:
-        return hits
+def read_pattern_texts(patterns_repo: Path) -> List[Tuple[Path, str]]:
+    """Every .owl/.ttl file in the pattern repository with its text, read once."""
+    out: List[Tuple[Path, str]] = []
+    if not patterns_repo.is_dir():
+        return out
     for p in patterns_repo.rglob("*"):
         if p.is_file() and p.suffix.lower() in (".owl", ".ttl"):
             try:
                 with open(p, "r", encoding="utf-8", errors="ignore") as f:
-                    if pattern_iri in f.read():
-                        hits.append(p)
+                    out.append((p, f.read()))
             except Exception:
                 pass
-    return hits
+    return out
+
+
+def find_pattern_files_by_iri(pattern_texts: List[Tuple[Path, str]], pattern_iri: str) -> List[Path]:
+    if not pattern_iri:
+        return []
+    return [p for p, text in pattern_texts if pattern_iri in text]
 
 def url_filename_stem(url_or_path: str, fallback: str = "unknown") -> str:
     p = urlparse(url_or_path).path or url_or_path
@@ -106,6 +112,12 @@ def main():
     if not csv_path.is_file():
         log(f"[!] CSV not found: {csv_path}"); sys.exit(1)
     out_root.mkdir(parents=True, exist_ok=True)
+
+    # The same ontology file is listed once per pattern it matched (4,828 rows,
+    # 2,881 files in the release harvest), and every row needs a pattern lookup:
+    # read the pattern repository once and download each file once.
+    pattern_texts = read_pattern_texts(patt_repo)
+    downloaded: dict = {}   # url -> (msg, saved_path) for successful downloads
 
     log_path = out_root / "download_log.csv"
     with open(csv_path, newline="", encoding="utf-8") as fin, \
@@ -146,14 +158,22 @@ def main():
             repo_dir.mkdir(parents=True, exist_ok=True)
             patt_dir.mkdir(parents=True, exist_ok=True)
 
-            # --- Download ontology file
+            # --- Download ontology file (once per URL; a failed one is retried)
             ext = guess_ext(url, details)
             target = repo_dir / f"{folder_name}{ext}"
-            ok, msg, saved_path = download_file(url, target)
+            fresh = url not in downloaded
+            if fresh:
+                ok, msg, saved_path = download_file(url, target)
+                if ok:
+                    downloaded[url] = (msg, saved_path)
+            else:
+                ok = True
+                msg, saved_path = downloaded[url]
+                msg = f"already downloaded this run | {msg}"
 
             # --- Copy pattern file if found
             copied = 0
-            hits = find_pattern_files_by_iri(patt_repo, pattern_iri)
+            hits = find_pattern_files_by_iri(pattern_texts, pattern_iri)
             if hits:
                 hit = sorted(hits, key=lambda p: (len(str(p)), p.name))[0]
                 dest_name = f"{sanitize_label(pattern_label)}{hit.suffix.lower() or '.owl'}"
@@ -182,7 +202,8 @@ def main():
             n += 1
             if args.limit and n >= args.limit:
                 break
-            time.sleep(SLEEP_BETWEEN)
+            if fresh:
+                time.sleep(SLEEP_BETWEEN)
 
     log(f"[✓] Done. Log written to: {log_path}")
     log(f"[i] Dataset root: {out_root}")

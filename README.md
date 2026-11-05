@@ -58,30 +58,61 @@ python -m venv .venv && . .venv/bin/activate     # Windows: .venv\Scripts\activa
 pip install -r requirements.txt
 ```
 
-The gate and the release are rebuilt from the corpus with:
+### The release reproduces from the archive
+
+What reproduces exactly is the release: the corpus archived on Zenodo, run
+through the released gate, yields `release-iri/MANIFEST.csv` row for row.
+[`reproduce.yml`](.github/workflows/reproduce.yml) checks this monthly and on
+every change to the gate. By hand:
 
 ```bash
-python pipeline/build_manifest.py  --corpus <corpus-root> --out pipeline/out
-python pipeline/audit_filters.py   --manifest pipeline/out/MANIFEST.csv
-python pipeline/build_release.py   --manifest pipeline/out/MANIFEST.csv --out release-iri
-python pipeline/gen_site.py                       # regenerate docs/ from the release
+pip install -r pipeline/requirements-reproduce.txt     # the pinned RDF parser
+curl -L -o corpus.zip https://zenodo.org/api/records/21808321/files/corpus.zip/content
+unzip -q corpus.zip                                     # -> corpus/{github,noOBO,OBO}/
+
+# 1. every archived ontology file is byte-identical to the one the gate hashed
+python pipeline/verify_reproduction.py hashes --manifest release-iri/MANIFEST.csv --corpus corpus
+
+# 2. re-running the gate gives the released verdicts
+mkdir regate-root
+ln -s "$PWD/corpus/github" regate-root/github_dataset   # the gate's name for it
+ln -s "$PWD/corpus/noOBO"  regate-root/noOBO
+ln -s "$PWD/corpus/OBO"    regate-root/OBO
+python pipeline/build_manifest.py --data-root regate-root --out regate --max-mb 100
+python pipeline/verify_reproduction.py compare --release release-iri/MANIFEST.csv --regated regate/MANIFEST.csv
 ```
 
-Two checks guard against drift, and both should pass before any commit:
+`--max-mb 100` skips re-parsing the five largest ontologies (`noOBO/cco` alone is
+1.1 GB and 15.7 M triples, far more than a 16 GB machine can hold in rdflib);
+step 1 still checks their files. `--max-mb 0` re-parses everything. On Windows,
+unpack to a short path such as `C:\c`: without long-path support, ontology paths
+under a deep folder exceed 260 characters and silently fail to open.
+
+The release is rebuilt from a gated manifest with:
 
 ```bash
-python paper-iri/verify_numbers.py    # every headline number vs the released CSVs
-python pipeline/check_repo_claims.py  # every path the manuscript cites is present
+python pipeline/audit_filters.py --manifest regate/MANIFEST.csv --data-root regate-root --out regate/audit
+python pipeline/build_release.py --manifest regate/MANIFEST.csv --data-root regate-root --out release-iri
+python pipeline/gen_site.py                             # regenerate docs/ from the release
 ```
 
-`verify_numbers.py` reports how many assertions it ran — 108 in a fresh clone,
-140 in a working tree that also holds the unpublished companion track. It is the
-reason four errors in the tables were caught rather than published.
+The harvester and the reproduction checks have tests:
+
+```bash
+python -m pytest MultiSource/tests pipeline/tests
+```
+
+### Re-harvesting finds what is new; it does not reproduce
 
 Harvesting is **not** re-runnable to the same result: it queries live APIs
-(GitHub, Google, BioPortal, MatPortal, LOV), so the reproducible artefact is the
-archived Zenodo deposition, not a re-run of the harvester. Credentials for a fresh
-harvest go in `.env` — see `.env.example`.
+(GitHub, BioPortal, MatPortal, LOV), so the reproducible artefact is the
+archived Zenodo deposition, not a re-run of the harvester.
+[`quarterly-harvest.yml`](.github/workflows/quarterly-harvest.yml) re-harvests
+the GitHub portion each quarter to report what changed, searching the release's
+144 pattern IRIs plus any the ODPA repository has published since, labelled
+separately. Google's Custom Search JSON API, used for the original harvest,
+shuts down on 2027-01-01. Credentials for a fresh harvest go in `.env` — see
+`.env.example`.
 
 ## Use cases
 
