@@ -151,15 +151,22 @@ def gh_request(session: requests.Session, url: str, params=None, *, max_retries:
 
         # Secondary rate limit / abuse detection often returns 403 with message
         if r.status_code in (403, 429):
+            # Which limit fired, as GitHub reports it: tells a per-token
+            # code-search allowance apart from a secondary (abuse) limit.
+            limits = " ".join(f"{k}={r.headers.get('x-ratelimit-' + k)}"
+                              for k in ("resource", "limit", "remaining", "used")
+                              if r.headers.get("x-ratelimit-" + k) is not None)
+            detail = f" [{r.status_code} {limits}{' | ' + msg if msg else ''}]"
             # If primary ratelimit exhausted
             if remaining == "0" and reset and reset.isdigit():
+                log(f"[GitHub] Primary rate limit exhausted.{detail}")
                 _sleep_until(int(reset))
                 attempt += 1
                 continue
             # Retry-After header if present
             if retry_after and retry_after.isdigit():
                 wait = int(retry_after)
-                log(f"[GitHub] Retry-After={wait}s. Backing off...")
+                log(f"[GitHub] Retry-After={wait}s. Backing off...{detail}")
                 time.sleep(wait)
                 attempt += 1
                 continue

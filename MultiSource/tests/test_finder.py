@@ -60,6 +60,35 @@ def test_query_parse_error_is_raised_without_retrying(monkeypatch):
     assert slept == []
 
 
+class ScriptedSession:
+    def __init__(self, responses):
+        self.responses, self.calls = list(responses), 0
+
+    def get(self, url, params=None):
+        self.calls += 1
+        return self.responses.pop(0)
+
+
+def test_a_throttled_request_logs_which_rate_limit_fired(monkeypatch, capsys):
+    # The 2026-11-05 CI run was throttled from its first request while a local
+    # run with a personal token never was; the headers say which limit it is.
+    monkeypatch.setattr(finder.time, "sleep", lambda s: None)
+    session = ScriptedSession([
+        response(403, {"message": "You have exceeded a secondary rate limit."},
+                 {"Retry-After": "734", "x-ratelimit-resource": "code_search",
+                  "x-ratelimit-limit": "10", "x-ratelimit-remaining": "8",
+                  "x-ratelimit-used": "2"}),
+        response(200, {"items": []}),
+    ])
+
+    finder.gh_request(session, "https://api.github.com/search/code")
+
+    err = capsys.readouterr().err
+    assert "Retry-After=734s" in err
+    assert "resource=code_search" in err and "limit=10" in err and "remaining=8" in err
+    assert "secondary rate limit" in err
+
+
 def test_code_search_queries_never_group_qualifiers():
     # GitHub's REST code search rejects "( extension:a OR extension:b )" with a
     # 422 every time, so a grouped query only wastes a request per IRI.

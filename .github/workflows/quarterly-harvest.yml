@@ -72,12 +72,19 @@ jobs:
           BIOPORTAL_API_KEY: ${{ secrets.BIOPORTAL_API_KEY }}
           MATPORTAL_API_KEY: ${{ secrets.MATPORTAL_API_KEY }}
           GOOGLE_API_KEY:    ${{ secrets.GOOGLE_API_KEY }}
+          CODE_SEARCH_TOKEN: ${{ secrets.CODE_SEARCH_TOKEN }}
         run: |
           {
             echo "## Harvest configuration"
             echo "- sources: \`$SOURCES\`"
             echo "- GitHub search cap: $GITHUB_MAX_MINUTES min"
           } >> "$GITHUB_STEP_SUMMARY"
+          if [[ -n "$CODE_SEARCH_TOKEN" ]]; then
+            echo "- code search token: \`CODE_SEARCH_TOKEN\` (personal access token)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::CODE_SEARCH_TOKEN is not set; falling back to GITHUB_TOKEN, which run 42063647084 found throttled from its first code-search request (22 of 150 IRIs in 150 min)."
+            echo "- code search token: **GITHUB_TOKEN fallback** (expect heavy throttling)" >> "$GITHUB_STEP_SUMMARY"
+          fi
           for pair in bioportal:BIOPORTAL_API_KEY matportal:MATPORTAL_API_KEY google:GOOGLE_API_KEY; do
             src="${pair%%:*}"; var="${pair#*:}"
             if [[ ",$SOURCES," == *",$src,"* && -z "${!var}" ]]; then
@@ -108,7 +115,12 @@ jobs:
       - name: Discover candidate ontologies
         timeout-minutes: 200
         env:
-          GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
+          # Code search with the Actions GITHUB_TOKEN was throttled from the
+          # first request (Retry-After ~12 min after a handful of calls), while
+          # a personal token ran 79 searches at 9/min with no back-off. A
+          # fine-grained PAT with read-only access to public repositories and
+          # no permissions is enough; store it as CODE_SEARCH_TOKEN.
+          GITHUB_TOKEN:      ${{ secrets.CODE_SEARCH_TOKEN || secrets.GITHUB_TOKEN }}
           GOOGLE_API_KEY:    ${{ secrets.GOOGLE_API_KEY }}
           GOOGLE_CSE_ID:     ${{ secrets.GOOGLE_CSE_ID }}
           BIOPORTAL_API_KEY: ${{ secrets.BIOPORTAL_API_KEY }}
