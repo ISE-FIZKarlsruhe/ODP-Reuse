@@ -509,38 +509,59 @@ def google_key_cx_cycle(cli_keys: Optional[str], cli_cxs: Optional[str],
 # BioPortal / MatPortal (OntoPortal)
 # ----------------------
 
-def bioportal_search(api_key: str, q: str, pages: int = 1, page_size: int = 50) -> Iterable[Dict]:
+PORTAL_ATTEMPTS = 4      # 1 try + 3 retries, backing off 5, 10, 20 s
+
+
+def ontoportal_search(name: str, base: str, api_key: str, q: str,
+                      pages: int = 1, page_size: int = 50) -> Iterable[Dict]:
     """
-    BioPortal Search API (OntoPortal): https://data.bioontology.org/documentation
+    OntoPortal Search API (BioPortal, MatPortal).
+
+    The portals feed the discovery report only, so a portal failure must never
+    end the harvest: a 502 from BioPortal once did, after GitHub search had
+    finished. Transient errors (5xx, 429, connection) are retried with back-off;
+    if a page still fails, the IRI is logged and skipped.
     """
-    base = "https://data.bioontology.org/search"
     headers = {"Authorization": f"apikey token={api_key}"}
     for p in range(1, pages + 1):
         params = {"q": q, "pagesize": page_size, "page": p}
-        r = requests.get(base, params=params, headers=headers, timeout=60)
-        if r.status_code == 401:
-            log("[BioPortal] Unauthorized. Check BIOPORTAL_API_KEY.")
+        last = ""
+        for attempt in range(1, PORTAL_ATTEMPTS + 1):
+            try:
+                r = requests.get(base, params=params, headers=headers, timeout=60)
+            except requests.RequestException as e:
+                last = f"{type(e).__name__}: {e}"
+            else:
+                if r.status_code == 401:
+                    log(f"[{name}] Unauthorized. Check the API key.")
+                    return
+                if r.status_code == 200:
+                    try:
+                        yield r.json()
+                    except ValueError as e:
+                        log(f"[{name}] Unreadable response for {q} (page {p}): {e}. Skipping this IRI.")
+                        return
+                    break
+                last = f"{r.status_code} {r.reason or ''}".strip()
+                if not (r.status_code == 429 or r.status_code >= 500):
+                    log(f"[{name}] {last} for {q} (page {p}). Skipping this IRI.")
+                    return
+            if attempt < PORTAL_ATTEMPTS:
+                time.sleep(5 * 2 ** (attempt - 1))
+        else:
+            log(f"[{name}] {last} for {q} (page {p}) after {PORTAL_ATTEMPTS} attempts. Skipping this IRI.")
             return
-        r.raise_for_status()
-        yield r.json()
         sleep_short()
+
+
+def bioportal_search(api_key: str, q: str, pages: int = 1, page_size: int = 50) -> Iterable[Dict]:
+    """BioPortal Search API: https://data.bioontology.org/documentation"""
+    return ontoportal_search("BioPortal", "https://data.bioontology.org/search", api_key, q, pages, page_size)
 
 
 def matportal_search(api_key: str, q: str, pages: int = 1, page_size: int = 50) -> Iterable[Dict]:
-    """
-    MatPortal (OntoPortal) Search API: same as BioPortal; different base URL.
-    """
-    base = "https://rest.matportal.org/search"
-    headers = {"Authorization": f"apikey token={api_key}"}
-    for p in range(1, pages + 1):
-        params = {"q": q, "pagesize": page_size, "page": p}
-        r = requests.get(base, params=params, headers=headers, timeout=60)
-        if r.status_code == 401:
-            log("[MatPortal] Unauthorized. Check MATPORTAL_API_KEY.")
-            return
-        r.raise_for_status()
-        yield r.json()
-        sleep_short()
+    """MatPortal (OntoPortal) Search API: same as BioPortal; different base URL."""
+    return ontoportal_search("MatPortal", "https://rest.matportal.org/search", api_key, q, pages, page_size)
 
 
 # ----------------------

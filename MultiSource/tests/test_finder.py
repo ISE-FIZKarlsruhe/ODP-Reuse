@@ -89,6 +89,54 @@ def test_a_throttled_request_logs_which_rate_limit_fired(monkeypatch, capsys):
     assert "secondary rate limit" in err
 
 
+class ScriptedGet:
+    """Stands in for requests.get: returns (or raises) the scripted items in order."""
+
+    def __init__(self, items):
+        self.items, self.calls = list(items), 0
+
+    def __call__(self, url, params=None, headers=None, timeout=None):
+        self.calls += 1
+        item = self.items.pop(0) if len(self.items) > 1 else self.items[0]
+        if isinstance(item, Exception):
+            raise item
+        return item
+
+
+def test_portal_search_retries_a_bad_gateway(monkeypatch):
+    # Run 42223848653: BioPortal's first query returned 502 and the uncaught
+    # error ended discovery after GitHub search had finished all 147 IRIs.
+    slept = []
+    monkeypatch.setattr(finder.time, "sleep", slept.append)
+    get = ScriptedGet([response(502), response(200, {"collection": [{"@id": "x"}]})])
+    monkeypatch.setattr(finder.requests, "get", get)
+
+    pages = list(finder.bioportal_search("key", IRI, pages=1))
+
+    assert pages == [{"collection": [{"@id": "x"}]}]
+    assert get.calls == 2 and slept
+
+
+def test_portal_search_gives_up_on_one_iri_without_raising(monkeypatch, capsys):
+    monkeypatch.setattr(finder.time, "sleep", lambda s: None)
+    get = ScriptedGet([response(502)])
+    monkeypatch.setattr(finder.requests, "get", get)
+
+    pages = list(finder.matportal_search("key", IRI, pages=2))
+
+    assert pages == []
+    assert get.calls == finder.PORTAL_ATTEMPTS
+    assert "502" in capsys.readouterr().err
+
+
+def test_portal_connection_error_does_not_raise(monkeypatch):
+    monkeypatch.setattr(finder.time, "sleep", lambda s: None)
+    monkeypatch.setattr(finder.requests, "get",
+                        ScriptedGet([requests.ConnectionError("reset by peer")]))
+
+    assert list(finder.bioportal_search("key", IRI)) == []
+
+
 def test_code_search_queries_never_group_qualifiers():
     # GitHub's REST code search rejects "( extension:a OR extension:b )" with a
     # 422 every time, so a grouped query only wastes a request per IRI.
