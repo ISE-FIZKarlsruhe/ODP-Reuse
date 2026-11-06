@@ -61,6 +61,20 @@ def test_pattern_sets_keep_every_release_iri_and_label_the_rest_new():
     ]
 
 
+def test_w3c_language_namespaces_are_not_searched_as_patterns():
+    # Extracted from pattern files' default namespaces, these matched any OWL,
+    # XHTML or SVG file on GitHub: 2,235 of 9,577 hits in run 42181530957.
+    release = ["http://a.org/p1", "http://www.w3.org/2002/07/owl",
+               "http://www.w3.org/1999/xhtml", "http://www.w3.org/2000/svg"]
+
+    rows = pi.build_pattern_sets(release, ["http://www.w3.org/2002/07/owl#", "http://b.org/p2"])
+
+    assert rows == [{"pattern_iri": "http://a.org/p1", "pattern_set": "release"},
+                    {"pattern_iri": "http://b.org/p2", "pattern_set": "new"}]
+    assert pi.is_language_namespace("http://www.w3.org/2002/07/owl#")
+    assert not pi.is_language_namespace("http://www.w3.org/ns/sosa/")
+
+
 def test_sets_command_writes_csv_from_a_cloned_repository(tmp_path):
     repo = tmp_path / "patterns-repository"
     (repo / "AgentRole").mkdir(parents=True)

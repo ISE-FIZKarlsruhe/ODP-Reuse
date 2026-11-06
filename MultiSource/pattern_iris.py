@@ -94,6 +94,24 @@ def is_generic(iri: str) -> bool:
     return bool(RX_GENERIC_TEMPLATE.search(iri) or RX_GENERIC_HOMEPAGE.match(iri))
 
 
+# Language namespaces that pattern files declare as their default namespace
+# (xmlns="..."). The extraction picks them up, but they are not patterns: a code
+# search for the OWL namespace returns any OWL file on GitHub.
+LANGUAGE_NAMESPACES = {
+    "http://www.w3.org/2002/07/owl",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns",
+    "http://www.w3.org/2000/01/rdf-schema",
+    "http://www.w3.org/2001/XMLSchema",
+    "http://www.w3.org/1999/xhtml",
+    "http://www.w3.org/2000/svg",
+    "http://www.w3.org/XML/1998/namespace",
+}
+
+
+def is_language_namespace(iri: str) -> bool:
+    return iri.strip().rstrip("#/") in LANGUAGE_NAMESPACES
+
+
 def read_text(p) -> str:
     try:
         with io.open(p, "r", encoding="utf-8", errors="ignore") as fh:
@@ -116,9 +134,10 @@ def unique_iris(files, host_filter: str = "") -> list[str]:
 
 
 def build_pattern_sets(release_iris, current_iris) -> list[dict[str, str]]:
-    release = list(dict.fromkeys(i for i in release_iris if i))
+    release = list(dict.fromkeys(i for i in release_iris if i and not is_language_namespace(i)))
     seen = set(release)
-    new = sorted(i for i in set(current_iris) if i not in seen and not is_generic(i))
+    new = sorted(i for i in set(current_iris)
+                 if i not in seen and not is_generic(i) and not is_language_namespace(i))
     return ([{"pattern_iri": i, "pattern_set": "release"} for i in release]
             + [{"pattern_iri": i, "pattern_set": "new"} for i in new])
 
@@ -177,7 +196,12 @@ def cmd_extract(host_filter: str, extract_report: str, dirs_summary: str,
 
 
 def cmd_sets(release: Path, repo: Path, out: Path) -> None:
-    rows = build_pattern_sets(read_iri_list(release), unique_iris(repo_files(repo)))
+    release_iris = read_iri_list(release)
+    dropped = [i for i in release_iris if is_language_namespace(i)]
+    if dropped:
+        print(f"[pattern_iris] not searched (language namespaces, not patterns): "
+              f"{', '.join(dropped)}", file=sys.stderr)
+    rows = build_pattern_sets(release_iris, unique_iris(repo_files(repo)))
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=["pattern_iri", "pattern_set"])

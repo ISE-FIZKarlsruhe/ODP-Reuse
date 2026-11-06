@@ -11,12 +11,17 @@ name: Quarterly ODP-reuse harvest
 # set of files by design. Exact reproducibility of the release -- archived
 # corpus in, released MANIFEST.csv out -- is tested by reproduce.yml.
 #
-# Time budget. GitHub-hosted jobs are capped at 6 h regardless of
-# timeout-minutes. GitHub code search allows 10 requests/minute; the finder paces
-# itself at 9 and searches ~150 pattern IRIs in about 75 minutes. Its GitHub
-# phase is capped at 150 minutes; if the cap is hit the remaining IRIs are
-# recorded as not_searched, the partial results are uploaded, and the run fails
-# saying so, instead of being killed with nothing to show.
+# Two jobs, because GitHub-hosted jobs are capped at 6 h each:
+#
+#   discover  code search (~80 min for ~150 IRIs at 9 requests/minute) plus the
+#             portal searches (~25 min). The GitHub phase is capped; if the cap
+#             is hit, the remaining IRIs are recorded as not_searched, the
+#             partial results are uploaded, and the run fails saying so.
+#   build     download every hit (~1 s each; ~6,000 files in 2026), repair,
+#             gate, audit, diff, issue. Runs only on a complete discovery.
+#
+# The discover job hands over its results and the exact ODPA pattern files it
+# searched for, so both jobs use the same pattern library.
 
 on:
   schedule:
@@ -36,7 +41,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 concurrency:
   group: quarterly-harvest
@@ -47,9 +51,10 @@ env:
   GITHUB_MAX_MINUTES: ${{ github.event.inputs.github_max_minutes || '150' }}
 
 jobs:
-  harvest:
+  # ==================================================================== discover
+  discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 350          # under the 6 h hard cap, so the upload step still runs
+    timeout-minutes: 300
 
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +68,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install -r pipeline/requirements.txt
 
       # A source whose key is missing is skipped by the finder. Say so where it
       # will be read, rather than letting the run look complete.
@@ -96,7 +100,7 @@ jobs:
             echo "::warning::Google's Custom Search JSON API is closed to new customers and shuts down on 2027-01-01."
           fi
 
-      # The search set: the 144 IRIs the release searched, plus any IRI the ODPA
+      # The search set: the IRIs the release searched, plus any IRI the ODPA
       # repository has gained since, labelled so the report can keep the two apart.
       - name: Build the pattern search set
         run: |
@@ -104,20 +108,20 @@ jobs:
           mkdir -p harvest/report
           cd MultiSource
           git clone --depth 1 https://github.com/odpa/patterns-repository.git
-          echo "- ODPA patterns-repository: \`$(git -C patterns-repository rev-parse HEAD)\`" >> "$GITHUB_STEP_SUMMARY"
+          git -C patterns-repository rev-parse HEAD > ../harvest/report/odpa_commit.txt
+          echo "- ODPA patterns-repository: \`$(cat ../harvest/report/odpa_commit.txt)\`" >> "$GITHUB_STEP_SUMMARY"
           python pattern_iris.py sets \
             --release report/retrieved_patterns.csv \
             --repo patterns-repository \
             --out ../harvest/report/pattern_sets.csv 2>&1 \
             | sed 's/^/- /' | tee -a "$GITHUB_STEP_SUMMARY"
 
-      # ---------------------------------------------------------------- 1. discover
       - name: Discover candidate ontologies
-        timeout-minutes: 200
+        timeout-minutes: 240
         env:
           # Code search with the Actions GITHUB_TOKEN was throttled from the
           # first request (Retry-After ~12 min after a handful of calls), while
-          # a personal token ran 79 searches at 9/min with no back-off. A
+          # a personal token searched all 150 IRIs in 79 min with no back-off. A
           # fine-grained PAT with read-only access to public repositories and
           # no permissions is enough; store it as CODE_SEARCH_TOKEN.
           GITHUB_TOKEN:      ${{ secrets.CODE_SEARCH_TOKEN || secrets.GITHUB_TOKEN }}
@@ -138,16 +142,64 @@ jobs:
             --google-skip-on-429 \
             --out ../harvest/report/results.csv
 
-      - name: Download candidate ontologies
-        timeout-minutes: 90
+      # The build job must copy pattern files from the same ODPA commit the
+      # search set came from.
+      - name: Stage the pattern library for the build job
+        if: always()
         run: |
+          mkdir -p odpa
+          if [ -d MultiSource/patterns-repository ]; then
+            cp -r MultiSource/patterns-repository odpa/
+            rm -rf odpa/patterns-repository/.git
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: discovery-${{ github.run_number }}
+          path: |
+            harvest/report/
+            odpa/
+          retention-days: 90
+
+  # ======================================================================= build
+  build:
+    needs: discover
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r pipeline/requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: discovery-${{ github.run_number }}
+          path: .
+
+      - name: Download candidate ontologies
+        timeout-minutes: 240
+        run: |
+          echo "- ODPA patterns-repository: \`$(cat harvest/report/odpa_commit.txt)\`" >> "$GITHUB_STEP_SUMMARY"
           cd MultiSource
           python build_github_dataset.py \
             --csv ../harvest/report/results.csv \
-            --patterns-repo ./patterns-repository \
+            --patterns-repo ../odpa/patterns-repository \
             --out-dir ../harvest/github_dataset
 
-      # ---------------------------------------------------------------- 2. repair
       # The harvester writes a pattern file even when the fetch returns nothing;
       # 23.1% of files in the 2026 snapshot were zero bytes and were being
       # counted as "no reuse". Repair before gating, never after.
@@ -158,7 +210,6 @@ jobs:
           test "$(find ../harvest -path '*/patterns/*' -size 0 | wc -l)" -eq 0 \
             || { echo "::error::empty pattern files remain after repair"; exit 1; }
 
-      # ---------------------------------------------------------------- 3. gate
       - name: Quality gate
         run: |
           cd pipeline
@@ -182,7 +233,6 @@ jobs:
           print("no sampled removal was disputed")
           PY
 
-      # ---------------------------------------------------------------- 4. diff
       - name: Diff against the published release
         id: diff
         run: |
@@ -196,7 +246,6 @@ jobs:
             --out ../harvest/diff
           cat ../harvest/diff/REPORT.md >> "$GITHUB_STEP_SUMMARY"
 
-      # ---------------------------------------------------------------- 5. report
       - name: Open an issue when something changed
         if: steps.diff.outputs.has_changes == 'true'
         uses: actions/github-script@v7
@@ -220,7 +269,6 @@ jobs:
         with:
           name: harvest-${{ github.run_number }}
           path: |
-            harvest/report/
             harvest/github_dataset/download_log.csv
             harvest/out/MANIFEST.csv
             harvest/out/gate_summary.md
