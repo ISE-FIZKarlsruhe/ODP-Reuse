@@ -389,10 +389,27 @@ once it is accepted.
 """
 
 
-def main() -> None:
+HASHED_NOTE_START = "`corpus-hashed/` is the IRI-anonymised twin"
+
+
+def existing_hashed_note(readme: Path) -> str:
+    """The README's current paragraph about corpus-hashed/, or "" if none."""
+    if not readme.is_file():
+        return ""
+    for line in readme.read_text(encoding="utf-8").splitlines():
+        if line.startswith(HASHED_NOTE_START):
+            return line
+    return ""
+
+
+def main(argv=None) -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--release", required=True, type=Path)
-    args = ap.parse_args()
+    ap.add_argument("--keep-hashed-note", action="store_true",
+                    help="when corpus-hashed/ is absent (it is a Zenodo-only file "
+                         "tree, so it is absent in CI), keep the README's existing "
+                         "paragraph about it instead of describing it as missing")
+    args = ap.parse_args(argv)
     rel = args.release
 
     stats_path = rel / "dataset_statistics.csv"
@@ -459,7 +476,11 @@ def main() -> None:
         for code, test, key, why in GATE)
 
     hashed = rel / "corpus-hashed"
-    if hashed.is_dir():
+    kept_note = (existing_hashed_note(rel / "README.md")
+                 if args.keep_hashed_note and not hashed.is_dir() else "")
+    if kept_note:
+        hashed_note = kept_note
+    elif hashed.is_dir():
         nfiles = sum(1 for _ in hashed.rglob("*.nt"))
         hashed_note = (
             f"`corpus-hashed/` is the IRI-anonymised twin of `corpus/`: "

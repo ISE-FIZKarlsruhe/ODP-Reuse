@@ -229,11 +229,14 @@ def pair_rows(onto_dir: Path, oid: str, strip_annots: bool = True,
     return out
 
 
-def write_csv(path: Path, rows: list[dict], columns: list[str] | None = None) -> None:
+def write_csv(path: Path, rows: list[dict], columns: list[str] | None = None,
+              eol: str | None = None) -> None:
+    """``eol`` None keeps the csv module's CRLF; merge_harvest passes "\\n"."""
     path.parent.mkdir(parents=True, exist_ok=True)
     cols = columns or (list(rows[0]) if rows else [])
     with path.open("w", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore",
+                           lineterminator=eol or "\r\n")
         w.writeheader()
         w.writerows(rows)
 
@@ -391,18 +394,36 @@ def build_dataset(source: str, level: str, rows: list[dict], data_root: Path,
         all_pairs.extend(prs)
         kept.append(r)
 
-    write_csv(dest / "pairs.csv", all_pairs, [
-        "ontology_id", "ontology_dir", "pattern", "pattern_file",
-        "n_pattern_entities", "n_reused_entities", "coverage_pct",
-        "complete_reuse", "n_label_entities"])
-    write_csv(dest / "ontologies.csv", kept, [
-        "ontology_id", "dataset", "n_pattern_files", "n_triples",
-        "n_entities_narrow", "n_entities_wide", "n_own_entities",
-        "n_gt_patterns", "n_complete_patterns", "max_reuse_pct"])
+    stats = write_view(dest, source, level, kept, all_pairs)
+    print(f"[OK] {name}: {stats['n_ontologies']} ontologies, "
+          f"{stats['n_pairs']} pairs, {stats['n_distinct_patterns']} patterns")
+    return {"dataset": name, **stats}
+
+
+VIEW_PAIR_COLUMNS = [
+    "ontology_id", "ontology_dir", "pattern", "pattern_file",
+    "n_pattern_entities", "n_reused_entities", "coverage_pct",
+    "complete_reuse", "n_label_entities"]
+VIEW_ONTOLOGY_COLUMNS = [
+    "ontology_id", "dataset", "n_pattern_files", "n_triples",
+    "n_entities_narrow", "n_entities_wide", "n_own_entities",
+    "n_gt_patterns", "n_complete_patterns", "max_reuse_pct"]
+
+
+def write_view(dest: Path, source: str, level: str, kept: list[dict],
+               all_pairs: list[dict], eol: str | None = None) -> dict:
+    """Write one view's tables, statistics and README; return its statistics.
+
+    Shared with merge_harvest.py, which appends a harvest's new ontologies to
+    the tables and rewrites the rest from them.
+    """
+    name = f"{source}-{level}"
+    write_csv(dest / "pairs.csv", all_pairs, VIEW_PAIR_COLUMNS, eol=eol)
+    write_csv(dest / "ontologies.csv", kept, VIEW_ONTOLOGY_COLUMNS, eol=eol)
 
     stats = statistics(kept, all_pairs)
-    write_csv(dest / "statistics.csv", [stats])
-    write_csv(dest / "top_patterns.csv", top_patterns(all_pairs))
+    write_csv(dest / "statistics.csv", [stats], eol=eol)
+    write_csv(dest / "top_patterns.csv", top_patterns(all_pairs), eol=eol)
 
     level_desc = ("every ontology with at least one verified reused pattern entity"
                   if level == "reuse"
@@ -411,15 +432,13 @@ def build_dataset(source: str, level: str, rows: list[dict], data_root: Path,
                   "6. **G6** at least one pattern is reused in full, evaluated after\n"
                   "   rules 1-5 have already removed pattern copies and duplicates.\n")
     (dest / "statistics.md").write_text(
-        f"# Statistics — {name}\n\n{render_stats_table(stats)}\n", encoding="utf-8")
+        f"# Statistics — {name}\n\n{render_stats_table(stats)}\n", encoding="utf-8",
+        newline=eol)
     (dest / "README.md").write_text(DATASET_README.format(
         name=name, source_label=SOURCE_LABEL[source], level_desc=level_desc,
         stats_table=render_stats_table(stats), level_gate=level_gate),
-        encoding="utf-8")
-
-    print(f"[OK] {name}: {stats['n_ontologies']} ontologies, "
-          f"{stats['n_pairs']} pairs, {stats['n_distinct_patterns']} patterns")
-    return {"dataset": name, **stats}
+        encoding="utf-8", newline=eol)
+    return stats
 
 
 # ----------------------------------------------------------------------

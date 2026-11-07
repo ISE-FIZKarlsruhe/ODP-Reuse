@@ -50,10 +50,55 @@ def test_datasets_the_harvest_did_not_rebuild_are_not_disappeared(tmp_path):
 
     report, out = run(tmp_path)
 
-    assert "ontologies that disappeared upstream: 0" in report
-    assert not (out / "disappeared.csv").exists()
+    assert "release ontologies not returned by this harvest: 0" in report
+    assert not (out / "not_returned.csv").exists()
     assert "not rebuilt by this harvest: OBO, noOBO" in report
     assert "corpus (github): **1 → 1**" in report
+
+
+def test_release_ontologies_the_harvest_missed_are_not_returned_and_kept(tmp_path):
+    # Run 42239149156 called 525 release ontologies "disappeared upstream"; in a
+    # sample of 100, 88 files were still at the same path. A search that does not
+    # return a file is not evidence that it is gone, and the release keeps it.
+    manifest(tmp_path / "old.csv", [
+        {"ontology_id": "a", "dataset": "github", "n_gt_patterns": 1},
+        {"ontology_id": "b", "dataset": "github", "n_gt_patterns": 1},
+    ])
+    manifest(tmp_path / "new.csv", [{"ontology_id": "a", "dataset": "github", "n_gt_patterns": 1}])
+
+    report, out = run(tmp_path)
+
+    assert "disappeared" not in report.lower()
+    assert "release ontologies not returned by this harvest: 1 (kept in the release)" in report
+    assert "## Not returned by this harvest" in report
+    assert (out / "not_returned.csv").exists()
+    assert not (out / "disappeared.csv").exists()
+
+
+def test_new_pairs_count_only_ontologies_that_pass_the_gate(tmp_path, monkeypatch):
+    # The issue for run 42239149156 announced 316 new pairs; 58 of them were on
+    # ontologies the gate drops, which can never enter a view.
+    manifest(tmp_path / "old.csv", [
+        {"ontology_id": "common_kept", "dataset": "github", "n_gt_patterns": 1},
+        {"ontology_id": "common_dropped", "dataset": "github", "n_gt_patterns": 1,
+         "drop_reason": "G4_substantive:own_entities=0<1"},
+    ])
+    manifest(tmp_path / "new.csv", [
+        {"ontology_id": "common_kept", "dataset": "github", "n_gt_patterns": 3},
+        {"ontology_id": "common_dropped", "dataset": "github", "n_gt_patterns": 4,
+         "drop_reason": "G4_substantive:own_entities=0<1"},
+        {"ontology_id": "new_kept", "dataset": "github", "n_gt_patterns": 2},
+        {"ontology_id": "new_dropped", "dataset": "github", "n_gt_patterns": 5,
+         "drop_reason": "G3_duplicate:of(new_kept)"},
+    ])
+    gh_out = tmp_path / "gh_output"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(gh_out))
+
+    report, _ = run(tmp_path)
+
+    # 2 on the new kept ontology + 2 gained by the kept common one
+    assert "new ontology–pattern pairs on gate-passing ontologies: 4**" in report
+    assert "new_pairs=4" in gh_out.read_text(encoding="utf-8").splitlines()
 
 
 def test_hits_for_patterns_added_after_the_release_are_listed_separately(tmp_path):

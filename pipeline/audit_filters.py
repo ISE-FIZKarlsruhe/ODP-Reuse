@@ -180,6 +180,22 @@ def verify_g5(d: Path, r: dict) -> tuple[str, dict]:
                         "n_entities_wide": len(ents), "n_pattern_files": n_pat}
 
 
+def verify_removal(rule: str, d: Path, r: dict, keeper_dir: Path | None,
+                   min_own_entities: int) -> tuple[str, dict]:
+    """Re-check one removal by its rule. Shared with merge_harvest.py."""
+    if rule == "G1_parse":
+        return verify_g1(d, r)
+    if rule == "G2_pattern_copy":
+        return verify_g2(d, r)
+    if rule == "G3_duplicate":
+        return verify_g3(d, r, keeper_dir)
+    if rule == "G4_substantive":
+        return verify_g4(d, r, min_own_entities)
+    if rule == "G5_has_gt":
+        return verify_g5(d, r)
+    return "unchecked", {}
+
+
 # ----------------------------------------------------------------------
 
 def main() -> None:
@@ -234,22 +250,11 @@ def main() -> None:
                 out_rows.append(base)
                 continue
             try:
-                if rule == "G1_parse":
-                    v, ev = verify_g1(d, r)
-                elif rule == "G2_pattern_copy":
-                    v, ev = verify_g2(d, r)
-                elif rule == "G3_duplicate":
-                    keeper = r["duplicate_of"]
+                kd = None
+                if rule == "G3_duplicate" and r["duplicate_of"]:
                     kd = onto_dir(args.data_root,
-                                  by_id.get((r["dataset"], keeper), r)) \
-                        if keeper else None
-                    v, ev = verify_g3(d, r, kd)
-                elif rule == "G4_substantive":
-                    v, ev = verify_g4(d, r, args.min_own_entities)
-                elif rule == "G5_has_gt":
-                    v, ev = verify_g5(d, r)
-                else:
-                    v, ev = "unchecked", {}
+                                  by_id.get((r["dataset"], r["duplicate_of"]), r))
+                v, ev = verify_removal(rule, d, r, kd, args.min_own_entities)
             except Exception as exc:  # noqa: BLE001
                 v, ev = "DISPUTED", {"evidence": f"audit error: "
                                                  f"{type(exc).__name__}: {exc}"}

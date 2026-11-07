@@ -137,6 +137,61 @@ def test_portal_connection_error_does_not_raise(monkeypatch):
     assert list(finder.bioportal_search("key", IRI)) == []
 
 
+PATTERNS4 = [("a", "http://x/a"), ("b", "http://x/b"), ("c", "http://x/c"), ("d", "http://x/d")]
+
+
+def bioportal(pages=1):
+    return lambda iri, breaker: finder.bioportal_search("key", iri, pages=pages, breaker=breaker)
+
+
+def test_portal_is_abandoned_after_consecutive_failed_iris(monkeypatch, capsys):
+    # Run 42239149156: BioPortal failed 51 of 147 IRIs and its retries used 217
+    # of the 240 minutes the discovery step is allowed.
+    monkeypatch.setattr(finder.time, "sleep", lambda s: None)
+    get = ScriptedGet([response(502)])
+    monkeypatch.setattr(finder.requests, "get", get)
+
+    rows = finder.search_portal("bioportal", "BioPortal", bioportal(), PATTERNS4,
+                                max_consecutive_failures=2)
+
+    assert rows == []
+    assert get.calls == 2 * finder.PORTAL_ATTEMPTS
+    assert "2 IRIs in a row failed; not searching the remaining 2" in capsys.readouterr().err
+
+
+def test_a_successful_iri_resets_the_portal_failure_count(monkeypatch):
+    monkeypatch.setattr(finder.time, "sleep", lambda s: None)
+    fail = [response(502)] * finder.PORTAL_ATTEMPTS
+    ok = response(200, {"collection": [{"@id": "http://onto/x", "prefLabel": "X"}]})
+    get = ScriptedGet(fail + [ok] + [response(502)])
+    monkeypatch.setattr(finder.requests, "get", get)
+
+    rows = finder.search_portal("bioportal", "BioPortal", bioportal(),
+                                PATTERNS4 + [("e", "http://x/e")], max_consecutive_failures=2)
+
+    # a fails, b succeeds (count reset), c and d fail, e is not searched
+    assert [r["pattern_iri"] for r in rows] == ["http://x/b"]
+    assert rows[0]["source"] == "bioportal" and rows[0]["match_label"] == "X"
+    assert get.calls == 3 * finder.PORTAL_ATTEMPTS + 1
+
+
+def hit(repo, path="a.owl"):
+    return {"repository": {"full_name": repo}, "path": path,
+            "html_url": f"https://github.com/{repo}/blob/0/{path}"}
+
+
+def test_hits_in_pattern_library_repositories_are_not_kept():
+    # Run 42239149156 returned 127 files from the ODPA library and 55 from this
+    # project's own docs/patterns copies; the release holds none of either.
+    items = [hit("odpa/patterns-repository"), hit("ise-fizkarlsruhe/odp-reuse"), hit("someone/onto")]
+
+    rows, status = finder.search_github_patterns([("p", IRI)], lambda q: iter(items))
+
+    assert {r["match_label"] for r in rows} == {"someone/onto"}
+    assert status[0]["hits"] == len(rows)
+    assert "8 hits in pattern-library repositories skipped" in status[0]["note"]
+
+
 def test_code_search_queries_never_group_qualifiers():
     # GitHub's REST code search rejects "( extension:a OR extension:b )" with a
     # 422 every time, so a grouped query only wastes a request per IRI.

@@ -1,7 +1,14 @@
 name: Reproduce the release
 
 # Tests the reproducibility claim the resource makes: the corpus archived on
-# Zenodo, run through the released quality gate, yields release-iri/MANIFEST.csv.
+# Zenodo, run through the released quality gate, yields the MANIFEST.csv of the
+# release it was archived with.
+#
+# The comparison is against release-iri/ AT THE RELEASE TAG, not on main. A
+# merged harvest pull request adds rows to main before their files reach
+# Zenodo with the next version; until then main is ahead of the archive, and
+# comparing main with the archive would test nothing but that delay. When a
+# new version is published, update ZENODO_RECORD and RELEASE_TAG together.
 #
 #   1. download corpus.zip from Zenodo and check it against Zenodo's MD5
 #   2. hashes   every ontology file is byte-identical to the one the gate hashed
@@ -24,6 +31,9 @@ on:
       zenodo_record:
         description: 'Zenodo record holding corpus.zip'
         default: '21808321'
+      release_tag:
+        description: 'Git tag of the release archived in that record'
+        default: 'v1.2.0'
       max_mb:
         description: 'Skip re-parsing ontology files larger than this (MB); 0 = no limit'
         default: '100'
@@ -34,8 +44,6 @@ on:
       - 'pipeline/build_manifest.py'
       - 'pipeline/verify_reproduction.py'
       - 'pipeline/requirements-reproduce.txt'
-      - 'release-iri/MANIFEST.csv'
-      - 'release-iri/views/**'
       - '.github/workflows/reproduce.yml'
   schedule:
     # monthly: catches a changed archive or an unpinned dependency drifting
@@ -46,6 +54,7 @@ permissions:
 
 env:
   ZENODO_RECORD: ${{ github.event.inputs.zenodo_record || '21808321' }}
+  RELEASE_TAG: ${{ github.event.inputs.release_tag || 'v1.2.0' }}
   MAX_MB: ${{ github.event.inputs.max_mb || '100' }}
 
 jobs:
@@ -55,6 +64,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # the release tag
+
+      # The released tables as they were archived; see the header.
+      - name: Check out the archived release's tables
+        run: |
+          mkdir at-tag
+          git archive "$RELEASE_TAG" release-iri | tar -x -C at-tag
+          echo "RELEASE=$PWD/at-tag/release-iri" >> "$GITHUB_ENV"
 
       - uses: actions/setup-python@v5
         with:
@@ -78,7 +96,7 @@ jobs:
           test -d archive/corpus/github
           echo "CORPUS=$PWD/archive/corpus" >> "$GITHUB_ENV"
           {
-            echo "## Reproducing the release from Zenodo record $ZENODO_RECORD"
+            echo "## Reproducing release $RELEASE_TAG from Zenodo record $ZENODO_RECORD"
             echo "- corpus.zip md5 \`$md5\` verified"
             echo "- re-parse limit: ${MAX_MB} MB"
             echo
@@ -87,7 +105,7 @@ jobs:
       - name: Archived files match the manifest's hashes
         run: |
           python pipeline/verify_reproduction.py hashes \
-            --manifest release-iri/MANIFEST.csv --corpus "$CORPUS" \
+            --manifest "$RELEASE/MANIFEST.csv" --corpus "$CORPUS" \
             --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Re-run the quality gate
@@ -102,14 +120,14 @@ jobs:
       - name: Re-run matches the released manifest
         run: |
           python pipeline/verify_reproduction.py compare \
-            --release release-iri/MANIFEST.csv --regated regate/MANIFEST.csv \
+            --release "$RELEASE/MANIFEST.csv" --regated regate/MANIFEST.csv \
             --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Release is internally consistent
         if: always()
         run: |
-          ln -sfn "$CORPUS" release-iri/corpus
-          python release-iri/validate_release.py
+          ln -sfn "$CORPUS" "$RELEASE/corpus"
+          python "$RELEASE/validate_release.py"
 
       - uses: actions/upload-artifact@v4
         if: always()

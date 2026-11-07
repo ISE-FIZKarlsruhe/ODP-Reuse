@@ -108,11 +108,31 @@ Harvesting is **not** re-runnable to the same result: it queries live APIs
 (GitHub, BioPortal, MatPortal, LOV), so the reproducible artefact is the
 archived Zenodo deposition, not a re-run of the harvester.
 [`quarterly-harvest.yml`](.github/workflows/quarterly-harvest.yml) re-harvests
-the GitHub portion each quarter to report what changed, searching the release's
-144 pattern IRIs plus any the ODPA repository has published since, labelled
-separately. Google's Custom Search JSON API, used for the original harvest,
-shuts down on 2027-01-01. Credentials for a fresh harvest go in `.env` — see
-`.env.example`.
+the GitHub portion each quarter, searching the release's 144 pattern IRIs plus
+any the ODPA repository has published since, labelled separately. Files in the
+pattern libraries themselves (`odpa/patterns-repository`, and this repository's
+own pattern copies under `docs/patterns/`) are not kept: they publish the
+patterns rather than reuse them, and the release holds none of them.
+
+A harvest only **adds** to the release. Code search returns at most 1,000 files
+per query and ranks them differently on every run, so a harvest that does not
+return a released ontology says nothing about it: after the first full harvest,
+88 of 100 sampled "missing" files were still at the same path.
+[`pipeline/merge_harvest.py`](pipeline/merge_harvest.py) keeps every released
+row, file and verdict, gates only the ontologies the release does not have
+(against the release, so a new copy of a released file is a duplicate of the
+released row), and the workflow opens a pull request with the result:
+
+```bash
+cd pipeline
+python merge_harvest.py --release ../release-iri \
+    --harvest-manifest ../harvest/out/MANIFEST.csv --harvest-root ../harvest \
+    --additions ../harvest/corpus-additions --report ../harvest/merge
+python write_release_readme.py --release ../release-iri --keep-hashed-note
+```
+
+Google's Custom Search JSON API, used for the original harvest, shuts down on
+2027-01-01. Credentials for a fresh harvest go in `.env` — see `.env.example`.
 
 ## Use cases
 

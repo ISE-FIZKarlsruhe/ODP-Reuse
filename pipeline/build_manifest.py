@@ -201,28 +201,37 @@ def main() -> None:
         s = {"dataset": ds, **s}
         rows.append(s)
     if rows:
-        keys = list(rows[0])
-        with (args.out / "gate_summary.csv").open("w", newline="",
-                                                  encoding="utf-8") as fh:
-            w = csv.DictWriter(fh, fieldnames=keys)
-            w.writeheader()
-            w.writerows(rows)
+        print(write_gate_summary(args.out, rows, args.min_own_entities))
 
-        md = ["# Quality-gate attrition", "",
-              "Counts are per dataset; each ontology is attributed to the FIRST rule",
-              "it fails, so the columns partition `discovered`.", "",
-              "| " + " | ".join(keys) + " |",
-              "|" + "|".join(["---"] * len(keys)) + "|"]
-        for r in rows:
-            md.append("| " + " | ".join(str(r[k]) for k in keys) + " |")
-        md.append("")
-        md.append("Rules: G1 parseable, G2 not a pattern copy, G3 not a duplicate,")
-        md.append("G4 substantive (>=%d own entities), G5 has ground truth,"
-                  % args.min_own_entities)
-        md.append("G6 complete reuse (variant membership). See odpqual/gate.py.")
-        (args.out / "gate_summary.md").write_text("\n".join(md) + "\n",
-                                                  encoding="utf-8")
-        print("\n".join(md))
+
+def write_gate_summary(out: Path, rows: list[dict], min_own_entities: int,
+                       eol: str | None = None) -> str:
+    """Write gate_summary.csv and gate_summary.md; return the Markdown.
+
+    ``rows`` holds one gate_summary() dict per dataset, with a leading
+    ``dataset`` key. Shared with merge_harvest.py.
+    """
+    keys = list(rows[0])
+    with (out / "gate_summary.csv").open("w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=keys, lineterminator=eol or "\r\n")
+        w.writeheader()
+        w.writerows(rows)
+
+    md = ["# Quality-gate attrition", "",
+          "Counts are per dataset; each ontology is attributed to the FIRST rule",
+          "it fails, so the columns partition `discovered`.", "",
+          "| " + " | ".join(keys) + " |",
+          "|" + "|".join(["---"] * len(keys)) + "|"]
+    for r in rows:
+        md.append("| " + " | ".join(str(r[k]) for k in keys) + " |")
+    md.append("")
+    md.append("Rules: G1 parseable, G2 not a pattern copy, G3 not a duplicate,")
+    md.append("G4 substantive (>=%d own entities), G5 has ground truth,"
+              % min_own_entities)
+    md.append("G6 complete reuse (variant membership). See odpqual/gate.py.")
+    (out / "gate_summary.md").write_text("\n".join(md) + "\n", encoding="utf-8",
+                                         newline=eol)
+    return "\n".join(md)
 
 
 if __name__ == "__main__":

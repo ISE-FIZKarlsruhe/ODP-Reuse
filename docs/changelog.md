@@ -24,10 +24,15 @@ monthly and on every change to the gate, so the claim that the archive, run
 through the released gate, yields the released verdicts is tested rather than
 asserted.
 
-**The corpus is maintained.** `quarterly-harvest.yml` re-runs discovery, repair
-and the gate for the GitHub portion every quarter and opens an issue listing
-ontology–pattern pairs that did not exist in the published release; hits for
-patterns published after the release are reported separately. A re-harvest
-queries live APIs and is not expected to reproduce the corpus: it tests that the
-harvester still runs, and shows what is new. A new release is cut deliberately
-from that issue, never automatically.
+**The corpus grows; it never shrinks.** `quarterly-harvest.yml` re-runs
+discovery, repair and the gate for the GitHub portion every quarter, searching
+the release's pattern IRIs plus any the ODPA has published since. A re-harvest
+queries live APIs and is a partial sample, not a census: code search returns at
+most 1,000 files per query, and a file a harvest does not return is usually
+still there. So a harvest only adds. `merge_harvest.py` keeps every released
+row, file and verdict as it is, gates the ontologies the release does not have
+against it (a new copy of a released file is a duplicate of the released one),
+re-verifies their removals, and appends them to `MANIFEST.csv`, the views and
+the audit. The workflow opens a pull request with the result. A person merges
+it, adds the new files to the Zenodo corpus and tags a minor version; nothing
+is published automatically.

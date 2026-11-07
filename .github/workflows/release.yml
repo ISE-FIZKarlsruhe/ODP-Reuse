@@ -129,11 +129,21 @@ jobs:
 
       # New Zenodo VERSION under the existing concept DOI. Left as a draft unless
       # explicitly published, because a Zenodo publish is irreversible.
+      #
+      # The corpus is not in git (release-*/corpus/ is ignored), so on a runner
+      # it is absent, and zenodo_publish.py clears the files a new version
+      # inherits. Publishing anyway would make the newest version -- the one
+      # the concept DOI resolves to -- hold metadata and code but no corpus.
+      # Refuse; publish that version from a machine that has the full corpus.
       - name: Zenodo version
         if: env.ZENODO_TOKEN != ''
         env:
           ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
         run: |
+          if ! ls dist/odp-reuse-corpus-*.tar.gz >/dev/null 2>&1; then
+            echo "::error::No corpus archive in dist/: a Zenodo version without the corpus would replace it with metadata only. Publish it locally with the full corpus (pipeline/zenodo_publish.py)."
+            exit 1
+          fi
           python pipeline/zenodo_publish.py \
             --concept "${{ env.ZENODO_CONCEPT }}" \
             --version "${{ steps.v.outputs.version }}" \

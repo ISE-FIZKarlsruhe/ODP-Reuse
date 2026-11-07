@@ -1,8 +1,8 @@
 name: Quarterly ODP-reuse harvest
 
 # Re-runs discovery, repair and the quality gate for the GitHub portion of the
-# corpus on a schedule, and opens an issue describing what changed since the
-# published release.
+# corpus on a schedule, adds the ontologies the release does not have yet, and
+# opens a pull request with them. Nothing is ever removed from the release.
 #
 # What this tests, and what it does not. It tests that the harvester still runs
 # end to end from a clean checkout, that its output still passes the gate and
@@ -11,14 +11,24 @@ name: Quarterly ODP-reuse harvest
 # set of files by design. Exact reproducibility of the release -- archived
 # corpus in, released MANIFEST.csv out -- is tested by reproduce.yml.
 #
-# Two jobs, because GitHub-hosted jobs are capped at 6 h each:
+# Add, never replace. A harvest is a partial sample: code search returns at most
+# 1,000 files per query and ranks them differently on every run. Run 42239149156
+# did not return 525 release ontologies, and 88 of 100 sampled were still at the
+# same path. So merge_harvest.py keeps every release row as it is and appends
+# only ontologies the release does not have, gated against the release.
+#
+# Three jobs, because GitHub-hosted jobs are capped at 6 h each:
 #
 #   discover  code search (~80 min for ~150 IRIs at 9 requests/minute) plus the
-#             portal searches (~25 min). The GitHub phase is capped; if the cap
-#             is hit, the remaining IRIs are recorded as not_searched, the
-#             partial results are uploaded, and the run fails saying so.
-#   build     download every hit (~1 s each; ~6,000 files in 2026), repair,
-#             gate, audit, diff, issue. Runs only on a complete discovery.
+#             portal searches. The GitHub phase is capped; if the cap is hit,
+#             the remaining IRIs are recorded as not_searched, the partial
+#             results are uploaded, and the run fails saying so.
+#   build     download every hit (~1 s each), repair, gate, audit, diff against
+#             the release, then add the new ontologies to a copy of release-iri.
+#             Runs only on a complete discovery.
+#   propose   on main only: commit that copy to the branch harvest/update and
+#             open (or update) a pull request. A person reviews and merges it,
+#             then cuts the release; nothing is published automatically.
 #
 # The discover job hands over its results and the exact ODPA pattern files it
 # searched for, so both jobs use the same pattern library.
@@ -129,13 +139,20 @@ jobs:
           GOOGLE_CSE_ID:     ${{ secrets.GOOGLE_CSE_ID }}
           BIOPORTAL_API_KEY: ${{ secrets.BIOPORTAL_API_KEY }}
           MATPORTAL_API_KEY: ${{ secrets.MATPORTAL_API_KEY }}
+        # GitHub serves at most 1,000 results per search (10 pages of 100). The
+        # finder used to stop at 250 (5 pages of 50), and 7 queries of run
+        # 42239149156 hit that cap with 252 to 9,936 matches on GitHub; 444 of
+        # the 525 release ontologies that run did not return were tied to them.
+        # A portal that fails 5 IRIs in a row is skipped for the rest of the run.
         run: |
           cd MultiSource
           python odp_multi_source_finder.py \
             --sources "$SOURCES" \
             --patterns-file ../harvest/report/pattern_sets.csv \
-            --github-max-pages 5 \
+            --github-per-page 100 \
+            --github-max-pages 10 \
             --github-search-per-minute 9 \
+            --portal-max-consecutive-failures 5 \
             --github-max-minutes "$GITHUB_MAX_MINUTES" \
             --google-pages 2 \
             --google-skip-on-403 \
@@ -169,7 +186,11 @@ jobs:
     timeout-minutes: 350
     permissions:
       contents: read
-      issues: write
+    outputs:
+      added: ${{ steps.merge.outputs.added }}
+      added_kept: ${{ steps.merge.outputs.added_kept }}
+      new_pairs: ${{ steps.merge.outputs.new_pairs }}
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -233,6 +254,9 @@ jobs:
           print("no sampled removal was disputed")
           PY
 
+      # The harvest compared with the release, for the run summary. Release
+      # ontologies the harvest did not return are listed as "not returned" and
+      # stay in the release.
       - name: Diff against the published release
         id: diff
         run: |
@@ -246,21 +270,41 @@ jobs:
             --out ../harvest/diff
           cat ../harvest/diff/REPORT.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Open an issue when something changed
-        if: steps.diff.outputs.has_changes == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const body = fs.readFileSync('harvest/diff/REPORT.md', 'utf8');
-            const title = `Quarterly harvest ${new Date().toISOString().slice(0,10)}: `
-                        + `${process.env.NEW_PAIRS} new ontology-pattern pairs`;
-            await github.rest.issues.create({
-              owner: context.repo.owner, repo: context.repo.repo,
-              title, body, labels: ['harvest', 'data-update'],
-            });
-        env:
-          NEW_PAIRS: ${{ steps.diff.outputs.new_pairs }}
+      # Add, never remove. Every release row stays as it is; ontologies the
+      # release does not have are gated against it (a new copy of a released
+      # file is a duplicate of the released row), their removals re-verified,
+      # and appended to MANIFEST.csv, the views and the audit. Fails, writing
+      # nothing, if a new removal cannot be re-verified.
+      - name: Add the new ontologies to the release
+        id: merge
+        run: |
+          cd pipeline
+          python merge_harvest.py \
+            --release ../release-iri \
+            --harvest-manifest ../harvest/out/MANIFEST.csv \
+            --harvest-root ../harvest \
+            --additions ../harvest/corpus-additions \
+            --report ../harvest/merge \
+            --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          python write_release_readme.py --release ../release-iri --keep-hashed-note
+          python ../release-iri/validate_release.py
+          cat ../harvest/merge/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+
+      # New ontologies from a harvest, gate unchanged: a minor version
+      # (docs/changelog.md). release.yml checks the tag against CITATION.cff.
+      - name: Propose the next minor version
+        id: version
+        if: steps.merge.outputs.added != '0'
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import re, pathlib
+          p = pathlib.Path("CITATION.cff")
+          s = p.read_text(encoding="utf-8")
+          m = re.search(r'^version:\s*["\']?(\d+)\.(\d+)\.(\d+)["\']?\s*$', s, re.M)
+          new = f"{m.group(1)}.{int(m.group(2)) + 1}.0"
+          p.write_text(s[:m.start()] + f"version: {new}" + s[m.end():], encoding="utf-8")
+          print(f"version={new}")
+          PY
 
       # Uploaded even when an earlier step failed or the job was cancelled, so a
       # partial harvest is still inspectable.
@@ -274,9 +318,68 @@ jobs:
             harvest/out/gate_summary.md
             harvest/out/audit/
             harvest/diff/
+            harvest/merge/
             harvest/repair/
           retention-days: 90
 
-      # No pull request is opened. The harvest's manifest covers the GitHub
-      # portion only and must not replace the release's; a new release is cut
-      # deliberately with release.yml after the issue has been reviewed.
+      # What the pull request commits: release-iri without the corpus (which
+      # is not in git), and the version bump.
+      - uses: actions/upload-artifact@v4
+        if: steps.merge.outputs.added != '0'
+        with:
+          name: release-update-${{ github.run_number }}
+          path: |
+            release-iri/
+            !release-iri/corpus/
+            CITATION.cff
+            harvest/merge/REPORT.md
+          retention-days: 90
+
+      # The added ontologies' files. The corpus is archived on Zenodo, not in
+      # git, so these go into the next Zenodo version by hand (see the PR).
+      - uses: actions/upload-artifact@v4
+        if: steps.merge.outputs.added != '0'
+        with:
+          name: corpus-additions-${{ github.run_number }}
+          path: harvest/corpus-additions/
+          retention-days: 90
+
+  # ===================================================================== propose
+  # Repository setting required: Settings > Actions > General > Workflow
+  # permissions > "Allow GitHub Actions to create and approve pull requests".
+  propose:
+    needs: build
+    if: needs.build.outputs.added != '0' && needs.build.outputs.added != '' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-update-${{ github.run_number }}
+          path: .
+
+      # One standing branch: a later harvest updates the same pull request
+      # rather than opening a second one against the same release.
+      - name: Open or update the pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: harvest/update
+          base: main
+          add-paths: |
+            release-iri
+            CITATION.cff
+          commit-message: >-
+            release: add ${{ needs.build.outputs.added }} ontologies from harvest
+            run ${{ github.run_id }} (${{ needs.build.outputs.added_kept }} pass the gate)
+          title: >-
+            v${{ needs.build.outputs.version }}: add ${{ needs.build.outputs.added }} ontologies
+            (${{ needs.build.outputs.added_kept }} pass the gate,
+            +${{ needs.build.outputs.new_pairs }} pairs)
+          body-path: harvest/merge/REPORT.md
+          labels: harvest, data-update
+          delete-branch: true

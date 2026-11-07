@@ -339,6 +339,17 @@ def github_code_search(session: requests.Session, query: str, *, per_page=50, ma
         time.sleep(_jitter_ms(delay_ms))
 
 
+# Repositories that publish the patterns themselves, not ontologies that reuse
+# them. Their files match the pattern IRIs by construction. The release holds
+# none of them; run 42239149156 returned 127 files from the ODPA library and 55
+# from this project's own copies under docs/patterns, 46 of which passed the
+# gate as "reusing" ontologies.
+PATTERN_LIBRARY_REPOS = {
+    "odpa/patterns-repository": "the ODPA library the search patterns come from",
+    "ise-fizkarlsruhe/odp-reuse": "this project's own copies of the patterns",
+}
+
+
 def search_github_patterns(patterns: List[Tuple[str, str]], search, *,
                            skip_generic: bool = False,
                            deadline: Optional[float] = None,
@@ -350,7 +361,8 @@ def search_github_patterns(patterns: List[Tuple[str, str]], search, *,
     ``search(query)`` yields GitHub code-search items. Returns ``(rows, status)``:
     one result row per hit, and one status row per pattern IRI saying whether it
     was searched -- so a run that stops early says which IRIs it never reached
-    instead of silently reporting them as unreused.
+    instead of silently reporting them as unreused. Hits in
+    PATTERN_LIBRARY_REPOS are counted in the status note and not kept.
 
     Once ``clock()`` passes ``deadline`` the remaining IRIs are marked
     ``not_searched`` and not queried.
@@ -376,11 +388,15 @@ def search_github_patterns(patterns: List[Tuple[str, str]], search, *,
             log(f"[GitHub] No usable queries (likely too long) for: {iri}")
             st.update(status="skipped", note="query too long")
             continue
-        rejected = 0
+        rejected = library = 0
         for q in queries:
             st["queries"] += 1
             try:
                 for item in search(q):
+                    repo = as_str(item.get("repository", {}).get("full_name"))
+                    if repo.lower() in PATTERN_LIBRARY_REPOS:
+                        library += 1
+                        continue
                     rows.append({
                         "source": "github",
                         "pattern_label": as_str(label),
@@ -396,8 +412,12 @@ def search_github_patterns(patterns: List[Tuple[str, str]], search, *,
                     rejected += 1
                     continue
                 raise
+        notes = []
         if rejected:
-            st["note"] = f"{rejected} quer{'y' if rejected == 1 else 'ies'} rejected (422)"
+            notes.append(f"{rejected} quer{'y' if rejected == 1 else 'ies'} rejected (422)")
+        if library:
+            notes.append(f"{library} hits in pattern-library repositories skipped")
+        st["note"] = "; ".join(notes)
         if on_pattern_done is not None:
             on_pattern_done(rows, status)
     return rows, status
@@ -510,17 +530,43 @@ def google_key_cx_cycle(cli_keys: Optional[str], cli_cxs: Optional[str],
 # ----------------------
 
 PORTAL_ATTEMPTS = 4      # 1 try + 3 retries, backing off 5, 10, 20 s
+PORTAL_MAX_CONSECUTIVE_FAILURES = 5
+
+
+class PortalBreaker:
+    """Counts IRIs in a row on which a portal failed; opens at ``limit``.
+
+    One failed IRI costs up to four requests and 35 s of back-off. When a portal
+    is down, that is paid on every remaining IRI: in run 42239149156 BioPortal
+    failed 51 of 147 IRIs and used 217 of the step's 240 minutes. After
+    ``limit`` failures in a row the portal is assumed down for this run.
+    """
+
+    def __init__(self, limit: int = PORTAL_MAX_CONSECUTIVE_FAILURES):
+        self.limit, self.consecutive = limit, 0
+
+    def failed(self) -> None:
+        self.consecutive += 1
+
+    def succeeded(self) -> None:
+        self.consecutive = 0
+
+    @property
+    def open(self) -> bool:
+        return self.limit > 0 and self.consecutive >= self.limit
 
 
 def ontoportal_search(name: str, base: str, api_key: str, q: str,
-                      pages: int = 1, page_size: int = 50) -> Iterable[Dict]:
+                      pages: int = 1, page_size: int = 50,
+                      breaker: Optional[PortalBreaker] = None) -> Iterable[Dict]:
     """
     OntoPortal Search API (BioPortal, MatPortal).
 
     The portals feed the discovery report only, so a portal failure must never
     end the harvest: a 502 from BioPortal once did, after GitHub search had
     finished. Transient errors (5xx, 429, connection) are retried with back-off;
-    if a page still fails, the IRI is logged and skipped.
+    if a page still fails, the IRI is logged and skipped, and ``breaker`` (if
+    given) counts it.
     """
     headers = {"Authorization": f"apikey token={api_key}"}
     for p in range(1, pages + 1):
@@ -537,10 +583,13 @@ def ontoportal_search(name: str, base: str, api_key: str, q: str,
                     return
                 if r.status_code == 200:
                     try:
-                        yield r.json()
+                        page = r.json()
                     except ValueError as e:
                         log(f"[{name}] Unreadable response for {q} (page {p}): {e}. Skipping this IRI.")
                         return
+                    if breaker is not None:
+                        breaker.succeeded()
+                    yield page
                     break
                 last = f"{r.status_code} {r.reason or ''}".strip()
                 if not (r.status_code == 429 or r.status_code >= 500):
@@ -550,18 +599,57 @@ def ontoportal_search(name: str, base: str, api_key: str, q: str,
                 time.sleep(5 * 2 ** (attempt - 1))
         else:
             log(f"[{name}] {last} for {q} (page {p}) after {PORTAL_ATTEMPTS} attempts. Skipping this IRI.")
+            if breaker is not None:
+                breaker.failed()
             return
         sleep_short()
 
 
-def bioportal_search(api_key: str, q: str, pages: int = 1, page_size: int = 50) -> Iterable[Dict]:
+def bioportal_search(api_key: str, q: str, pages: int = 1, page_size: int = 50,
+                     breaker: Optional[PortalBreaker] = None) -> Iterable[Dict]:
     """BioPortal Search API: https://data.bioontology.org/documentation"""
-    return ontoportal_search("BioPortal", "https://data.bioontology.org/search", api_key, q, pages, page_size)
+    return ontoportal_search("BioPortal", "https://data.bioontology.org/search", api_key, q, pages, page_size,
+                             breaker=breaker)
 
 
-def matportal_search(api_key: str, q: str, pages: int = 1, page_size: int = 50) -> Iterable[Dict]:
+def matportal_search(api_key: str, q: str, pages: int = 1, page_size: int = 50,
+                     breaker: Optional[PortalBreaker] = None) -> Iterable[Dict]:
     """MatPortal (OntoPortal) Search API: same as BioPortal; different base URL."""
-    return ontoportal_search("MatPortal", "https://rest.matportal.org/search", api_key, q, pages, page_size)
+    return ontoportal_search("MatPortal", "https://rest.matportal.org/search", api_key, q, pages, page_size,
+                             breaker=breaker)
+
+
+def search_portal(source: str, name: str, search, patterns: List[Tuple[str, str]], *,
+                  max_consecutive_failures: int = PORTAL_MAX_CONSECUTIVE_FAILURES) -> List[Dict]:
+    """Search one OntoPortal instance for every pattern IRI.
+
+    ``search(iri, breaker)`` yields result pages. After
+    ``max_consecutive_failures`` failed IRIs in a row the remaining IRIs are not
+    searched, and the log says how many (0 disables the limit).
+    """
+    breaker = PortalBreaker(max_consecutive_failures)
+    rows: List[Dict] = []
+    for idx, (label, iri) in enumerate(patterns, 1):
+        if breaker.open:
+            log(f"[{name}] {breaker.limit} IRIs in a row failed; not searching the remaining "
+                f"{len(patterns) - idx + 1} of {len(patterns)} IRIs on {name} in this run.")
+            break
+        log(f"[{name} {idx}/{len(patterns)}] Searching for IRI: {iri}")
+        for page in search(iri, breaker):
+            for res in page.get("collection", []):
+                pref = as_str(res.get("prefLabel") or res.get("@id") or res.get("id") or "")
+                url = normalize_url(res.get("@id") or res.get("links", {}).get("self")
+                                    or res.get("links", {}).get("ontology"))
+                rows.append({
+                    "source": source,
+                    "pattern_label": as_str(label),
+                    "pattern_iri": as_str(iri),
+                    "match_label": pref,
+                    "url": url,
+                    "details": as_str(res.get("definition") or res.get("annotatedProperty") or "")
+                })
+        sleep_short()
+    return rows
 
 
 # ----------------------
@@ -673,6 +761,8 @@ def main():
                     help="Stop fetching more Google pages for an IRI once this many hits have been collected.")
     ap.add_argument("--bioportal-pages", type=int, default=2, help="BioPortal pages.")
     ap.add_argument("--matportal-pages", type=int, default=2, help="MatPortal pages.")
+    ap.add_argument("--portal-max-consecutive-failures", type=int, default=PORTAL_MAX_CONSECUTIVE_FAILURES,
+                    help="Stop searching a portal after this many IRIs in a row failed (0 = never stop).")
     ap.add_argument("--sparql-endpoint", help="SPARQL endpoint URL for 'sparql' source.")
     ap.add_argument("--skip-generic", action="store_true", help="Skip generic/template ODP IRIs (e.g., /template, homepage IRIs).")
     ap.add_argument("--out", default="odp_multi_results.csv", help="Output CSV path.")
@@ -854,42 +944,22 @@ def main():
         if not bioportal_key:
             log("[BioPortal] Missing BIOPORTAL_API_KEY; skipping BioPortal search.")
         else:
-            for idx, (label, iri) in enumerate(patterns, 1):
-                log(f"[BioPortal {idx}/{len(patterns)}] Searching for IRI: {iri}")
-                for page in bioportal_search(bioportal_key, iri, pages=args.bioportal_pages):
-                    for res in page.get("collection", []):
-                        pref = as_str(res.get("prefLabel") or res.get("@id") or res.get("id") or "")
-                        url  = normalize_url(res.get("@id") or res.get("links", {}).get("self") or res.get("links", {}).get("ontology"))
-                        rows.append({
-                            "source": "bioportal",
-                            "pattern_label": as_str(label),
-                            "pattern_iri": as_str(iri),
-                            "match_label": pref,
-                            "url": url,
-                            "details": as_str(res.get("definition") or res.get("annotatedProperty") or "")
-                        })
-                sleep_short()
+            rows.extend(search_portal(
+                "bioportal", "BioPortal",
+                lambda iri, breaker: bioportal_search(bioportal_key, iri, pages=args.bioportal_pages,
+                                                      breaker=breaker),
+                patterns, max_consecutive_failures=args.portal_max_consecutive_failures))
 
     # ---------------- MatPortal ----------------
     if "matportal" in sources:
         if not matportal_key:
             log("[MatPortal] Missing MATPORTAL_API_KEY; skipping MatPortal search.")
         else:
-            for idx, (label, iri) in enumerate(patterns, 1):
-                log(f"[MatPortal {idx}/{len(patterns)}] Searching for IRI: {iri}")
-                for page in matportal_search(matportal_key, iri, pages=args.matportal_pages):
-                    for res in page.get("collection", []):
-                        pref = as_str(res.get("prefLabel") or res.get("@id") or res.get("id") or "")
-                        url  = normalize_url(res.get("@id") or res.get("links", {}).get("self") or res.get("links", {}).get("ontology"))
-                        rows.append({
-                            "source": "matportal",
-                            "pattern_label": as_str(label),
-                            "pattern_iri": as_str(iri),
-                            "match_label": pref,
-                            "url": url,
-                            "details": as_str(res.get("definition") or res.get("annotatedProperty") or "")
-                        })
-                sleep_short()
+            rows.extend(search_portal(
+                "matportal", "MatPortal",
+                lambda iri, breaker: matportal_search(matportal_key, iri, pages=args.matportal_pages,
+                                                      breaker=breaker),
+                patterns, max_consecutive_failures=args.portal_max_consecutive_failures))
 
     # ---------------- LOV ----------------
     if "lov" in sources:

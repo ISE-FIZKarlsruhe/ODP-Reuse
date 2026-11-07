@@ -7,19 +7,23 @@ report what changed, as the quarterly workflow's payload.
 Answers, for a new harvest:
 
   * which ontologies are NEW (discovered now, absent from the release)
-  * which ontology-pattern PAIRS are new -- the headline number, because a new
-    pair is new evidence of reuse
-  * which ontologies GAINED or LOST ground truth (a pattern was published,
-    withdrawn, or repaired)
-  * which ontologies DISAPPEARED (repository deleted or made private)
+  * which ontology-pattern PAIRS are new on ontologies that pass the gate --
+    the headline number, because only those can enter a view
+  * which ontologies have more or fewer pairs in this harvest than in the
+    release (a pattern was published, withdrawn, or repaired)
+  * which release ontologies this harvest did NOT RETURN. Code search keeps at
+    most 1,000 results per query and ranks them differently on every run, so
+    a file it does not return is usually still there (88 of 100 sampled after
+    run 42239149156). The release keeps every one of them.
   * how the quality gate's verdict shifted, per rule
 
 Sets GitHub Actions outputs `has_changes`, `new_pairs`, `new_ontologies` and
-writes `REPORT.md` for the issue body.
+writes `REPORT.md` for the run summary. Nothing here changes the release;
+merge_harvest.py adds the new ontologies.
 
 Only the datasets present in the NEW manifest are compared. A harvest rebuilds
 the GitHub portion only; the noOBO and OBO portions are not re-discovered, so
-their absence from a harvest is not a disappearance.
+their absence from a harvest says nothing about them.
 
 Optional inputs make the report say what the harvest actually did:
 
@@ -114,7 +118,7 @@ def coverage_section(status: list[dict]) -> tuple[list[str], bool]:
     return ([f"> **INCOMPLETE harvest.** {len(missing)} of {len(status)} pattern IRIs were "
              f"not searched ({', '.join(f'{k}: {v}' for k, v in sorted(by_set.items()))}). "
              "Ontologies that reuse only those patterns are missing from this harvest, so "
-             "'disappeared' and 'lost ground truth' below are not evidence of change.", ""],
+             "'not returned' and 'fewer pairs' below are not evidence of change.", ""],
             True)
 
 
@@ -164,8 +168,11 @@ def main(argv=None) -> None:
     newly_kept = [k for k in common if kept(new[k]) and not kept(old[k])]
     newly_dropped = [k for k in common if not kept(new[k]) and kept(old[k])]
 
-    new_pairs = (sum(gt(new[k]) for k in added)
-                 + sum(b - a for _k, a, b in gained))
+    # Only pairs on ontologies that pass the gate can enter a view, so only
+    # those are counted as new. Run 42239149156 counted 316, of which 58 were
+    # on dropped ontologies.
+    new_pairs = (sum(gt(new[k]) for k in added if kept(new[k]))
+                 + sum(b - a for k, a, b in gained if kept(new[k])))
     new_complete = (sum(complete(new[k]) for k in added)
                     + sum(max(0, complete(new[k]) - complete(old[k]))
                           for k in common))
@@ -182,11 +189,13 @@ def main(argv=None) -> None:
          f"- corpus ({', '.join(rebuilt) or 'nothing rebuilt'}): **{len(old)} → {len(new)}** ontologies",
          *([f"- not rebuilt by this harvest: {', '.join(not_rebuilt)} "
             f"(release rows unchanged, not compared)"] if not_rebuilt else []),
-         f"- **new ontology–pattern pairs: {new_pairs}**",
+         f"- **new ontology–pattern pairs on gate-passing ontologies: {new_pairs}**",
          f"- new complete-reuse pairs: {new_complete}",
-         f"- newly discovered ontologies: {len(added)}",
-         f"- ontologies that disappeared upstream: {len(gone)}",
-         f"- gained ground truth: {len(gained)} · lost: {len(lost)}",
+         f"- newly discovered ontologies: {len(added)} "
+         f"({sum(1 for k in added if kept(new[k]))} pass the gate)",
+         f"- release ontologies not returned by this harvest: {len(gone)} (kept in the release)",
+         f"- more pairs than in the release: {len(gained)} · fewer: {len(lost)} "
+         f"(the release keeps its pairs)",
          f"- newly passing the gate: {len(newly_kept)} · newly dropped: {len(newly_dropped)}",
          ""]
     L += discovery_section(read_rows(args.discovery))
@@ -204,18 +213,21 @@ def main(argv=None) -> None:
         L.append("")
 
     if gained:
-        L += ["## Gained ground truth", "",
+        L += ["## More pairs than in the release", "",
               "| dataset | ontology | before | after |", "|---|---|---:|---:|"]
         for (ds, o), a, b in gained[:40]:
             L.append(f"| {ds} | `{o}` | {a} | {b} |")
         L.append("")
 
     if gone:
-        L += ["## Disappeared upstream", "",
-              "These were in the release but are no longer discoverable — the "
-              "repository was deleted, renamed or made private. The published "
-              "release keeps them; this is a provenance note, not a deletion.", "",
-              *[f"- `{o}` ({ds})" for ds, o in gone[:40]], ""]
+        L += ["## Not returned by this harvest", "",
+              "These release ontologies were not among the files this harvest's "
+              "searches returned. That is not evidence that they are gone: code "
+              "search caps and re-ranks its results, and after run 42239149156, 88 "
+              "of 100 sampled files were still at the same path. The release keeps "
+              "all of them; see `not_returned.csv`.", "",
+              *[f"- `{o}` ({ds})" for ds, o in gone[:40]],
+              *([f"\n_…and {len(gone) - 40} more._"] if len(gone) > 40 else []), ""]
 
     L += ["## Gate verdict shift", "",
           "| rule | before | after | Δ |", "|---|---:|---:|---:|"]
@@ -240,11 +252,11 @@ def main(argv=None) -> None:
     dump("gained_ground_truth.csv",
          [{"dataset": k[0], "ontology_id": k[1], "before": a, "after": b}
           for k, a, b in gained], ["dataset", "ontology_id", "before", "after"])
-    dump("disappeared.csv", [old[k] for k in gone],
+    dump("not_returned.csv", [old[k] for k in gone],
          ["dataset", "ontology_id", "n_gt_patterns", "drop_reason"])
 
-    print(f"new pairs: {new_pairs}   new ontologies: {len(added)}   "
-          f"disappeared: {len(gone)}")
+    print(f"new pairs on gate-passing ontologies: {new_pairs}   new ontologies: "
+          f"{len(added)}   not returned (kept): {len(gone)}")
 
     gh = os.environ.get("GITHUB_OUTPUT")
     if gh:
