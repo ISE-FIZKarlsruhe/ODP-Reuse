@@ -5,7 +5,7 @@ it fails, so the columns partition `discovered`.
 
 | dataset | discovered | dropped_G1_parse | dropped_G2_pattern_copy | dropped_G3_duplicate | dropped_G4_substantive | dropped_G5_has_gt | dropped_G6_complete_reuse | kept_reuse | kept_complete_reuse |
 |---|---|---|---|---|---|---|---|---|---|
-| github | 1887 | 268 | 36 | 203 | 539 | 399 | 0 | 442 | 37 |
+| github | 3622 | 424 | 51 | 344 | 1651 | 531 | 0 | 621 | 42 |
 | noOBO | 78 | 1 | 0 | 0 | 1 | 25 | 0 | 51 | 6 |
 | OBO | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 8 | 8 |
 
