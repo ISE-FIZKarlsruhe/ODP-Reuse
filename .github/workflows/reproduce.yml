@@ -16,7 +16,11 @@ name: Reproduce the release
 #   2. hashes   every ontology file is byte-identical to the one the gate hashed
 #   3. re-gate  run build_manifest.py on the archive and compare every row
 #               with the release (path and error_detail are machine-specific
-#               and not compared)
+#               and not compared). The rows are gated in the order the release
+#               was built: first the ontologies no release-iri/additions/v*.csv
+#               lists, then each version's additions against what was already
+#               published -- a new copy of a published file is a duplicate of
+#               the published row, as merge_harvest.py decided when it added it.
 #   4. validate_release.py: views, statistics and manifest agree with the corpus
 #
 # Ontologies larger than MAX_MB are not re-parsed: noOBO/cco alone is 1.1 GB and
@@ -44,6 +48,7 @@ on:
     paths:
       - 'pipeline/odpqual/**'
       - 'pipeline/build_manifest.py'
+      - 'pipeline/merge_harvest.py'
       - 'pipeline/verify_reproduction.py'
       - 'pipeline/requirements-reproduce.txt'
       - '.github/workflows/reproduce.yml'
@@ -131,6 +136,7 @@ jobs:
         run: |
           python pipeline/verify_reproduction.py compare \
             --release "$RELEASE/MANIFEST.csv" --regated regate/MANIFEST.csv \
+            --additions "$RELEASE/additions" \
             --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Release is internally consistent

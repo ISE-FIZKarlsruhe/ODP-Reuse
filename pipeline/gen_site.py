@@ -1018,8 +1018,9 @@ is published.
 
 **The release reproduces.** `reproduce.yml` downloads the newest corpus
 archived on Zenodo, checks every ontology file against the hash the gate
-recorded, re-runs the gate and compares every row with the `MANIFEST.csv` of
-the release it belongs to. It runs monthly and on every change to the gate.
+recorded, re-runs the gate version by version, as the release was built, and
+compares every row with the `MANIFEST.csv` of the release it belongs to. It
+runs monthly and on every change to the gate.
 """
 
 

@@ -31,7 +31,7 @@ see §B2 for the transition table.
 |---|---|---|---|---:|---|
 | **G1** | Parseable | the ontology file parses as RDF under any format | — | **269** (13.6%) | an unparseable file cannot be analysed at all |
 | **G2** | Not a pattern copy | (a) `owl:Ontology` IRI not in a pattern-library namespace; (b) not byte-identical to one of its patterns; (c) entity set ≠ a pattern's entity set | — | **36** (1.8%) | **the decisive rule** — a 100%-exact-IRI criterion is tautological on a file that *is* the pattern |
-| **G3** | Not a duplicate | among identical SHA-256 content hashes keep the lexicographically first id | — | **203** (10.3%) | forks and mirrors inflate every count and leak across train/test splits |
+| **G3** | Not a duplicate | among identical SHA-256 content hashes keep the lexicographically first id; from v1.3.0 on, a copy of an already published file is a duplicate of the published one | — | **203** (10.3%) | forks and mirrors inflate every count and leak across train/test splits |
 | **G4** | Substantive | entities contributed beyond its patterns ≥ threshold | **≥1** (`--min-own-entities`, the released value) | **540** (27.4%) | an ontology that adds nothing to its patterns is an aggregation of them, not a reusing ontology; all 540 contribute exactly zero |
 | **G5** | Has ground truth | ≥1 pattern with non-empty entity intersection | ≥1 entity | **424** (21.5%) | no overlap means no reuse signal and nothing to score against |
 | **G6** | Complete reuse | ≥1 pattern reused in full, evaluated **after** G1–G5 | 100% coverage | — (view membership, not a drop) | the original criterion, now unsatisfiable by a pattern copy |

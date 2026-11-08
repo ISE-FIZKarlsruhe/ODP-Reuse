@@ -63,11 +63,20 @@ pip install -r requirements.txt
 What reproduces exactly is the release: the corpus archived on Zenodo, run
 through the released gate, yields `release-iri/MANIFEST.csv` row for row.
 [`reproduce.yml`](.github/workflows/reproduce.yml) checks this monthly and on
-every change to the gate. By hand:
+every change to the gate.
+
+The gate runs in the order the release was built. Each version after v1.2.0
+added ontologies and gated them against those already published, so a new copy
+of a published file is a duplicate of the published row even when its id sorts
+first. `--additions` replays that: first the ontologies no
+`release-iri/additions/v*.csv` lists, then each version's additions in turn.
+Without it, 41 rows of v1.3.0 would differ: they are 15 groups of identical
+files, and run all at once the gate would keep the new copy's id. By hand:
 
 ```bash
 pip install -r pipeline/requirements-reproduce.txt     # the pinned RDF parser
-curl -L -o corpus.zip https://zenodo.org/api/records/21808321/files/corpus.zip/content
+record=$(python -c "import json; print(json.load(open('release-iri/archive.json'))['zenodo_record'])")
+curl -L -o corpus.zip "https://zenodo.org/api/records/$record/files/corpus.zip/content"
 unzip -q corpus.zip                                     # -> corpus/{github,noOBO,OBO}/
 
 # 1. every archived ontology file is byte-identical to the one the gate hashed
@@ -79,7 +88,8 @@ ln -s "$PWD/corpus/github" regate-root/github_dataset   # the gate's name for it
 ln -s "$PWD/corpus/noOBO"  regate-root/noOBO
 ln -s "$PWD/corpus/OBO"    regate-root/OBO
 python pipeline/build_manifest.py --data-root regate-root --out regate --max-mb 100
-python pipeline/verify_reproduction.py compare --release release-iri/MANIFEST.csv --regated regate/MANIFEST.csv
+python pipeline/verify_reproduction.py compare --release release-iri/MANIFEST.csv \
+    --regated regate/MANIFEST.csv --additions release-iri/additions
 ```
 
 `--max-mb 100` skips re-parsing the five largest ontologies (`noOBO/cco` alone is
@@ -88,7 +98,9 @@ step 1 still checks their files. `--max-mb 0` re-parses everything. On Windows,
 unpack to a short path such as `C:\c`: without long-path support, ontology paths
 under a deep folder exceed 260 characters and silently fail to open.
 
-The release is rebuilt from a gated manifest with:
+v1.2.0, the last version gated all at once, is rebuilt from a gated manifest
+with the commands below; later versions add to it with `merge_harvest.py`
+(see [Re-harvesting](#re-harvesting-finds-what-is-new-it-does-not-reproduce)):
 
 ```bash
 python pipeline/audit_filters.py --manifest regate/MANIFEST.csv --data-root regate-root --out regate/audit

@@ -23,7 +23,20 @@ corpus downloaded from Zenodo.
            their hash check stands in for them.
 
                python verify_reproduction.py compare \\
-                   --release ../release-iri/MANIFEST.csv --regated out/MANIFEST.csv
+                   --release ../release-iri/MANIFEST.csv --regated out/MANIFEST.csv \\
+                   --additions ../release-iri/additions
+
+           With --additions, the re-run is gated in the order the release was
+           built. Each version after v1.2.0 added ontologies and gated them
+           against the ontologies already published (merge_harvest.py), so a
+           new copy of a published file is a duplicate of the published row
+           even when its id sorts first. Gating the whole archive at once would
+           keep the smallest id instead. The replay gates the ontologies no
+           additions/v*.csv lists, then each version's additions in version
+           order, with merge_harvest.regate -- the code that published them.
+           A row skipped for size enters the replay as its released row (its
+           file is hash-verified), so the duplicates of a large file still
+           point at it.
 
 Both exit non-zero on any discrepancy and can append a Markdown summary to
 --summary (e.g. $GITHUB_STEP_SUMMARY).
@@ -61,24 +74,62 @@ class CompareResult:
     missing: list[Key] = field(default_factory=list)
     extra: list[Key] = field(default_factory=list)
     size_skipped: list[Key] = field(default_factory=list)
+    replayed: list[tuple[str, int]] = field(default_factory=list)  # (version, rows)
 
     @property
     def ok(self) -> bool:
         return not (self.mismatches or self.missing or self.extra)
 
 
-def compare_manifests(release: Path, regated: Path) -> CompareResult:
+def _version(name: str) -> tuple:
+    return tuple(int(p) if p.isdigit() else p for p in name.split("."))
+
+
+def load_additions(directory: Path) -> list[tuple[str, set[Key]]]:
+    """The ontologies each version added, oldest version first."""
+    if not directory.is_dir():
+        return []
+    out = []
+    for f in directory.glob("v*.csv"):
+        out.append((f.stem[1:], set(load(f)[1])))
+    return sorted(out, key=lambda v: _version(v[0]))
+
+
+def replay(regated: dict[Key, dict], release: dict[Key, dict],
+           versions: list[tuple[str, set[Key]]], min_own_entities: int = 1
+           ) -> tuple[dict[Key, dict], list[tuple[str, int]]]:
+    """Gate the re-run's rows in the order the release was built (module doc)."""
+    import merge_harvest  # the code that published every version after the first
+
+    rows = {k: release[k] if r.get("drop_reason", "").startswith(SIZE_SKIP) and k in release
+            else r for k, r in regated.items()}
+    later = set().union(*(keys for _v, keys in versions))
+    base = [r for k, r in rows.items() if k not in later]
+    done = merge_harvest.regate(base, [], min_own_entities)
+    counts = [("base", len(done))]
+    for version, keys in versions:
+        added = merge_harvest.regate([rows[k] for k in keys if k in rows], done, min_own_entities)
+        done += added
+        counts.append((version, len(added)))
+    return {(r["dataset"], r["ontology_id"]): r for r in done}, counts
+
+
+def compare_manifests(release: Path, regated: Path,
+                      additions: Path | None = None) -> CompareResult:
     rel_cols, rel = load(release)
-    new_cols, new = load(regated)
-    datasets = sorted({ds for ds, _ in new})
+    new_cols, raw = load(regated)
+    datasets = sorted({ds for ds, _ in raw})
     rel = {k: r for k, r in rel.items() if k[0] in set(datasets)}
     cols = [c for c in rel_cols if c in set(new_cols) and c not in MACHINE_SPECIFIC]
 
     res = CompareResult(datasets=datasets)
+    new = raw
+    if additions is not None:
+        new, res.replayed = replay(raw, rel, load_additions(additions))
     res.missing = sorted(set(rel) - set(new))
     res.extra = sorted(set(new) - set(rel))
     for k in sorted(set(rel) & set(new)):
-        if new[k].get("drop_reason", "").startswith(SIZE_SKIP):
+        if raw[k].get("drop_reason", "").startswith(SIZE_SKIP):
             res.size_skipped.append(k)
             continue
         diff = [c for c in cols if (rel[k].get(c) or "") != (new[k].get(c) or "")]
@@ -137,8 +188,12 @@ def report_compare(res: CompareResult) -> str:
          f"- identical rows: **{res.n_identical} of {total}**",
          f"- skipped for size (hash-verified only): {len(res.size_skipped)}",
          f"- differing: {len(res.mismatches)} | missing from re-run: {len(res.missing)} | "
-         f"not in release: {len(res.extra)}", "",
-         "Not compared: `path`, `error_detail` (machine-specific).", ""]
+         f"not in release: {len(res.extra)}", ""]
+    if res.replayed:
+        steps = ", then ".join(f"{n} {'first' if v == 'base' else 'added in v' + v}"
+                               for v, n in res.replayed)
+        L += [f"Gated in version order, as the release was built: {steps}.", ""]
+    L += ["Not compared: `path`, `error_detail` (machine-specific).", ""]
     if res.mismatches:
         L += ["**Differing rows** (first 30):", ""]
         L += [f"- `{ds}/{oid}`: {', '.join(cols)}" for (ds, oid), cols in res.mismatches[:30]]
@@ -171,6 +226,9 @@ def main(argv=None) -> None:
     c = sub.add_parser("compare")
     c.add_argument("--release", required=True, type=Path)
     c.add_argument("--regated", required=True, type=Path)
+    c.add_argument("--additions", type=Path,
+                   help="the release's additions/ directory: replay the versions in "
+                        "order (see above); absent directory = gate all at once")
     for p in (h, c):
         p.add_argument("--summary", type=Path, help="append the Markdown report here")
     a = ap.parse_args(argv)
@@ -179,7 +237,7 @@ def main(argv=None) -> None:
         res = verify_hashes(a.manifest, a.corpus)
         text = report_hashes(res, len(load(a.manifest)[1]))
     else:
-        res = compare_manifests(a.release, a.regated)
+        res = compare_manifests(a.release, a.regated, a.additions)
         text = report_compare(res)
     print(text)
     if a.summary:
