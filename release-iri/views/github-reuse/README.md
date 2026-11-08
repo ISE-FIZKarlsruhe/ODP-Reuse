@@ -32,14 +32,14 @@ ontologies, the ODP files they reuse, and the mapping between them.
 
 | Measure | Value |
 |---|---:|
-| Ontologies | 442 |
-| Ontology–pattern pairs | 669 |
-| Distinct patterns | 45 |
-| Ontologies with a fully reused pattern | 37 |
-| Fully reused pairs | 47 |
-| Mean patterns per ontology | 1.51 |
-| Mean pattern coverage (%) | 24.08 |
-| Median entities per ontology | 61 |
+| Ontologies | 620 |
+| Ontology–pattern pairs | 871 |
+| Distinct patterns | 49 |
+| Ontologies with a fully reused pattern | 42 |
+| Fully reused pairs | 53 |
+| Mean patterns per ontology | 1.4 |
+| Mean pattern coverage (%) | 21.79 |
+| Median entities per ontology | 69 |
 
 ## How this dataset was built
 

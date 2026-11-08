@@ -6,7 +6,7 @@ ontology-to-pattern mapping, per-view statistics, and the complete record of how
 the corpus was filtered.
 
 Every ontology here survived a documented quality gate. Most candidates did not:
-of **1,973** ontologies discovered, **501** (25.4%) are usable.
+of **3,705** ontologies discovered, **679** (18.3%) are usable.
 That attrition is itself a finding, and `MANIFEST.csv` records the reason for
 every exclusion.
 
@@ -14,8 +14,8 @@ every exclusion.
 
 | Dataset | Ontologies | Pairs | Distinct patterns | Fully reused pairs |
 |---|---:|---:|---:|---:|
-| `github-reuse` | 442 | 669 | 45 | 47 |
-| `github-complete` | 37 | 100 | 28 | 47 |
+| `github-reuse` | 620 | 871 | 49 | 53 |
+| `github-complete` | 42 | 108 | 31 | 53 |
 | `noOBO-reuse` | 51 | 90 | 45 | 6 |
 | `noOBO-complete` | 6 | 16 | 11 | 6 |
 | `OBO-reuse` | 8 | 758 | 420 | 620 |
@@ -24,7 +24,7 @@ every exclusion.
 `*-reuse` — every gated ontology with at least one verified reused pattern entity.
 `*-complete` — the subset where at least one pattern is reused *in full*.
 
-`corpus-hashed/` is the IRI-anonymised twin of `corpus/`: 6,085 files, same content and same reuse relations, every IRI replaced by a deterministic hash. Use **hashed to evaluate** a detection method — it removes the namespace-recognition shortcut — and **plain to inspect or curate**. Its files are N-Triples whatever the original serialisation was; `format_map.csv` records what each one was, and directory names are left unhashed so the tree still aligns with `MANIFEST.csv`.
+`corpus-hashed/` is the IRI-anonymised twin of `corpus/`: 9,884 files, same content and same reuse relations, every IRI replaced by a deterministic hash. Use **hashed to evaluate** a detection method — it removes the namespace-recognition shortcut — and **plain to inspect or curate**. Its files are N-Triples whatever the original serialisation was; `format_map.csv` records what each one was, and directory names are left unhashed so the tree still aligns with `MANIFEST.csv`.
 
 ## Layout
 
@@ -155,11 +155,11 @@ Each ontology is attributed to the **first** rule it fails, so the columns of
 
 | Rule | Test | Removed | Why |
 |---|---|---:|---|
-| **G1** | parses as RDF | 269 | an unparseable file cannot be analysed |
-| **G2** | **is not itself a copy of a pattern** — its `owl:Ontology` IRI is not in a pattern-library namespace, it is not byte-identical to one of its patterns, and its entity set does not equal a pattern's | 36 | a 100%-reuse criterion is *tautological* on a file that **is** the pattern |
-| **G3** | is not a byte-identical duplicate of another ontology | 203 | forks and mirrors inflate counts and leak across train/test splits |
-| **G4** | contributes at least **1** entity of its own, beyond its patterns | 540 | an ontology that adds nothing to its patterns is an aggregation of them, not a reusing ontology; every ontology dropped here contributes exactly zero |
-| **G5** | has ≥1 pattern with a non-empty entity overlap | 424 | no overlap means no reuse signal and nothing to score against |
+| **G1** | parses as RDF | 425 | an unparseable file cannot be analysed |
+| **G2** | **is not itself a copy of a pattern** — its `owl:Ontology` IRI is not in a pattern-library namespace, it is not byte-identical to one of its patterns, and its entity set does not equal a pattern's | 51 | a 100%-reuse criterion is *tautological* on a file that **is** the pattern |
+| **G3** | is not a byte-identical duplicate of another ontology | 342 | forks and mirrors inflate counts and leak across train/test splits |
+| **G4** | contributes at least **1** entity of its own, beyond its patterns | 1,652 | an ontology that adds nothing to its patterns is an aggregation of them, not a reusing ontology; every ontology dropped here contributes exactly zero |
+| **G5** | has ≥1 pattern with a non-empty entity overlap | 556 | no overlap means no reuse signal and nothing to score against |
 | **G6** | has ≥1 pattern reused *in full* (the `*-complete` views only) | 0 | applied *after* G1–G5, so it cannot be satisfied by a pattern copy |
 
 `FILTERS.md` states each rule in full, with its threshold, its sub-reasons, and how

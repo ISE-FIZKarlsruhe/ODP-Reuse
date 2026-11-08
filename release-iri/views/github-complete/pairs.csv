@@ -1,9 +1,16 @@
 ontology_id,ontology_dir,pattern,pattern_file,n_pattern_entities,n_reused_entities,coverage_pct,complete_reuse,n_label_entities
 ISE-FIZKarlsruhe_viewsari_viewsari,../../corpus/github/ISE-FIZKarlsruhe_viewsari_viewsari,place,../../corpus/github/ISE-FIZKarlsruhe_viewsari_viewsari/patterns/place.owl,3,3,100.0,1,0
+LA3D_rlm_literal,../../corpus/github/LA3D_rlm_literal,region,../../corpus/github/LA3D_rlm_literal/patterns/region.owl,4,4,100.0,1,0
 SPAROntologies_literal_literal,../../corpus/github/SPAROntologies_literal_literal,region,../../corpus/github/SPAROntologies_literal_literal/patterns/region.owl,4,4,100.0,1,0
+SofiBar_CulturalHeritageHistoricalContext_DUL4_2,../../corpus/github/SofiBar_CulturalHeritageHistoricalContext_DUL4_2,DUL,../../corpus/github/SofiBar_CulturalHeritageHistoricalContext_DUL4_2/patterns/DUL.owl,196,196,100.0,1,0
 Yogi-Bubu-Exam_MemOnPology_SPoMO,../../corpus/github/Yogi-Bubu-Exam_MemOnPology_SPoMO,constituency,../../corpus/github/Yogi-Bubu-Exam_MemOnPology_SPoMO/patterns/constituency.owl,2,2,100.0,1,0
 acontenti_progetto-modsem_survival-materialized,../../corpus/github/acontenti_progetto-modsem_survival-materialized,coparticipation,../../corpus/github/acontenti_progetto-modsem_survival-materialized/patterns/coparticipation.owl,4,4,100.0,1,0
 acontenti_progetto-modsem_survival-materialized,../../corpus/github/acontenti_progetto-modsem_survival-materialized,participation,../../corpus/github/acontenti_progetto-modsem_survival-materialized/patterns/participation.owl,29,1,3.45,0,0
+ebrahimnorouzi_pizza-ontology_ontology,../../corpus/github/ebrahimnorouzi_pizza-ontology_ontology,componency,../../corpus/github/ebrahimnorouzi_pizza-ontology_ontology/patterns/componency.owl,5,5,100.0,1,0
+ebrahimnorouzi_pizza-ontology_ontology,../../corpus/github/ebrahimnorouzi_pizza-ontology_ontology,partof,../../corpus/github/ebrahimnorouzi_pizza-ontology_ontology/patterns/partof.owl,13,2,15.38,0,0
+ebrahimnorouzi_pizza-ontology_ontology,../../corpus/github/ebrahimnorouzi_pizza-ontology_ontology,price,../../corpus/github/ebrahimnorouzi_pizza-ontology_ontology/patterns/price.owl,7,7,100.0,1,0
+ebrahimnorouzi_pizza-ontology_pizza,../../corpus/github/ebrahimnorouzi_pizza-ontology_pizza,componency,../../corpus/github/ebrahimnorouzi_pizza-ontology_pizza/patterns/componency.owl,5,5,100.0,1,0
+ebrahimnorouzi_pizza-ontology_pizza,../../corpus/github/ebrahimnorouzi_pizza-ontology_pizza,partof,../../corpus/github/ebrahimnorouzi_pizza-ontology_pizza/patterns/partof.owl,13,2,15.38,0,0
 giorgiacrosilla_biasontology_ExtrinsicIncentiveError,../../corpus/github/giorgiacrosilla_biasontology_ExtrinsicIncentiveError,coparticipation,../../corpus/github/giorgiacrosilla_biasontology_ExtrinsicIncentiveError/patterns/coparticipation.owl,4,4,100.0,1,0
 giorgiacrosilla_biasontology_ExtrinsicIncentiveError,../../corpus/github/giorgiacrosilla_biasontology_ExtrinsicIncentiveError,participation,../../corpus/github/giorgiacrosilla_biasontology_ExtrinsicIncentiveError/patterns/participation.owl,29,1,3.45,0,0
 giorgiacrosilla_biasontology_ZeroSumBias,../../corpus/github/giorgiacrosilla_biasontology_ZeroSumBias,coparticipation,../../corpus/github/giorgiacrosilla_biasontology_ZeroSumBias/patterns/coparticipation.owl,4,4,100.0,1,0
@@ -52,6 +59,7 @@ marco-scarnato_Ontology-Project_mangaExported,../../corpus/github/marco-scarnato
 marco-scarnato_Ontology-Project_mangaExported,../../corpus/github/marco-scarnato_Ontology-Project_mangaExported,set,../../corpus/github/marco-scarnato_Ontology-Project_mangaExported/patterns/set.owl,4,4,100.0,1,0
 marco-scarnato_Ontology-Project_ontology,../../corpus/github/marco-scarnato_Ontology-Project_ontology,collectionentity,../../corpus/github/marco-scarnato_Ontology-Project_ontology/patterns/collectionentity.owl,3,1,33.33,0,0
 marco-scarnato_Ontology-Project_ontology,../../corpus/github/marco-scarnato_Ontology-Project_ontology,set,../../corpus/github/marco-scarnato_Ontology-Project_ontology/patterns/set.owl,4,4,100.0,1,0
+michaelakuempel_ActionableKnowledgeRepresentation_AlignedOntology,../../corpus/github/michaelakuempel_ActionableKnowledgeRepresentation_AlignedOntology,DUL,../../corpus/github/michaelakuempel_ActionableKnowledgeRepresentation_AlignedOntology/patterns/DUL.owl,196,196,100.0,1,0
 nd-crane_Drawio-experiments_ContextualizedPartWhole,../../corpus/github/nd-crane_Drawio-experiments_ContextualizedPartWhole,WinstonPartWhole,../../corpus/github/nd-crane_Drawio-experiments_ContextualizedPartWhole/patterns/WinstonPartWhole.ttl,8,8,100.0,1,0
 nvbach91_iga-knerd_pro,../../corpus/github/nvbach91_iga-knerd_pro,timeindexedsituation,../../corpus/github/nvbach91_iga-knerd_pro/patterns/timeindexedsituation.owl,9,5,55.56,0,0
 nvbach91_iga-knerd_pro,../../corpus/github/nvbach91_iga-knerd_pro,timeinterval,../../corpus/github/nvbach91_iga-knerd_pro/patterns/timeinterval.owl,4,4,100.0,1,0

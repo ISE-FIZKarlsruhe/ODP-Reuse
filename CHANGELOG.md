@@ -6,6 +6,19 @@ which always resolves to the newest. The newest version is listed first. From
 v1.3.0 on, `publish-release.yml` writes each entry from the same numbers as
 `release-iri/history.csv`.
 
+## v1.3.0 — 2026-11-08
+
+**+178 ontologies · +202 ontology–pattern pairs** in the quality-gated views, from the harvest of 2026-11-08 ([workflow run](https://github.com/ISE-FIZKarlsruhe/ODP-Reuse/actions/runs/42466505380)). 1,732 ontologies were added to the corpus; 178 pass the quality gate and the other 1,554 are kept with the rule that excluded them.
+
+No ontology, file or verdict of an earlier version was removed or changed.
+
+| view | ontologies | pairs |
+|---|---:|---:|
+| `github-reuse` | 442 → 620 (+178) | 669 → 871 (+202) |
+| `github-complete` | 37 → 42 (+5) | 100 → 108 (+8) |
+
+Zenodo: [10.5281/zenodo.24054749](https://doi.org/10.5281/zenodo.24054749) · added ontologies: `release-iri/additions/v1.3.0.csv`
+
 ## v1.2.0 — 2026-08-05
 
 The quality-gated release. Zenodo:

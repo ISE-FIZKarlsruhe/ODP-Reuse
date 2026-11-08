@@ -1,8 +1,12 @@
 ontology_id,dataset,n_pattern_files,n_triples,n_entities_narrow,n_entities_wide,n_own_entities,n_gt_patterns,n_complete_patterns,max_reuse_pct
 ISE-FIZKarlsruhe_viewsari_viewsari,github,1,956,129,147,144,1,1,100.0
+LA3D_rlm_literal,github,2,99,10,11,7,1,1,100.0
 SPAROntologies_literal_literal,github,2,99,10,11,7,1,1,100.0
+SofiBar_CulturalHeritageHistoricalContext_DUL4_2,github,1,1917,197,197,1,1,1,100.0
 Yogi-Bubu-Exam_MemOnPology_SPoMO,github,1,251,22,29,27,1,1,100.0
 acontenti_progetto-modsem_survival-materialized,github,3,1614,64,125,121,2,1,100.0
+ebrahimnorouzi_pizza-ontology_ontology,github,4,490,50,86,74,3,2,100.0
+ebrahimnorouzi_pizza-ontology_pizza,github,4,379,36,63,58,2,1,100.0
 giorgiacrosilla_biasontology_ExtrinsicIncentiveError,github,2,75,18,24,20,2,1,100.0
 giorgiacrosilla_biasontology_ZeroSumBias,github,2,228,31,41,37,2,1,100.0
 linhd-postdata_core-ontology_objectrole,github,1,55,7,7,4,1,1,100.0
@@ -15,6 +19,7 @@ liuji1031_ontology_to_schema_pwo,github,12,263,42,46,23,11,1,100.0
 lorenzofavaro_music-events-ontology_music-inferred,github,7,3635,91,267,245,5,4,100.0
 marco-scarnato_Ontology-Project_mangaExported,github,5,1426,83,134,128,3,2,100.0
 marco-scarnato_Ontology-Project_ontology,github,2,865,75,125,121,2,1,100.0
+michaelakuempel_ActionableKnowledgeRepresentation_AlignedOntology,github,1,1958,212,212,16,1,1,100.0
 nd-crane_Drawio-experiments_ContextualizedPartWhole,github,1,145,20,19,11,1,1,100.0
 nvbach91_iga-knerd_pro,github,3,295,30,66,58,2,1,100.0
 nvbach91_phd-odyssey_pwo,github,11,263,42,46,23,11,1,100.0
