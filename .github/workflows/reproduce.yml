@@ -7,8 +7,10 @@ name: Reproduce the release
 # The comparison is against release-iri/ AT THE RELEASE TAG, not on main. A
 # merged harvest pull request adds rows to main before their files reach
 # Zenodo with the next version; until then main is ahead of the archive, and
-# comparing main with the archive would test nothing but that delay. When a
-# new version is published, update ZENODO_RECORD and RELEASE_TAG together.
+# comparing main with the archive would test nothing but that delay. The pair
+# to check -- Zenodo record and release tag -- is read from
+# release-iri/archive.json, which publish-release.yml updates with every
+# version, so the newest published version is the one checked.
 #
 #   1. download corpus.zip from Zenodo and check it against Zenodo's MD5
 #   2. hashes   every ontology file is byte-identical to the one the gate hashed
@@ -23,17 +25,17 @@ name: Reproduce the release
 # the same commands with --max-mb 0 on a machine with well over 16 GB of memory.
 #
 # A re-harvest is a different question -- it queries live APIs and cannot
-# reproduce the corpus. That is quarterly-harvest.yml.
+# reproduce the corpus. That is harvest.yml.
 
 on:
   workflow_dispatch:
     inputs:
       zenodo_record:
-        description: 'Zenodo record holding corpus.zip'
-        default: '21808321'
+        description: 'Zenodo record holding corpus.zip (empty = the one release-iri/archive.json names)'
+        default: ''
       release_tag:
-        description: 'Git tag of the release archived in that record'
-        default: 'v1.2.0'
+        description: 'Git tag of the release archived in that record (empty = from archive.json)'
+        default: ''
       max_mb:
         description: 'Skip re-parsing ontology files larger than this (MB); 0 = no limit'
         default: '100'
@@ -53,8 +55,6 @@ permissions:
   contents: read
 
 env:
-  ZENODO_RECORD: ${{ github.event.inputs.zenodo_record || '21808321' }}
-  RELEASE_TAG: ${{ github.event.inputs.release_tag || 'v1.2.0' }}
   MAX_MB: ${{ github.event.inputs.max_mb || '100' }}
 
 jobs:
@@ -66,6 +66,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0     # the release tag
+
+      - name: Which version
+        env:
+          IN_RECORD: ${{ github.event.inputs.zenodo_record }}
+          IN_TAG: ${{ github.event.inputs.release_tag }}
+        run: |
+          rec=${IN_RECORD:-$(python3 -c "import json; print(json.load(open('release-iri/archive.json'))['zenodo_record'])")}
+          tag=${IN_TAG:-$(python3 -c "import json; print(json.load(open('release-iri/archive.json'))['release_tag'])")}
+          echo "ZENODO_RECORD=$rec" >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=$tag" >> "$GITHUB_ENV"
 
       # The released tables as they were archived; see the header.
       - name: Check out the archived release's tables

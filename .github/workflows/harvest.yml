@@ -1,8 +1,10 @@
-name: Quarterly ODP-reuse harvest
+name: Monthly ODP-reuse harvest
 
 # Re-runs discovery, repair and the quality gate for the GitHub portion of the
-# corpus on a schedule, adds the ontologies the release does not have yet, and
-# opens a pull request with them. Nothing is ever removed from the release.
+# corpus every month, adds the ontologies the release does not have yet, and
+# publishes them as the next minor version (publish-release.yml): a Zenodo
+# version, a git tag and a GitHub Release. Nothing is ever removed from the
+# release, and a month that finds nothing new publishes nothing.
 #
 # What this tests, and what it does not. It tests that the harvester still runs
 # end to end from a clean checkout, that its output still passes the gate and
@@ -26,17 +28,17 @@ name: Quarterly ODP-reuse harvest
 #   build     download every hit (~1 s each), repair, gate, audit, diff against
 #             the release, then add the new ontologies to a copy of release-iri.
 #             Runs only on a complete discovery.
-#   propose   on main only: commit that copy to the branch harvest/update and
-#             open (or update) a pull request. A person reviews and merges it,
-#             then cuts the release; nothing is published automatically.
+#   publish   on main only, when something was added: publish-release.yml
+#             checks the update, assembles the new archive and publishes the
+#             version. Any failed check publishes nothing.
 #
 # The discover job hands over its results and the exact ODPA pattern files it
 # searched for, so both jobs use the same pattern library.
 
 on:
   schedule:
-    # 03:00 UTC on the 1st of Jan / Apr / Jul / Oct
-    - cron: '0 3 1 1,4,7,10 *'
+    # 03:00 UTC on the 1st of every month
+    - cron: '0 3 1 * *'
   workflow_dispatch:
     inputs:
       sources:
@@ -48,12 +50,19 @@ on:
       github_max_minutes:
         description: 'Cap on the GitHub search phase (minutes)'
         default: '150'
+      publish:
+        description: >-
+          Publish what the harvest adds: yes (as the monthly run does), dry-run
+          (every check and the Zenodo upload, then discard; nothing public), or no
+        type: choice
+        options: ['yes', 'dry-run', 'no']
+        default: 'yes'
 
 permissions:
   contents: read
 
 concurrency:
-  group: quarterly-harvest
+  group: harvest
   cancel-in-progress: false
 
 env:
@@ -190,7 +199,6 @@ jobs:
       added: ${{ steps.merge.outputs.added }}
       added_kept: ${{ steps.merge.outputs.added_kept }}
       new_pairs: ${{ steps.merge.outputs.new_pairs }}
-      version: ${{ steps.version.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -290,22 +298,6 @@ jobs:
           python ../release-iri/validate_release.py
           cat ../harvest/merge/REPORT.md >> "$GITHUB_STEP_SUMMARY"
 
-      # New ontologies from a harvest, gate unchanged: a minor version
-      # (docs/changelog.md). release.yml checks the tag against CITATION.cff.
-      - name: Propose the next minor version
-        id: version
-        if: steps.merge.outputs.added != '0'
-        run: |
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import re, pathlib
-          p = pathlib.Path("CITATION.cff")
-          s = p.read_text(encoding="utf-8")
-          m = re.search(r'^version:\s*["\']?(\d+)\.(\d+)\.(\d+)["\']?\s*$', s, re.M)
-          new = f"{m.group(1)}.{int(m.group(2)) + 1}.0"
-          p.write_text(s[:m.start()] + f"version: {new}" + s[m.end():], encoding="utf-8")
-          print(f"version={new}")
-          PY
-
       # Uploaded even when an earlier step failed or the job was cancelled, so a
       # partial harvest is still inspectable.
       - uses: actions/upload-artifact@v4
@@ -322,8 +314,8 @@ jobs:
             harvest/repair/
           retention-days: 90
 
-      # What the pull request commits: release-iri without the corpus (which
-      # is not in git), and the version bump.
+      # The merged tables, for publish-release.yml: release-iri without the
+      # corpus (which is not in git) and the merge's report and added.csv.
       - uses: actions/upload-artifact@v4
         if: steps.merge.outputs.added != '0'
         with:
@@ -331,12 +323,11 @@ jobs:
           path: |
             release-iri/
             !release-iri/corpus/
-            CITATION.cff
-            harvest/merge/REPORT.md
+            harvest/merge/
           retention-days: 90
 
       # The added ontologies' files. The corpus is archived on Zenodo, not in
-      # git, so these go into the next Zenodo version by hand (see the PR).
+      # git; publish-release.yml adds these to it.
       - uses: actions/upload-artifact@v4
         if: steps.merge.outputs.added != '0'
         with:
@@ -344,42 +335,20 @@ jobs:
           path: harvest/corpus-additions/
           retention-days: 90
 
-  # ===================================================================== propose
-  # Repository setting required: Settings > Actions > General > Workflow
-  # permissions > "Allow GitHub Actions to create and approve pull requests".
-  propose:
+  # ===================================================================== publish
+  # Only from main, and only when the merge added something. Every check in
+  # publish-release.yml must pass before anything is public.
+  publish:
     needs: build
-    if: needs.build.outputs.added != '0' && needs.build.outputs.added != '' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    if: >-
+      needs.build.outputs.added != '0' && needs.build.outputs.added != '' &&
+      github.ref == 'refs/heads/main' && github.event.inputs.publish != 'no'
+    uses: ./.github/workflows/publish-release.yml
+    with:
+      run_id: ${{ github.run_id }}
+      dry_run: ${{ github.event.inputs.publish == 'dry-run' }}
+    secrets: inherit
     permissions:
       contents: write
       pull-requests: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: release-update-${{ github.run_number }}
-          path: .
-
-      # One standing branch: a later harvest updates the same pull request
-      # rather than opening a second one against the same release.
-      - name: Open or update the pull request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          branch: harvest/update
-          base: main
-          add-paths: |
-            release-iri
-            CITATION.cff
-          commit-message: >-
-            release: add ${{ needs.build.outputs.added }} ontologies from harvest
-            run ${{ github.run_id }} (${{ needs.build.outputs.added_kept }} pass the gate)
-          title: >-
-            v${{ needs.build.outputs.version }}: add ${{ needs.build.outputs.added }} ontologies
-            (${{ needs.build.outputs.added_kept }} pass the gate,
-            +${{ needs.build.outputs.new_pairs }} pairs)
-          body-path: harvest/merge/REPORT.md
-          labels: harvest, data-update
-          delete-branch: true
+      actions: write

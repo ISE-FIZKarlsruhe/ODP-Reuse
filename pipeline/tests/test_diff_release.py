@@ -1,4 +1,4 @@
-"""Tests for diff_release, the quarterly harvest's report.
+"""Tests for diff_release, the harvest's report.
 
 A harvest rebuilds only the GitHub portion, so comparing it with the full
 release manifest used to list every noOBO and OBO ontology as "disappeared

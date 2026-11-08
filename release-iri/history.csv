@@ -1,0 +1,3 @@
+version,date,tag,zenodo_record,doi,discovered,kept,github-reuse_ontologies,github-reuse_pairs,github-complete_ontologies,github-complete_pairs,noOBO-reuse_ontologies,noOBO-reuse_pairs,noOBO-complete_ontologies,noOBO-complete_pairs,OBO-reuse_ontologies,OBO-reuse_pairs,OBO-complete_ontologies,OBO-complete_pairs,added_ontologies,added_kept,added_pairs,harvest_run,summary
+1.0.0,2025-11-28,,17751741,10.5281/zenodo.17751741,,,,,,,,,,,,,,,,,,,"First deposit, before the quality gate; counts not comparable with later versions"
+1.2.0,2026-08-05,v1.2.0,21808321,10.5281/zenodo.21808321,1973,501,442,669,37,100,51,90,6,16,8,758,8,758,,,,,"Quality gate G1-G6 on every discovered ontology; unfiltered corpus, six views, IRI-hashed twin"

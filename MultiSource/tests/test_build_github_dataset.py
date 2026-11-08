@@ -3,7 +3,7 @@
 The release's discovery file has 4,828 GitHub rows but 2,881 distinct files and
 67 distinct pattern IRIs: an ontology that reuses three patterns appears three
 times. Downloading it once and indexing the pattern repository once keeps the
-quarterly harvest inside GitHub's 6-hour job limit without changing its output.
+monthly harvest inside GitHub's 6-hour job limit without changing its output.
 """
 import csv
 

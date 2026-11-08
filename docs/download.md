@@ -24,7 +24,7 @@ versions are reviewable as a pull request.
 
 The corpus contains single files above GitHub's 100 MB hard limit, and git would
 retain every version of a 2.8 GB payload forever. Keeping the tables in git and
-the corpus on Zenodo means a quarterly update shows up as a readable diff instead
+the corpus on Zenodo means a monthly update shows up as a readable diff instead
 of an opaque binary churn.
 
 ## Use it in code

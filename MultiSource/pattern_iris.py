@@ -5,7 +5,7 @@ pattern_iris.py -- decide which pattern IRIs the harvester searches for.
 The released corpus searched the IRIs that ``run_multiple_source.sh`` extracted
 from a clone of odpa/patterns-repository (MultiSource/report/retrieved_patterns.csv,
 144 IRIs). This module holds that extraction, so the release, a local re-run and
-the quarterly CI harvest all use the same rules.
+the monthly CI harvest all use the same rules.
 
 Two commands:
 

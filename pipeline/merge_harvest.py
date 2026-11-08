@@ -120,6 +120,21 @@ class Merge:
     not_returned: list[tuple[str, str]] = field(default_factory=list)
     changed_upstream: list[tuple[str, str]] = field(default_factory=list)
     gained: list[tuple[str, str, int, int]] = field(default_factory=list)
+    case_clash: list[tuple[str, str]] = field(default_factory=list)
+
+
+def case_clashes(existing: list[tuple[str, str]], new: list[tuple[str, str]]) -> set:
+    """New keys whose id differs only in letter case from an existing key or an
+    earlier new one. Windows and macOS cannot hold both directories side by
+    side, so unpacking the archive there would merge them."""
+    seen = {(ds, oid.lower()) for ds, oid in existing}
+    clash = set()
+    for ds, oid in sorted(new):
+        k = (ds, oid.lower())
+        if k in seen:
+            clash.add((ds, oid))
+        seen.add(k)
+    return clash
 
 
 def _record(row: dict):
@@ -167,7 +182,9 @@ def merge_manifest(release_rows: list[dict], harvest_rows: list[dict], *,
     hv = {key(r): r for r in harvest_rows}
     harvested = {r["dataset"] for r in harvest_rows}
 
-    added = regate([r for r in harvest_rows if key(r) not in rel], release_rows,
+    candidates = [r for r in harvest_rows if key(r) not in rel]
+    clash = case_clashes(list(rel), [key(r) for r in candidates])
+    added = regate([r for r in candidates if key(r) not in clash], release_rows,
                    min_own_entities)
 
     # Each portion's new rows go right after its last release row, so the
@@ -193,6 +210,7 @@ def merge_manifest(release_rows: list[dict], harvest_rows: list[dict], *,
         changed_upstream=[k for k in common if k not in same
                           and rel[k]["content_sha256"] and hv[k]["content_sha256"]],
         gained=[(k[0], k[1], gt(rel[k]), gt(hv[k])) for k in same if gt(hv[k]) > gt(rel[k])],
+        case_clash=sorted(clash),
     )
 
 
@@ -378,7 +396,10 @@ def write_report(path: Path, m: Merge, n_release: int, changed: dict, views_befo
           f"- **{len(m.changed_upstream)} released ontologies changed upstream.** The release "
           "keeps the archived version; see `changed_upstream.csv`.",
           f"- **{len(m.not_returned)} released ontologies were not returned** by this harvest's "
-          "searches. They stay in the release; see `not_returned.csv`.", "",
+          "searches. They stay in the release; see `not_returned.csv`.",
+          *([f"- **{len(m.case_clash)} new ontologies were not added** because their id "
+             "differs only in letter case from one already present; Windows and macOS could "
+             "not unpack both. See `case_clash.csv`."] if m.case_clash else []), "",
           "## Before tagging the new version", "",
           "The corpus is archived on Zenodo, not in git, so this pull request carries the "
           "tables only. The added ontologies' files are in the run's `corpus-additions` "
@@ -432,6 +453,8 @@ def main(argv=None) -> int:
         write_csv(args.report / name, rows, cols)
 
     dump("not_returned.csv", [{"dataset": d, "ontology_id": o} for d, o in m.not_returned],
+         ["dataset", "ontology_id"])
+    dump("case_clash.csv", [{"dataset": d, "ontology_id": o} for d, o in m.case_clash],
          ["dataset", "ontology_id"])
     dump("changed_upstream.csv", [{"dataset": d, "ontology_id": o} for d, o in m.changed_upstream],
          ["dataset", "ontology_id"])

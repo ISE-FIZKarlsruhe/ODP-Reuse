@@ -44,7 +44,10 @@
   })();
 
   const fmt = n => n.toLocaleString('en-US');
-  const css = v => getComputedStyle(document.documentElement)
+  // The colour tokens are declared on [data-md-color-scheme], which
+  // mkdocs-material sets on <body>, not <html>. Reading them from <html>
+  // returned "" for every token, so every token-coloured chart drew in black.
+  const css = v => getComputedStyle(document.body || document.documentElement)
     .getPropertyValue(v).trim();
 
   async function load(el) {
@@ -693,12 +696,129 @@
     });
   }
 
+  /* ---- version history: the dataset over time -------------------------- */
+  /* One point per version on a time axis. A version before the quality gate
+     has no comparable counts, so it is a marker on the axis, not a point. */
+  async function history(el) {
+    const data = await load(el);
+    if (!data.length) return;
+    const W = el.clientWidth || 800, H = 300, m = { t: 26, r: 24, b: 52, l: 54 };
+    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`)
+      .attr('role', 'img').attr('aria-label', 'Corpus size by version');
+    const dates = data.map(d => new Date(d.date));
+    const [lo, hi] = d3.extent(dates);
+    const pad = Math.max(20 * 864e5, (hi - lo) * 0.06);
+    const x = d3.scaleTime().domain([new Date(+lo - pad), new Date(+hi + pad)])
+      .range([m.l, W - m.r]);
+    const counted = data.filter(d => d.comparable);
+    const max = d3.max(counted, d => Math.max(d.discovered, d.kept, d.pairs)) || 1;
+    const y = d3.scaleLinear().domain([0, max * 1.12]).nice().range([H - m.b, m.t]);
+    const series = [
+      { key: 'discovered', label: 'Corpus', color: css('--odp-violet') },
+      { key: 'pairs', label: 'Pairs', color: css('--odp-mint') },
+      { key: 'kept', label: 'Pass the gate', color: css('--odp-coral') },
+    ];
+
+    svg.append('g').attr('class', 'odp-axis')
+      .attr('transform', `translate(0,${H - m.b})`)
+      .call(d3.axisBottom(x).ticks(Math.min(8, Math.max(2, W / 120))));
+    svg.append('g').attr('class', 'odp-axis')
+      .attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5));
+
+    data.forEach(d => {
+      const cx = x(new Date(d.date));
+      svg.append('line').attr('x1', cx).attr('x2', cx).attr('y1', m.t)
+        .attr('y2', H - m.b).attr('stroke', css('--odp-line'))
+        .attr('stroke-dasharray', d.comparable ? null : '3 4');
+      svg.append('text').attr('x', cx).attr('y', H - m.b + 32)
+        .attr('text-anchor', 'middle').attr('font-size', 11).attr('font-weight', 600)
+        .text('v' + d.version + (d.comparable ? '' : ' · pre-gate'));
+    });
+
+    const line = k => d3.line().x(d => x(new Date(d.date))).y(d => y(d[k]));
+    series.forEach(s => {
+      if (counted.length > 1) {
+        svg.append('path').datum(counted).attr('fill', 'none').attr('stroke', s.color)
+          .attr('stroke-width', 2.5).attr('stroke-linecap', 'round').attr('d', line(s.key));
+      }
+      svg.selectAll(null).data(counted).join('circle')
+        .attr('cx', d => x(new Date(d.date))).attr('cy', d => y(d[s.key])).attr('r', 5)
+        .attr('fill', s.color)
+        .on('mousemove', (ev, d) => tip.show(
+          `<b>v${d.version}</b> · ${d.date}<br>${s.label}: ${fmt(d[s.key])}` +
+          (d.added ? `<br>this version added ${fmt(d.added.kept)} gate-passing ` +
+                     `ontologies, ${fmt(d.added.pairs)} pairs` : ''), ev))
+        .on('mouseleave', tip.hide);
+      const last = counted[counted.length - 1];
+      if (last) {
+        svg.append('text').attr('x', x(new Date(last.date)) - 9).attr('y', y(last[s.key]) - 9)
+          .attr('text-anchor', 'end').attr('font-size', 11).attr('font-weight', 600)
+          .attr('fill', s.color).text(`${s.label} ${fmt(last[s.key])}`);
+      }
+    });
+  }
+
+  /* ---- what each version added ----------------------------------------- */
+  async function additions(el) {
+    const data = await load(el);
+    if (!data.length) return;
+    const W = el.clientWidth || 800, H = 250, m = { t: 30, r: 16, b: 40, l: 54 };
+    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`)
+      .attr('role', 'img').attr('aria-label', 'Ontologies added by each version');
+    const x = d3.scaleBand().domain(data.map(d => 'v' + d.version))
+      .range([m.l, W - m.r]).padding(0.35);
+    const max = d3.max(data, d => d.added ? d.added.ontologies : 0) || 1;
+    const y = d3.scaleLinear().domain([0, max * 1.15]).nice().range([H - m.b, m.t]);
+    svg.append('g').attr('class', 'odp-axis')
+      .attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x));
+    svg.append('g').attr('class', 'odp-axis')
+      .attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5));
+
+    data.forEach(d => {
+      const bx = x('v' + d.version), bw = x.bandwidth();
+      if (!d.added) {
+        svg.append('text').attr('x', bx + bw / 2).attr('y', H - m.b - 10)
+          .attr('text-anchor', 'middle').attr('font-size', 10.5).attr('opacity', .6)
+          .text(d.comparable ? 'baseline' : 'first deposit');
+        return;
+      }
+      const parts = [
+        { n: d.added.kept, label: 'pass the gate', color: css('--odp-coral'), op: .9 },
+        { n: d.added.excluded, label: 'excluded by the gate', color: css('--odp-violet'), op: .45 },
+      ];
+      let acc = 0;
+      parts.forEach(p => {
+        svg.append('rect').attr('class', 'odp-band')
+          .attr('x', bx).attr('width', bw).attr('rx', 2)
+          .attr('y', y(acc + p.n)).attr('height', Math.max(0, y(acc) - y(acc + p.n)))
+          .attr('fill', p.color).attr('fill-opacity', p.op)
+          .on('mousemove', ev => tip.show(
+            `<b>v${d.version}</b><br>${fmt(p.n)} added ontologies ${p.label}`, ev))
+          .on('mouseleave', tip.hide);
+        acc += p.n;
+      });
+      svg.append('text').attr('class', 'odp-value').attr('x', bx + bw / 2)
+        .attr('y', y(acc) - 8).attr('text-anchor', 'middle').attr('font-size', 11)
+        .text(`+${fmt(d.added.kept)} · +${fmt(d.added.pairs)} pairs`);
+    });
+
+    const legend = svg.append('g').attr('transform', `translate(${m.l},12)`);
+    [['Pass the gate', css('--odp-coral'), .9],
+     ['Excluded, kept with its reason', css('--odp-violet'), .45]].forEach(([t, c, o], i) => {
+      const g = legend.append('g').attr('transform', `translate(${i * 150},0)`);
+      g.append('rect').attr('width', 10).attr('height', 10).attr('y', -9).attr('rx', 2)
+        .attr('fill', c).attr('fill-opacity', o);
+      g.append('text').attr('x', 15).attr('font-size', 10.5).text(t);
+    });
+  }
+
   /* ---- boot ------------------------------------------------------------- */
   const CHARTS = {
     'odp-funnel': funnel, 'odp-rules': rules, 'odp-thresholds': thresholds,
     'odp-forms': forms, 'odp-toppat': topPatterns, 'odp-views': views,
     'odp-constellation': reuseGraph,
     'odp-uc1': oracleGap, 'odp-uc2': forest,
+    'odp-history': history, 'odp-additions': additions,
   };
 
   function render() {

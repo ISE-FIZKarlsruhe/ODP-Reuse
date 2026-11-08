@@ -1,0 +1,78 @@
+[
+ {
+  "version": "1.0.0",
+  "date": "2025-11-28",
+  "tag": "",
+  "doi": "10.5281/zenodo.17751741",
+  "summary": "First deposit, before the quality gate; counts not comparable with later versions",
+  "comparable": false,
+  "discovered": null,
+  "kept": null,
+  "pairs": null,
+  "views": {
+   "github-reuse": {
+    "ontologies": null,
+    "pairs": null
+   },
+   "github-complete": {
+    "ontologies": null,
+    "pairs": null
+   },
+   "noOBO-reuse": {
+    "ontologies": null,
+    "pairs": null
+   },
+   "noOBO-complete": {
+    "ontologies": null,
+    "pairs": null
+   },
+   "OBO-reuse": {
+    "ontologies": null,
+    "pairs": null
+   },
+   "OBO-complete": {
+    "ontologies": null,
+    "pairs": null
+   }
+  },
+  "added": null
+ },
+ {
+  "version": "1.2.0",
+  "date": "2026-08-05",
+  "tag": "v1.2.0",
+  "doi": "10.5281/zenodo.21808321",
+  "summary": "Quality gate G1-G6 on every discovered ontology; unfiltered corpus, six views, IRI-hashed twin",
+  "comparable": true,
+  "discovered": 1973,
+  "kept": 501,
+  "pairs": 1517,
+  "views": {
+   "github-reuse": {
+    "ontologies": 442,
+    "pairs": 669
+   },
+   "github-complete": {
+    "ontologies": 37,
+    "pairs": 100
+   },
+   "noOBO-reuse": {
+    "ontologies": 51,
+    "pairs": 90
+   },
+   "noOBO-complete": {
+    "ontologies": 6,
+    "pairs": 16
+   },
+   "OBO-reuse": {
+    "ontologies": 8,
+    "pairs": 758
+   },
+   "OBO-complete": {
+    "ontologies": 8,
+    "pairs": 758
+   }
+  },
+  "added": null
+ }
+]

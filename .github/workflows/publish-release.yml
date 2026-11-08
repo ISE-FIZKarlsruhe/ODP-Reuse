@@ -1,0 +1,301 @@
+name: Publish a harvest as a new version
+
+# Publishes a harvest run's additions as the next minor version: a Zenodo
+# version under concept 17751740, a git tag, a GitHub Release, and the
+# changelog, release-iri/history.csv and the site that are drawn from them.
+#
+# harvest.yml calls it after every harvest that added something. It runs
+# unattended, so it makes the checks a reviewer would make and publishes
+# nothing unless every one passes:
+#
+#   1. the update only adds: every released MANIFEST row, view row and audit
+#      record is unchanged, and every new MANIFEST row is one the merge reported
+#   2. the gate is the released gate: pipeline/odpqual is unchanged since the
+#      release tag (a gate change is a major version, made by a person)
+#   3. the newest Zenodo version is the one release-iri/archive.json names, so
+#      the new version is built on what is actually archived
+#   4. every added file matches the hash the gate recorded and none is already
+#      archived; after adding them, every file in the new archive matches
+#      MANIFEST.csv
+#   5. validate_release.py passes on the new tables with the new corpus
+#
+# The order keeps a failure from leaving a half-published version: open a
+# Zenodo draft (it reserves the DOI) -> write the version down (CITATION.cff,
+# CHANGELOG.md, history.csv, archive.json) -> package -> upload to the draft ->
+# push the commit and the tag in one atomic push -> publish the Zenodo version
+# -> GitHub Release and site. A failure before the push discards the draft; a
+# failure after it leaves the draft and says how to publish it.
+#
+# Dry run (the default when started by hand): every check and the upload, then
+# the draft is discarded, nothing is pushed, and the assembled archive and the
+# changed files are kept as an artifact to inspect.
+#
+#   gh workflow run publish-release.yml -f run_id=<harvest run id> -f dry_run=true
+
+on:
+  workflow_call:
+    inputs:
+      run_id:
+        type: string
+        required: true
+      dry_run:
+        type: boolean
+        default: false
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Harvest run whose artifacts to publish'
+        required: true
+      dry_run:
+        description: 'Check and assemble everything, then discard the Zenodo draft and push nothing'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+env:
+  ZENODO_CONCEPT: '17751740'
+  RUN_ID: ${{ inputs.run_id }}
+  DRY_RUN: ${{ inputs.dry_run }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0     # the release tag, for check 2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r pipeline/requirements.txt requests
+
+      - name: Zenodo token
+        run: |
+          [ -n "$ZENODO_TOKEN" ] || { echo "::error::the ZENODO_TOKEN secret is not set"; exit 1; }
+
+      # ------------------------------------------------- the harvest's results
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-update-*
+          path: art/update
+          merge-multiple: true
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: corpus-additions-*
+          path: art/additions
+          merge-multiple: true
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: harvest-*
+          path: art/harvest
+          merge-multiple: true
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+
+      # upload-artifact strips the paths' common prefix: harvest-* holds
+      # merge/, out/, ... (no harvest/), corpus-additions-* holds corpus/,
+      # release-update-* keeps release-iri/.
+      - name: Inputs
+        run: |
+          set -e
+          test -f art/update/release-iri/MANIFEST.csv
+          test -f art/harvest/merge/added.csv
+          test -d art/additions/corpus
+          {
+            echo "ADDED=$PWD/art/harvest/merge/added.csv"
+            echo "RUN_URL=${{ github.server_url }}/${{ github.repository }}/actions/runs/$RUN_ID"
+            echo "TODAY=$(date -u +%F)"
+          } >> "$GITHUB_ENV"
+
+      # ---------------------------------------------------------------- checks
+      - name: "Check 1: the update only adds"
+        run: |
+          python pipeline/publish_harvest.py check \
+            --old release-iri --new art/update/release-iri --added "$ADDED"
+
+      - name: "Check 2: the gate is the released gate"
+        run: |
+          tag=$(python -c "import json; print(json.load(open('release-iri/archive.json'))['release_tag'])")
+          git diff --quiet "$tag" HEAD -- pipeline/odpqual || {
+            echo "::error::pipeline/odpqual changed since $tag. A gate change is a major version and is not published automatically."
+            exit 1; }
+          echo "PREV_TAG=$tag" >> "$GITHUB_ENV"
+
+      - name: Version
+        run: |
+          v=$(python pipeline/publish_harvest.py version --citation CITATION.cff)
+          if git rev-parse -q --verify "refs/tags/v$v" >/dev/null; then
+            echo "::error::tag v$v already exists"; exit 1
+          fi
+          echo "VERSION=$v" >> "$GITHUB_ENV"
+          echo "## Publishing v$v (after $PREV_TAG) from harvest run $RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Check 3: build on the archived version"
+        run: |
+          want=$(python -c "import json; print(json.load(open('release-iri/archive.json'))['zenodo_record'])")
+          got=$(python pipeline/publish_harvest.py latest --concept "$ZENODO_CONCEPT")
+          [ "$want" = "$got" ] || {
+            echo "::error::the newest Zenodo version is record $got, but release-iri/archive.json names $want"
+            exit 1; }
+          echo "PREV_RECORD=$got" >> "$GITHUB_ENV"
+
+      - name: Download the archived corpus
+        run: python pipeline/publish_harvest.py fetch --record "$PREV_RECORD" --out work
+
+      - name: "Check 4: add the new files"
+        run: |
+          python pipeline/publish_harvest.py add-files \
+            --additions art/additions/corpus --corpus work/corpus --added "$ADDED"
+          python pipeline/hash_corpus.py --corpus art/additions/corpus --out work/hashed-new
+          python pipeline/publish_harvest.py merge-hashed --new work/hashed-new --into work/corpus-hashed
+
+      - name: Install the new tables
+        run: |
+          cp -r art/update/release-iri/. release-iri/
+          ln -s "$PWD/work/corpus" release-iri/corpus
+          ln -s "$PWD/work/corpus-hashed" release-iri/corpus-hashed
+
+      - name: "Check 4b: every archived file matches MANIFEST.csv"
+        run: |
+          python pipeline/verify_reproduction.py hashes \
+            --manifest release-iri/MANIFEST.csv --corpus work/corpus \
+            --summary "$GITHUB_STEP_SUMMARY"
+
+      - name: "Check 5: the release is consistent"
+        run: |
+          python pipeline/write_release_readme.py --release release-iri
+          python release-iri/validate_release.py
+
+      # ----------------------------------------------------- the new version
+      - name: Open the Zenodo draft (reserves the DOI)
+        id: draft
+        run: |
+          python pipeline/publish_harvest.py notes --release release-iri \
+            --version "$VERSION" --date "$TODAY" --added "$ADDED" \
+            --harvest-run "$RUN_URL" --out work/notes.txt
+          python pipeline/zenodo_publish.py --step open --concept "$ZENODO_CONCEPT" \
+            --version "v$VERSION" --metadata release-iri/zenodo.json \
+            --notes-file work/notes.txt --draft-json work/draft.json
+          echo "id=$(python -c "import json; print(json.load(open('work/draft.json'))['draft_id'])")" >> "$GITHUB_OUTPUT"
+
+      - name: Write the version down
+        run: |
+          python pipeline/publish_harvest.py record --release release-iri \
+            --citation CITATION.cff --changelog CHANGELOG.md \
+            --version "$VERSION" --date "$TODAY" --draft work/draft.json \
+            --added "$ADDED" --harvest-run "$RUN_URL" --notes-out work/release-notes.md
+          cat work/release-notes.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Package
+        run: |
+          rm release-iri/corpus release-iri/corpus-hashed     # the symlinks; tables only from here
+          mkdir -p dist
+          python pipeline/publish_harvest.py zip --root work/corpus --prefix corpus --out dist/corpus.zip
+          python pipeline/publish_harvest.py zip --root work/corpus-hashed --prefix corpus-hashed \
+            --out dist/corpus-hashed.zip
+          tar czf "dist/odp-reuse-metadata-v$VERSION.tar.gz" release-iri
+          tar czf "dist/odp-reuse-src-v$VERSION.tar.gz" $(ls -d pipeline use-cases MultiSource \
+            scholar requirements.txt README.md LICENSE CITATION.cff CHANGELOG.md .github/workflows \
+            2>/dev/null)
+          (cd dist && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt)
+
+      - name: Upload to the draft
+        run: |
+          python pipeline/zenodo_publish.py --step upload --draft-id "${{ steps.draft.outputs.id }}" \
+            --files dist/corpus.zip dist/corpus-hashed.zip \
+                    "dist/odp-reuse-metadata-v$VERSION.tar.gz" "dist/odp-reuse-src-v$VERSION.tar.gz"
+
+      # -------------------------------------------------------------- dry run
+      - name: "Dry run: discard the draft, push nothing"
+        if: env.DRY_RUN == 'true'
+        run: |
+          python pipeline/zenodo_publish.py --step discard --draft-id "${{ steps.draft.outputs.id }}"
+          git status --short
+          echo "**Dry run:** v$VERSION was assembled and passed every check; the Zenodo draft was discarded and nothing was pushed." >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: env.DRY_RUN == 'true'
+        with:
+          name: publish-dry-run-${{ github.run_number }}
+          path: |
+            dist/
+            release-iri/
+            CITATION.cff
+            CHANGELOG.md
+            work/notes.txt
+            work/release-notes.md
+          retention-days: 30
+
+      # -------------------------------------------------------------- publish
+      - name: Commit and tag
+        id: push
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add release-iri CITATION.cff CHANGELOG.md
+          { echo "release: v$VERSION from harvest run $RUN_ID"; echo; cat work/notes.txt; } > work/commit.txt
+          git commit -q -F work/commit.txt
+          git tag -a "v$VERSION" -F work/commit.txt
+          git push --atomic origin HEAD:main "refs/tags/v$VERSION"
+
+      - name: Publish the Zenodo version
+        id: zenodo
+        if: env.DRY_RUN != 'true'
+        run: |
+          python pipeline/zenodo_publish.py --step publish --draft-id "${{ steps.draft.outputs.id }}" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: GitHub Release
+        if: env.DRY_RUN != 'true'
+        run: |
+          gh release create "v$VERSION" --title "v$VERSION" --notes-file work/release-notes.md \
+            "dist/odp-reuse-metadata-v$VERSION.tar.gz" "dist/odp-reuse-src-v$VERSION.tar.gz" \
+            dist/SHA256SUMS.txt
+
+      # Events raised with the workflow token start no workflows by themselves,
+      # so the site and the reproduction check are started explicitly.
+      - name: Site, reproduction check, and any open harvest pull request
+        if: env.DRY_RUN != 'true'
+        run: |
+          gh workflow run pages.yml --ref main
+          gh workflow run reproduce.yml --ref main
+          for n in $(gh pr list --head harvest/update --state open --json number --jq '.[].number'); do
+            gh pr close "$n" --delete-branch --comment "Published as v$VERSION by publish-release.yml."
+          done
+
+      # ------------------------------------------------------------- failures
+      - name: Discard the draft (failed before anything was pushed)
+        if: failure() && steps.draft.outputs.id != '' && steps.push.outcome != 'success'
+        run: python pipeline/zenodo_publish.py --step discard --draft-id "${{ steps.draft.outputs.id }}" || true
+
+      - name: Explain a failure after the push
+        if: failure() && steps.push.outcome == 'success' && steps.zenodo.outcome != 'success'
+        run: |
+          msg="main and tag v$VERSION are pushed, but Zenodo draft ${{ steps.draft.outputs.id }} is not published. Publish it with: python pipeline/zenodo_publish.py --step publish --draft-id ${{ steps.draft.outputs.id }} (ZENODO_TOKEN set), then: gh release create v$VERSION --notes-file CHANGELOG.md"
+          echo "::error::$msg"
+          echo "**$msg**" >> "$GITHUB_STEP_SUMMARY"

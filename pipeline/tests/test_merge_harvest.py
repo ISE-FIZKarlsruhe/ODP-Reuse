@@ -131,6 +131,19 @@ def test_parse_and_pattern_copy_verdicts_of_new_rows_stand():
     assert [r["stage_reached"] for r in m.added] == ["discovered", "parsed"]
 
 
+def test_an_id_differing_only_in_letter_case_is_reported_not_added():
+    # SPAROntologies_literal_Literal (new) vs SPAROntologies_literal_literal
+    # (released): two directories that Windows and macOS cannot hold side by
+    # side, so unpacking the archive there would merge them.
+    release = [mrow("r_x_literal")]
+    harvest = [mrow("r_x_Literal"), mrow("n_B"), mrow("n_b"), mrow("other")]
+
+    m = mh.merge_manifest(release, harvest)
+
+    assert ids(m.added) == ["n_B", "other"]
+    assert m.case_clash == [("github", "n_b"), ("github", "r_x_Literal")]
+
+
 def test_more_pairs_on_a_released_file_are_reported_but_not_merged():
     # Adding them means re-gating the archived file with the new patterns, which
     # needs the archived corpus; until then they are candidates.

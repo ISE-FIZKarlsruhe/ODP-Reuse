@@ -824,7 +824,7 @@ versions are reviewable as a pull request.
 
 The corpus contains single files above GitHub's 100 MB hard limit, and git would
 retain every version of a 2.8 GB payload forever. Keeping the tables in git and
-the corpus on Zenodo means a quarterly update shows up as a readable diff instead
+the corpus on Zenodo means a monthly update shows up as a readable diff instead
 of an opaque binary churn.
 
 ## Use it in code
@@ -881,13 +881,102 @@ sibling.
 """
 
 
+REUSE_VIEWS = ("github-reuse", "noOBO-reuse", "OBO-reuse")
+
+
+def _count(v):
+    """A history.csv count, or None where the version has none (v1.0.0)."""
+    return num(v) if str(v or "").strip() else None
+
+
+def history_payload(rows: list[dict]) -> list[dict]:
+    """One point per version, oldest first, for the changelog's charts."""
+    out = []
+    for r in sorted(rows, key=lambda r: r.get("date", "")):
+        discovered = _count(r.get("discovered"))
+        pairs = (sum(num(r.get(f"{v}_pairs")) for v in REUSE_VIEWS)
+                 if discovered is not None else None)
+        added = None
+        if _count(r.get("added_ontologies")) is not None:
+            n, k = num(r["added_ontologies"]), num(r.get("added_kept"))
+            added = {"ontologies": n, "kept": k, "excluded": n - k,
+                     "pairs": num(r.get("added_pairs"))}
+        out.append({
+            "version": r["version"], "date": r["date"], "tag": r.get("tag", ""),
+            "doi": r.get("doi", ""), "summary": r.get("summary", ""),
+            "comparable": discovered is not None,
+            "discovered": discovered, "kept": _count(r.get("kept")), "pairs": pairs,
+            "views": {v: {"ontologies": _count(r.get(f"{v}_ontologies")),
+                          "pairs": _count(r.get(f"{v}_pairs"))}
+                      for v in ("github-reuse", "github-complete", "noOBO-reuse",
+                                "noOBO-complete", "OBO-reuse", "OBO-complete")},
+            "added": added,
+        })
+    return out
+
+
+def _release_notes(changelog: str) -> str:
+    """CHANGELOG.md's version sections, one heading level down."""
+    i = changelog.find("\n## ")
+    if i < 0:
+        return changelog.strip()
+    return "\n".join(("#" + line) if line.startswith("## ") else line
+                     for line in changelog[i + 1:].splitlines()).strip()
+
+
 def page_changelog(ctx: dict) -> str:
+    points = history_payload(ctx.get("history", []))
+    rows = []
+    for p in reversed(points):
+        dash = "—"
+        cell = (lambda v: f"{v:,}" if v is not None else dash)
+        added = (f"+{p['added']['kept']} · +{p['added']['pairs']} pairs" if p["added"]
+                 else ("baseline" if p["comparable"] else dash))
+        doi = (f"[{p['doi'].rsplit('/', 1)[-1]}](https://doi.org/{p['doi']})"
+               if p["doi"] else dash)
+        rows.append(f"| **v{p['version']}** · {p['date']} | {cell(p['discovered'])} | "
+                    f"{cell(p['kept'])} | {cell(p['pairs'])} | {added} | {doi} |")
+    newest = points[-1] if points else None
+    lead = (f"The newest version is **v{newest['version']}** ({newest['date']}); "
+            f"{len(points)} versions have been published." if newest else "")
+    table = "\n".join(["| Version | Corpus | Gated | Pairs | Added | Zenodo |",
+                       "|---|---:|---:|---:|---|---|", *rows])
+    charts = "" if not points else """
+<div id="odp-history" class="odp-viz" data-src="data/history.json"></div>
+
+**Corpus** counts every ontology discovered and published, whether or not it
+passes the quality gate; **pass the gate** is the union of the `*-reuse` views;
+**pairs** are ontology–pattern pairs summed over the three `*-reuse` views.
+Versions before the gate are marked on the axis but have no comparable counts.
+
+## What each version added
+
+<div id="odp-additions" class="odp-viz" data-src="data/history.json"></div>
+
+Each bar is one version's addition to the corpus: the ontologies that pass the
+gate, and the ones that were added but are excluded, each with the rule that
+excluded it in `MANIFEST.csv`. A version adds; it never removes, so every
+earlier version's ontologies are still in the newer ones.
+"""
     return f"""# Changelog
 
-Every release is a git tag, a GitHub Release and a Zenodo version under the same
-concept DOI. The newest is shown first; all earlier versions remain resolvable.
+Every version is a git tag, a GitHub Release and a Zenodo version under the
+concept DOI [10.5281/zenodo.17751740](https://doi.org/10.5281/zenodo.17751740),
+which always resolves to the newest. Earlier versions stay resolvable under
+their own DOIs. {lead}
 
-{ctx['changelog']}
+## The dataset over time
+{charts}
+## Every version
+
+{table if points else "_No version history yet._"}
+
+`release-iri/history.csv` holds these numbers for every version and view, and
+`release-iri/additions/v<version>.csv` lists the ontologies each version added.
+
+## Release notes
+
+{_release_notes(ctx.get('changelog', ''))}
 
 ## Versioning
 
@@ -897,29 +986,40 @@ concept DOI. The newest is shown first; all earlier versions remain resolvable.
 | **minor** | new ontologies or pairs from a harvest; gate unchanged | earlier results valid on their subset |
 | **patch** | repairs, metadata, documentation; membership unchanged | fully comparable |
 
-## How updates happen
+## How a new version is made
 
-Two workflows test two different claims.
+```mermaid
+flowchart TB
+  subgraph month["Every month"]
+    direction LR
+    H["Harvest<br/>GitHub code search"] --> G["Download, repair,<br/>quality gate"] --> N{{"New<br/>ontologies?"}}
+  end
+  subgraph release["A new minor version"]
+    direction LR
+    M["Add only<br/>merge_harvest.py"] --> C["Checks<br/>nothing removed,<br/>hashes match"] --> Z["Zenodo draft,<br/>DOI reserved"] --> T["Commit,<br/>tag vX.Y.0"] --> P["Zenodo version,<br/>GitHub Release"]
+  end
+  N -- yes --> M
+  N -- no --> X["Nothing is published"]
+```
 
-**The release reproduces.** `reproduce.yml` downloads the corpus archived on
-Zenodo, checks every ontology file against the hash the gate recorded, re-runs
-the gate and compares every row with the released `MANIFEST.csv`. It runs
-monthly and on every change to the gate, so the claim that the archive, run
-through the released gate, yields the released verdicts is tested rather than
-asserted.
+**The corpus grows; it never shrinks.** `harvest.yml` re-runs discovery,
+repair and the gate for the GitHub portion every month, searching the release's
+pattern IRIs plus any the ODPA has published since. A harvest queries live APIs
+and is a partial sample, not a census: code search returns at most 1,000 files
+per query, and a file a harvest does not return is usually still there. So a
+harvest only adds. `merge_harvest.py` keeps every released row, file and verdict
+as it is, gates the ontologies the release does not have against it (a new copy
+of a released file is a duplicate of the released one), and re-verifies their
+removals. `publish-release.yml` then checks that the update only adds, that the
+gate is the released gate, and that every file in the new archive matches the
+hash the gate recorded, and publishes the result as the next minor version:
+a Zenodo version, a git tag and a GitHub Release. If any check fails, nothing
+is published.
 
-**The corpus grows; it never shrinks.** `quarterly-harvest.yml` re-runs
-discovery, repair and the gate for the GitHub portion every quarter, searching
-the release's pattern IRIs plus any the ODPA has published since. A re-harvest
-queries live APIs and is a partial sample, not a census: code search returns at
-most 1,000 files per query, and a file a harvest does not return is usually
-still there. So a harvest only adds. `merge_harvest.py` keeps every released
-row, file and verdict as it is, gates the ontologies the release does not have
-against it (a new copy of a released file is a duplicate of the released one),
-re-verifies their removals, and appends them to `MANIFEST.csv`, the views and
-the audit. The workflow opens a pull request with the result. A person merges
-it, adds the new files to the Zenodo corpus and tags a minor version; nothing
-is published automatically.
+**The release reproduces.** `reproduce.yml` downloads the newest corpus
+archived on Zenodo, checks every ontology file against the hash the gate
+recorded, re-runs the gate and compares every row with the `MANIFEST.csv` of
+the release it belongs to. It runs monthly and on every change to the gate.
 """
 
 
@@ -951,6 +1051,10 @@ def build_payloads(ctx: dict, out: Path) -> None:
          + [{"rule": "Kept", "n": num(r["kept_reuse"]),
              "color": RULE_COLOR["KEPT"]}]}
         for r in ctx["gate"]], indent=1), encoding="utf-8")
+
+    # the dataset's history, one point per version (changelog page)
+    (d / "history.json").write_text(json.dumps(
+        history_payload(ctx.get("history", [])), indent=1), encoding="utf-8")
 
     # views
     (d / "views.json").write_text(json.dumps([
@@ -1298,6 +1402,7 @@ def main() -> None:
         "uc1": uc1,
         "uc2": uc2,
         "rq": {p.stem: read(p) for p in args.rq.glob("rq*.csv")},
+        "history": read(args.release / "history.csv"),
         "changelog": (Path("CHANGELOG.md").read_text(encoding="utf-8")
                       if Path("CHANGELOG.md").is_file()
                       else "_No changelog yet._"),
