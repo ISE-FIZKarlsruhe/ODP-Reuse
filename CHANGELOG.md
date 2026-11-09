@@ -6,6 +6,18 @@ which always resolves to the newest. The newest version is listed first. From
 v1.3.0 on, `publish-release.yml` writes each entry from the same numbers as
 `release-iri/history.csv`.
 
+## Unreleased
+
+Corrected two diagnostic columns of 7 rows first released in v1.2.0
+(`OBO/uberon` and 6 GitHub ontologies). `n_pattern_errors` counted the
+characters of a parser message instead of the pattern files that failed to
+parse (240 to 1,000 instead of 1, or 6 for uberon), and `pattern_errors` held
+that message one character at a time: a defect of the cache
+`build_manifest.py --resume` reads, fixed before v1.3.0. The corrected values
+are those of the gate re-run on the archived files
+([reproduce run 42498698949](https://github.com/ISE-FIZKarlsruhe/ODP-Reuse/actions/runs/42498698949)).
+No verdict, view or file depends on these columns, and none changed.
+
 ## v1.3.0 — 2026-11-08
 
 **+178 ontologies · +202 ontology–pattern pairs** in the quality-gated views, from the harvest of 2026-11-08 ([workflow run](https://github.com/ISE-FIZKarlsruhe/ODP-Reuse/actions/runs/42466505380)). 1,732 ontologies were added to the corpus; 178 pass the quality gate and the other 1,554 are kept with the rule that excluded them.

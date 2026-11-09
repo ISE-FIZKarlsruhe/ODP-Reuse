@@ -6,8 +6,9 @@
 # would show up as a failed reproduction rather than a changed dependency.
 #
 # These versions re-gated v1.2.0 locally (2026-11-05) with 1958 of 1965 compared
-# rows identical; the other 6 differ only in pattern_errors, a --resume cache
-# defect since fixed in build_manifest.py.
+# rows identical; the others differ only in pattern_errors and n_pattern_errors,
+# a --resume cache defect since fixed in build_manifest.py. Those 7 rows are
+# corrected on main for the version after v1.3.0 (CHANGELOG.md, Unreleased).
 #
 # The gate and verify_reproduction.py need nothing else from pipeline/requirements.txt.
 rdflib==7.6.0

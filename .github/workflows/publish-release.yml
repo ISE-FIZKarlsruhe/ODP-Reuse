@@ -145,6 +145,17 @@ jobs:
             exit 1; }
           echo "PREV_TAG=$tag" >> "$GITHUB_ENV"
 
+      # Check 1 compares with main. A correction made on main since the last
+      # version (v1.2.0's garbled pattern_errors, say) is allowed, but only when
+      # CHANGELOG.md says what it is in a "## Unreleased" section, which
+      # becomes part of this version's notes.
+      - name: "Check 2b: corrections to released rows are stated"
+        run: |
+          git show "$PREV_TAG:release-iri/MANIFEST.csv" > "$RUNNER_TEMP/tag-MANIFEST.csv"
+          python pipeline/publish_harvest.py corrections \
+            --tag-manifest "$RUNNER_TEMP/tag-MANIFEST.csv" \
+            --manifest art/update/release-iri/MANIFEST.csv --changelog CHANGELOG.md
+
       - name: Version
         run: |
           v=$(python pipeline/publish_harvest.py version --citation CITATION.cff)
@@ -196,7 +207,7 @@ jobs:
         run: |
           python pipeline/publish_harvest.py notes --release release-iri \
             --version "$VERSION" --date "$TODAY" --added "$ADDED" \
-            --harvest-run "$RUN_URL" --out work/notes.txt
+            --harvest-run "$RUN_URL" --changelog CHANGELOG.md --out work/notes.txt
           python pipeline/zenodo_publish.py --step open --concept "$ZENODO_CONCEPT" \
             --version "v$VERSION" --metadata release-iri/zenodo.json \
             --notes-file work/notes.txt --draft-json work/draft.json

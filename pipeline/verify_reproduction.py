@@ -17,9 +17,11 @@ corpus downloaded from Zenodo.
                    --manifest ../release-iri/MANIFEST.csv --corpus ../release-iri/corpus
 
   compare  a re-run of build_manifest.py gives the released row for every
-           ontology. ``path`` and ``error_detail`` (which embeds the path) are
+           ontology. ``path``, ``error_detail`` and ``pattern_errors`` (the
+           parser's messages, which name files by absolute path) are
            machine-specific and not compared; ``parsed`` still carries the error
-           type. Rows the re-run skipped with --max-mb are listed, not failed:
+           type and ``n_pattern_errors`` the number of pattern files that failed
+           to parse. Rows the re-run skipped with --max-mb are listed, not failed:
            their hash check stands in for them.
 
                python verify_reproduction.py compare \\
@@ -53,7 +55,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from odpqual.gate import main_ontology_file, sha256  # noqa: E402
 
-MACHINE_SPECIFIC = {"path", "error_detail"}
+# Each embeds an absolute path: error_detail and pattern_errors name the file in
+# the parser's message. parsed and n_pattern_errors still carry what they report.
+MACHINE_SPECIFIC = {"path", "error_detail", "pattern_errors"}
 SIZE_SKIP = "G1_parse:SizeLimitExceeded"
 
 Key = tuple[str, str]
@@ -193,7 +197,8 @@ def report_compare(res: CompareResult) -> str:
         steps = ", then ".join(f"{n} {'first' if v == 'base' else 'added in v' + v}"
                                for v, n in res.replayed)
         L += [f"Gated in version order, as the release was built: {steps}.", ""]
-    L += ["Not compared: `path`, `error_detail` (machine-specific).", ""]
+    L += ["Not compared: `path`, `error_detail`, `pattern_errors` (they name files by "
+          "absolute path).", ""]
     if res.mismatches:
         L += ["**Differing rows** (first 30):", ""]
         L += [f"- `{ds}/{oid}`: {', '.join(cols)}" for (ds, oid), cols in res.mismatches[:30]]

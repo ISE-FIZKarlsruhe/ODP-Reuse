@@ -60,6 +60,28 @@ def test_a_changed_verdict_fails_and_names_the_columns(tmp_path):
     assert res.mismatches == [(("github", "a"), ["n_gt_patterns", "stage_reached", "drop_reason"])]
 
 
+def test_pattern_error_text_is_machine_specific_but_its_count_is_not(tmp_path):
+    # The parser's message names the pattern file by its absolute path.
+    msg = "datamodel.owl: ParserError: file:///{}/github_dataset/a/patterns/datamodel.owl"
+    fields = ["n_pattern_errors", "pattern_errors"]
+    cols = COLS + fields
+    rel_row = {**row("a"), "n_pattern_errors": "1", "pattern_errors": msg.format("C:/release")}
+    same = {**row("a"), "n_pattern_errors": "1", "pattern_errors": msg.format("home/runner")}
+    more = {**same, "n_pattern_errors": "2"}
+
+    def put(name, r):
+        with (tmp_path / name).open("w", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=cols)
+            w.writeheader()
+            w.writerow(r)
+        return tmp_path / name
+
+    rel = put("rel.csv", rel_row)
+    assert vr.compare_manifests(rel, put("same.csv", same)).ok
+    res = vr.compare_manifests(rel, put("more.csv", more))
+    assert res.mismatches == [(("github", "a"), ["n_pattern_errors"])]
+
+
 def test_rows_skipped_for_size_are_listed_not_failed(tmp_path):
     rel = write(tmp_path / "rel.csv", [row("go", ds="OBO")])
     new = write(tmp_path / "new.csv", [row("go", ds="OBO", parsed="SizeLimitExceeded",

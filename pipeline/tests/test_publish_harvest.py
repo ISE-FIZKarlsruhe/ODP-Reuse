@@ -221,6 +221,81 @@ def test_recording_a_version_writes_every_record_from_the_same_numbers(tmp_path)
     assert "adds 1 ontology to the corpus" in (tmp_path / "notes.txt").read_text(encoding="utf-8")
 
 
+# ------------------------------------------------- corrections to released rows
+#
+# A correction to a released row (v1.2.0 shipped 7 garbled pattern_errors
+# values) is made on main by hand and published with the next version. It must
+# be stated: a "## Unreleased" section of CHANGELOG.md becomes part of that
+# version's entry, and a released row that differs from the previous tag
+# without such a section stops the publication.
+
+CHANGELOG_WITH_NOTE = ("# Changelog\n\nIntro.\n\n## Unreleased\n\n"
+                       "Corrected `n_pattern_errors` of 7 rows.\n\n## v1.2.0 — x\n\nOld.\n")
+
+
+def test_unreleased_notes_are_split_from_the_changelog():
+    rest, note = ph.split_unreleased(CHANGELOG_WITH_NOTE)
+
+    assert note == "Corrected `n_pattern_errors` of 7 rows."
+    assert rest == "# Changelog\n\nIntro.\n\n## v1.2.0 — x\n\nOld.\n"
+    assert ph.split_unreleased(rest) == (rest, "")
+
+
+def test_recording_a_version_moves_the_unreleased_notes_into_it(tmp_path):
+    rel = history_release(tmp_path / "rel")
+    prev = {c: "" for c in ph.HISTORY_COLUMNS}
+    prev.update({"version": "1.2.0", "date": "2026-08-05", "github-reuse_ontologies": "442",
+                 "github-reuse_pairs": "669"})
+    write(rel / "history.csv", [prev], ph.HISTORY_COLUMNS)
+    write(tmp_path / "added.csv", [mrow("c")], COLS)
+    (tmp_path / "draft.json").write_text(json.dumps({"draft_id": 99, "doi": "10.5281/zenodo.99"}),
+                                         encoding="utf-8")
+    (tmp_path / "CITATION.cff").write_text("version: 1.2.0\ndate-released: 'x'\n", encoding="utf-8")
+    changelog = tmp_path / "CHANGELOG.md"
+    changelog.write_text(CHANGELOG_WITH_NOTE, encoding="utf-8")
+    args = ["--release", str(rel), "--version", "1.3.0", "--date", "2026-12-01",
+            "--added", str(tmp_path / "added.csv"), "--harvest-run", "https://run/1"]
+
+    assert ph.main(["notes", *args, "--changelog", str(changelog),
+                    "--out", str(tmp_path / "notes.txt")]) == 0
+    assert ph.main(["record", *args, "--citation", str(tmp_path / "CITATION.cff"),
+                    "--changelog", str(changelog), "--draft", str(tmp_path / "draft.json"),
+                    "--notes-out", str(tmp_path / "release-notes.md")]) == 0
+
+    text = changelog.read_text(encoding="utf-8")
+    assert "## Unreleased" not in text
+    assert text.index("## v1.3.0") < text.index("Corrected `n_pattern_errors`") < text.index("## v1.2.0")
+    assert text.count("Corrected `n_pattern_errors`") == 1
+    assert "Corrected `n_pattern_errors`" in (tmp_path / "release-notes.md").read_text(encoding="utf-8")
+    assert "Corrected `n_pattern_errors`" in (tmp_path / "notes.txt").read_text(encoding="utf-8")
+
+
+def test_a_released_row_changed_since_the_tag_needs_an_unreleased_note(tmp_path):
+    tag = tmp_path / "tag.csv"
+    write(tag, [mrow("a", n_pattern_errors="240"), mrow("b")], COLS)
+    now = tmp_path / "now.csv"
+    write(now, [mrow("a", n_pattern_errors="1"), mrow("b"), mrow("c")], COLS)
+
+    assert ph.released_changes(tag, now) == [(("github", "a"), ["n_pattern_errors"])]
+
+    plain, noted = tmp_path / "plain.md", tmp_path / "noted.md"
+    plain.write_text("# Changelog\n\n## v1.2.0 — x\n", encoding="utf-8")
+    noted.write_text(CHANGELOG_WITH_NOTE, encoding="utf-8")
+    cli = ["corrections", "--tag-manifest", str(tag), "--manifest", str(now), "--changelog"]
+    assert ph.main([*cli, str(plain)]) == 1
+    assert ph.main([*cli, str(noted)]) == 0
+
+
+def test_an_unchanged_release_needs_no_note(tmp_path):
+    tag = tmp_path / "tag.csv"
+    write(tag, [mrow("a")], COLS)
+    plain = tmp_path / "plain.md"
+    plain.write_text("# Changelog\n", encoding="utf-8")
+
+    assert ph.main(["corrections", "--tag-manifest", str(tag), "--manifest", str(tag),
+                    "--changelog", str(plain)]) == 0
+
+
 # ------------------------------------------------------------------ corpus
 
 def onto_dir(root: Path, oid: str, body: bytes) -> Path:

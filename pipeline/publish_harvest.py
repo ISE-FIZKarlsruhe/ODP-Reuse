@@ -167,7 +167,43 @@ def history_row(release: Path, *, version: str, date: str, tag: str, record: str
     return row
 
 
-def changelog_entry(row: dict, previous: dict) -> str:
+UNRELEASED = "## Unreleased"
+
+
+def split_unreleased(text: str) -> tuple[str, str]:
+    """CHANGELOG text without its "## Unreleased" section, and that section's body.
+
+    The section holds what changed on main by hand since the last version -- a
+    correction to released rows, say -- and becomes part of the next version.
+    """
+    lines = text.split("\n")
+    i = next((n for n, line in enumerate(lines) if line.strip() == UNRELEASED), None)
+    if i is None:
+        return text, ""
+    j = next((n for n in range(i + 1, len(lines)) if lines[n].startswith("## ")), len(lines))
+    return "\n".join(lines[:i] + lines[j:]), "\n".join(lines[i + 1:j]).strip()
+
+
+def unreleased_note(changelog: Path | None) -> str:
+    if changelog is None or not changelog.is_file():
+        return ""
+    return split_unreleased(changelog.read_text(encoding="utf-8"))[1]
+
+
+def released_changes(tag_manifest: Path, manifest: Path) -> list[tuple[tuple[str, str], list[str]]]:
+    """Released rows that differ from the previous version's MANIFEST.csv, with the columns."""
+    now = {(r["dataset"], r["ontology_id"]): r for r in read_csv(manifest)}
+    out = []
+    for r in read_csv(tag_manifest):
+        k = (r["dataset"], r["ontology_id"])
+        if k not in now:
+            out.append((k, ["(row removed)"]))
+        elif now[k] != r:
+            out.append((k, sorted(c for c in r if r[c] != now[k].get(c))))
+    return out
+
+
+def changelog_entry(row: dict, previous: dict, also: str = "") -> str:
     v, date = row["version"], row["date"]
     added, kept, pairs = (num(row["added_ontologies"]), num(row["added_kept"]),
                           num(row["added_pairs"]))
@@ -184,13 +220,17 @@ def changelog_entry(row: dict, previous: dict) -> str:
         c, d = num(previous.get(f"{view}_pairs")), num(row.get(f"{view}_pairs"))
         if previous.get(f"{view}_ontologies") and (a, c) != (b, d):
             L.append(f"| `{view}` | {a} → {b} ({b - a:+d}) | {c} → {d} ({d - c:+d}) |")
+    if also:
+        L += ["", "**Also in this version:**", "", also]
     L += ["", f"Zenodo: [{row['doi']}](https://doi.org/{row['doi']}) · added ontologies: "
               f"`release-iri/additions/v{v}.csv`", ""]
     return "\n".join(L)
 
 
 def prepend_changelog(path: Path, entry: str) -> None:
+    """Put ``entry`` above the older versions; the Unreleased section is now in it."""
     text = path.read_text(encoding="utf-8") if path.is_file() else "# Changelog\n"
+    text = split_unreleased(text)[0]
     i = text.find("\n## ")
     text = (text[:i + 1] + entry + "\n" + text[i + 1:]) if i >= 0 else text.rstrip("\n") + "\n\n" + entry
     path.write_text(text, encoding="utf-8", newline="\n")
@@ -200,15 +240,16 @@ def _n(n: int, one: str, many: str) -> str:
     return f"{n:,} {one if n == 1 else many}"
 
 
-def release_notes(row: dict) -> str:
+def release_notes(row: dict, also: str = "") -> str:
     """Plain-text version notes, for Zenodo and the commit and tag messages."""
     v = row["version"]
-    return (f"Version {v} adds {_n(num(row['added_ontologies']), 'ontology', 'ontologies')} "
+    text = (f"Version {v} adds {_n(num(row['added_ontologies']), 'ontology', 'ontologies')} "
             f"to the corpus from the harvest of {row['date']} ({row['harvest_run']}); "
             f"{num(row['added_kept'])} pass the quality gate, adding "
             f"{_n(num(row['added_pairs']), 'ontology-pattern pair', 'ontology-pattern pairs')} "
             "to the views. No ontology, file or verdict of an earlier version was removed or "
             f"changed. The added ontologies are listed in release-iri/additions/v{v}.csv.")
+    return text + (f"\n\nAlso in this version: {also}" if also else "")
 
 
 # ------------------------------------------------------------------- corpus
@@ -339,8 +380,21 @@ def cmd_notes(a) -> None:
     row = history_row(a.release, version=a.version, date=a.date, tag=f"v{a.version}",
                       record="", doi="", previous=history[-1] if history else {},
                       added=read_csv(a.added), harvest_run=a.harvest_run)
-    a.out.write_text(release_notes(row) + "\n", encoding="utf-8")
-    print(release_notes(row))
+    notes = release_notes(row, unreleased_note(a.changelog))
+    a.out.write_text(notes + "\n", encoding="utf-8")
+    print(notes)
+
+
+def cmd_corrections(a) -> int:
+    """Released rows changed since the previous version must be stated in CHANGELOG.md."""
+    changes = released_changes(a.tag_manifest, a.manifest)
+    for (ds, oid), cols in changes:
+        print(f"changed since the previous version: {ds}/{oid} ({', '.join(cols)})")
+    if changes and not unreleased_note(a.changelog):
+        print(f"::error::{len(changes)} released rows differ from the previous version and "
+              f"CHANGELOG.md has no '{UNRELEASED}' section saying what was corrected and why.")
+        return 1
+    return 0
 
 
 def cmd_record(a) -> None:
@@ -352,7 +406,7 @@ def cmd_record(a) -> None:
     row = history_row(rel, version=a.version, date=a.date, tag=f"v{a.version}",
                       record=str(draft["draft_id"]), doi=draft["doi"], previous=previous,
                       added=added, harvest_run=a.harvest_run)
-    entry = changelog_entry(row, previous)
+    entry = changelog_entry(row, previous, unreleased_note(a.changelog))
     write_csv(rel / "history.csv", history + [row], HISTORY_COLUMNS)
     write_csv(rel / "additions" / f"v{a.version}.csv", added, list(added[0]) if added else [])
     archive = {"zenodo_record": str(draft["draft_id"]), "doi": draft["doi"],
@@ -398,7 +452,13 @@ def main(argv=None) -> int:
     p.add_argument("--date", required=True)
     p.add_argument("--added", type=Path, required=True)
     p.add_argument("--harvest-run", default="")
+    p.add_argument("--changelog", type=Path, help="its Unreleased section joins the notes")
     p.add_argument("--out", type=Path, required=True)
+    p = sub.add_parser("corrections")
+    p.add_argument("--tag-manifest", type=Path, required=True,
+                   help="MANIFEST.csv of the previous version")
+    p.add_argument("--manifest", type=Path, required=True)
+    p.add_argument("--changelog", type=Path, required=True)
     p = sub.add_parser("record")
     p.add_argument("--release", type=Path, required=True)
     p.add_argument("--citation", type=Path, required=True)
@@ -441,6 +501,8 @@ def main(argv=None) -> int:
         print(f"[OK] {a.out} ({a.out.stat().st_size / 1e6:.1f} MB)")
     elif a.cmd == "notes":
         cmd_notes(a)
+    elif a.cmd == "corrections":
+        return cmd_corrections(a)
     elif a.cmd == "record":
         cmd_record(a)
     return 0
