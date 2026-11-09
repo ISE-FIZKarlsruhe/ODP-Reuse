@@ -40,6 +40,13 @@ corpus downloaded from Zenodo.
            file is hash-verified), so the duplicates of a large file still
            point at it.
 
+           With --corrected (main's MANIFEST.csv), a released row the re-run
+           does not reproduce is listed, not failed, when main already holds
+           exactly the values the re-run gives: a correction made after the
+           release and published with the next version. publish-release.yml
+           does not publish such a change unless CHANGELOG.md states it. A row
+           where main differs from the re-run as well still fails.
+
 Both exit non-zero on any discrepancy and can append a Markdown summary to
 --summary (e.g. $GITHUB_STEP_SUMMARY).
 """
@@ -79,6 +86,7 @@ class CompareResult:
     extra: list[Key] = field(default_factory=list)
     size_skipped: list[Key] = field(default_factory=list)
     replayed: list[tuple[str, int]] = field(default_factory=list)  # (version, rows)
+    corrected: list[tuple[Key, list[str]]] = field(default_factory=list)
 
     @property
     def ok(self) -> bool:
@@ -118,10 +126,11 @@ def replay(regated: dict[Key, dict], release: dict[Key, dict],
     return {(r["dataset"], r["ontology_id"]): r for r in done}, counts
 
 
-def compare_manifests(release: Path, regated: Path,
-                      additions: Path | None = None) -> CompareResult:
+def compare_manifests(release: Path, regated: Path, additions: Path | None = None,
+                      corrected: Path | None = None) -> CompareResult:
     rel_cols, rel = load(release)
     new_cols, raw = load(regated)
+    fixed = load(corrected)[1] if corrected is not None else {}
     datasets = sorted({ds for ds, _ in raw})
     rel = {k: r for k, r in rel.items() if k[0] in set(datasets)}
     cols = [c for c in rel_cols if c in set(new_cols) and c not in MACHINE_SPECIFIC]
@@ -137,10 +146,12 @@ def compare_manifests(release: Path, regated: Path,
             res.size_skipped.append(k)
             continue
         diff = [c for c in cols if (rel[k].get(c) or "") != (new[k].get(c) or "")]
-        if diff:
-            res.mismatches.append((k, diff))
-        else:
+        if not diff:
             res.n_identical += 1
+        elif k in fixed and all((fixed[k].get(c) or "") == (new[k].get(c) or "") for c in cols):
+            res.corrected.append((k, diff))
+        else:
+            res.mismatches.append((k, diff))
     return res
 
 
@@ -187,12 +198,16 @@ def _list(title: str, keys, limit: int = 30) -> list[str]:
 
 
 def report_compare(res: CompareResult) -> str:
-    total = res.n_identical + len(res.mismatches) + len(res.size_skipped)
+    total = (res.n_identical + len(res.mismatches) + len(res.size_skipped)
+             + len(res.corrected))
     L = [f"### Gate re-run vs released MANIFEST.csv ({', '.join(res.datasets)})", "",
          f"- identical rows: **{res.n_identical} of {total}**",
-         f"- skipped for size (hash-verified only): {len(res.size_skipped)}",
-         f"- differing: {len(res.mismatches)} | missing from re-run: {len(res.missing)} | "
-         f"not in release: {len(res.extra)}", ""]
+         f"- skipped for size (hash-verified only): {len(res.size_skipped)}"]
+    if res.corrected:
+        L.append(f"- corrected on main since this release, as the re-run gives them: "
+                 f"{len(res.corrected)}")
+    L += [f"- differing: {len(res.mismatches)} | missing from re-run: {len(res.missing)} | "
+          f"not in release: {len(res.extra)}", ""]
     if res.replayed:
         steps = ", then ".join(f"{n} {'first' if v == 'base' else 'added in v' + v}"
                                for v, n in res.replayed)
@@ -202,6 +217,12 @@ def report_compare(res: CompareResult) -> str:
     if res.mismatches:
         L += ["**Differing rows** (first 30):", ""]
         L += [f"- `{ds}/{oid}`: {', '.join(cols)}" for (ds, oid), cols in res.mismatches[:30]]
+        L.append("")
+    if res.corrected:
+        L += ["**Corrected on main since this release** (first 30). The released value "
+              "was wrong; main's MANIFEST.csv holds the value the re-run gives, and the "
+              "next version publishes it (CHANGELOG.md):", ""]
+        L += [f"- `{ds}/{oid}`: {', '.join(cols)}" for (ds, oid), cols in res.corrected[:30]]
         L.append("")
     L += _list("Skipped for size", res.size_skipped)
     L += _list("Missing from re-run", res.missing)
@@ -234,6 +255,9 @@ def main(argv=None) -> None:
     c.add_argument("--additions", type=Path,
                    help="the release's additions/ directory: replay the versions in "
                         "order (see above); absent directory = gate all at once")
+    c.add_argument("--corrected", type=Path,
+                   help="main's MANIFEST.csv: a released row that differs from the re-run "
+                        "is listed, not failed, when main holds exactly the re-run's values")
     for p in (h, c):
         p.add_argument("--summary", type=Path, help="append the Markdown report here")
     a = ap.parse_args(argv)
@@ -242,7 +266,7 @@ def main(argv=None) -> None:
         res = verify_hashes(a.manifest, a.corpus)
         text = report_hashes(res, len(load(a.manifest)[1]))
     else:
-        res = compare_manifests(a.release, a.regated, a.additions)
+        res = compare_manifests(a.release, a.regated, a.additions, a.corrected)
         text = report_compare(res)
     print(text)
     if a.summary:

@@ -63,7 +63,10 @@ pip install -r requirements.txt
 What reproduces exactly is the release: the corpus archived on Zenodo, run
 through the released gate, yields `release-iri/MANIFEST.csv` row for row.
 [`reproduce.yml`](.github/workflows/reproduce.yml) checks this monthly and on
-every change to the gate.
+every change to the gate. A value corrected after its release (CHANGELOG.md
+names each correction) is checked as corrected: the job compares the published
+version's rows and lists those that main has since corrected to exactly what
+the re-run gives.
 
 The gate runs in the order the release was built. Each version after v1.2.0
 added ontologies and gated them against those already published, so a new copy

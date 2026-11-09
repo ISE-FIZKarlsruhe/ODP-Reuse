@@ -215,6 +215,33 @@ def test_a_file_skipped_for_size_still_keeps_its_duplicates(tmp_path):
     assert res.size_skipped == [("OBO", "go")] and res.n_identical == 1
 
 
+def test_a_correction_on_main_that_the_rerun_confirms_is_listed_not_failed(tmp_path):
+    # Released with a wrong value, corrected on main, not yet in a published version.
+    rel = write(tmp_path / "rel.csv", [row("a", n_triples="10"), row("b")])
+    main = write(tmp_path / "main.csv", [row("a", n_triples="12"), row("b")])
+    new = write(tmp_path / "new.csv", [row("a", n_triples="12", path="/home/runner/a"),
+                                       row("b", path="/home/runner/b")])
+
+    res = vr.compare_manifests(rel, new, corrected=main)
+
+    assert res.ok, res.mismatches
+    assert res.corrected == [(("github", "a"), ["n_triples"])]
+    assert res.n_identical == 1 and res.mismatches == []
+    text = vr.report_compare(res)
+    assert "`github/a`: n_triples" in text and "**PASS**" in text
+
+
+def test_a_correction_the_rerun_does_not_confirm_still_fails(tmp_path):
+    rel = write(tmp_path / "rel.csv", [row("a", n_triples="10")])
+    main = write(tmp_path / "main.csv", [row("a", n_triples="11")])
+    new = write(tmp_path / "new.csv", [row("a", n_triples="12")])
+
+    res = vr.compare_manifests(rel, new, corrected=main)
+
+    assert not res.ok
+    assert res.mismatches == [(("github", "a"), ["n_triples"])] and res.corrected == []
+
+
 def make_onto(corpus, ds_dir, oid, text):
     d = corpus / ds_dir / oid
     (d / "patterns").mkdir(parents=True)
